@@ -1,0 +1,219 @@
+System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
+        switch (arguments.length) {
+            case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
+            case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
+            case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
+        }
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var angular2_1, http_1;
+    var AuthConfig, AuthRequestOptions, AuthHttp, JwtHelper, AuthStatus;
+    /**
+     * WIP example of a manual HTTP interceptor.
+     *
+     */
+    function intercept() {
+        declare;
+        _open = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+            this.addEventListener("readystatechange", function () {
+                if (this.readyState == 1) {
+                    this.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('id_token'));
+                }
+            }, false);
+            _open.call(this, method, url, async, user, pass);
+        };
+    }
+    exports_1("intercept", intercept);
+    return {
+        setters:[
+            function (angular2_1_1) {
+                angular2_1 = angular2_1_1;
+            },
+            function (http_1_1) {
+                http_1 = http_1_1;
+            }],
+        execute: function() {
+            /**
+             * Sets up the authentication configuration.
+             *
+             */
+            AuthConfig = (function () {
+                function AuthConfig(config) {
+                    this.config = config || {};
+                    this._headerName = this.config.headerName || 'Authorization';
+                    this._headerPrefix = this.config.headerPrefix || 'Bearer ';
+                    this._tokenName = this.config.tokenName || 'id_token';
+                    this._jwt = localStorage.getItem(this._tokenName);
+                    return {
+                        headerName: this._headerName,
+                        headerPrefix: this._headerPrefix,
+                        tokenName: this._tokenName,
+                        jwt: this._jwt
+                    };
+                }
+                return AuthConfig;
+            })();
+            /**
+             * Extends BaseRequestOptions and provides it with an authentication header.
+             *
+             */
+            AuthRequestOptions = (function (_super) {
+                __extends(AuthRequestOptions, _super);
+                function AuthRequestOptions(config) {
+                    _super.call(this);
+                    this.config = config;
+                    this._authHeader = new http_1.Headers();
+                    this.headers = this._authHeader;
+                    this._config = new AuthConfig(config);
+                    this._authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.jwt);
+                }
+                return AuthRequestOptions;
+            })(http_1.BaseRequestOptions);
+            exports_1("AuthRequestOptions", AuthRequestOptions);
+            /**
+             * Allows for explicit authenticated HTTP requests.
+             * WIP - need to add proper config
+             */
+            AuthHttp = (function () {
+                function AuthHttp(http) {
+                    this.http = http;
+                    this.authHeader = new http_1.Headers();
+                    this._headerName = 'Authorization';
+                    this._headerPrefix = 'Bearer ';
+                    this._tokenName = 'id_token';
+                    this._jwt = localStorage.getItem(this._tokenName);
+                    this.authHeader.append(this._headerName, this._headerPrefix + this._jwt);
+                }
+                AuthHttp.prototype.request = function (method, url, body) {
+                    return this.http.request(new http_1.Request({
+                        method: method,
+                        url: url,
+                        body: body,
+                        headers: this.authHeader
+                    }));
+                };
+                AuthHttp.prototype.get = function (url) {
+                    return this.request(http_1.RequestMethods.Get, url);
+                };
+                AuthHttp.prototype.post = function (url, body) {
+                    return this.request(http_1.RequestMethods.Post, url, body);
+                };
+                AuthHttp.prototype.put = function (url, body) {
+                    return this.request(http_1.RequestMethods.Put, url, body);
+                };
+                AuthHttp.prototype.delete = function (url, body) {
+                    return this.request(http_1.RequestMethods.Delete, url, body);
+                };
+                AuthHttp.prototype.options = function (url, body) {
+                    return this.request(http_1.RequestMethods.Options, url, body);
+                };
+                AuthHttp.prototype.head = function (url, body) {
+                    return this.request(http_1.RequestMethods.Head, url, body);
+                };
+                AuthHttp.prototype.patch = function (url, body) {
+                    return this.request(http_1.RequestMethods.Patch, url, body);
+                };
+                AuthHttp = __decorate([
+                    angular2_1.Injectable(), 
+                    __metadata('design:paramtypes', [http_1.Http])
+                ], AuthHttp);
+                return AuthHttp;
+            })();
+            exports_1("AuthHttp", AuthHttp);
+            /**
+             * Helper class to decode and find JWT expiration.
+             *
+             */
+            JwtHelper = (function () {
+                function JwtHelper() {
+                }
+                JwtHelper.prototype.urlBase64Decode = function (str) {
+                    var output = str.replace(/-/g, '+').replace(/_/g, '/');
+                    switch (output.length % 4) {
+                        case 0: {
+                            break;
+                        }
+                        case 2: {
+                            output += '==';
+                            break;
+                        }
+                        case 3: {
+                            output += '=';
+                            break;
+                        }
+                        default: {
+                            throw 'Illegal base64url string!';
+                        }
+                    }
+                    return decodeURIComponent(escape(window.atob(output))); //polifyll https://github.com/davidchambers/Base64.js
+                };
+                JwtHelper.prototype.decodeToken = function (token) {
+                    var parts = token.split('.');
+                    if (parts.length !== 3) {
+                        throw new Error('JWT must have 3 parts');
+                    }
+                    var decoded = this.urlBase64Decode(parts[1]);
+                    if (!decoded) {
+                        throw new Error('Cannot decode the token');
+                    }
+                    return JSON.parse(decoded);
+                };
+                JwtHelper.prototype.getTokenExpirationDate = function (token) {
+                    var decoded;
+                    decoded = this.decodeToken(token);
+                    if (typeof decoded.exp === "undefined") {
+                        return null;
+                    }
+                    var date = new Date(0); // The 0 here is the key, which sets the date to the epoch
+                    date.setUTCSeconds(decoded.exp);
+                    return date;
+                };
+                JwtHelper.prototype.isTokenExpired = function (token, offsetSeconds) {
+                    var date = this.getTokenExpirationDate(token);
+                    offsetSeconds = offsetSeconds || 0;
+                    if (date === null) {
+                        return false;
+                    }
+                    // Token expired?
+                    return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
+                };
+                return JwtHelper;
+            })();
+            exports_1("JwtHelper", JwtHelper);
+            /**
+             * Checks for presence of token and that token hasn't expired.
+             * For use with the @CanActivate router decorator.
+             */
+            AuthStatus = (function () {
+                function AuthStatus() {
+                }
+                AuthStatus.tokenNotExpired = function (tokenName) {
+                    this.tokenName = tokenName || 'id_token';
+                    this.token = localStorage.getItem(this.tokenName);
+                    var jwtHelper = new JwtHelper();
+                    if (!this.token) {
+                        throw 'No token saved!';
+                    }
+                    if (jwtHelper.isTokenExpired(this.token)) {
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                };
+                return AuthStatus;
+            })();
+            exports_1("AuthStatus", AuthStatus);
+        }
+    }
+});
