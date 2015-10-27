@@ -115,7 +115,9 @@ class App {
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  AuthHttp
+  provide(AuthHttp, { useFactory: () => {
+    return new AuthHttp()
+  }})
 ])
 ```
 
@@ -134,7 +136,7 @@ bootstrap(App, [
       headerPrefix: YOUR_HEADER_PREFIX,
       tokenName: YOUR_TOKEN_NAME 
     })
-  }}),
+  }})
 ])
 ```
 
