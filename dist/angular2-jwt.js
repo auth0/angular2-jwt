@@ -17,23 +17,6 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
     };
     var angular2_1, http_1;
     var AuthConfig, AuthRequestOptions, AuthHttp, JwtHelper, AuthStatus;
-    /**
-     * WIP example of a manual HTTP interceptor.
-     *
-     */
-    function intercept() {
-        declare;
-        _open = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
-            this.addEventListener("readystatechange", function () {
-                if (this.readyState == 1) {
-                    this.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('id_token'));
-                }
-            }, false);
-            _open.call(this, method, url, async, user, pass);
-        };
-    }
-    exports_1("intercept", intercept);
     return {
         setters:[
             function (angular2_1_1) {
@@ -45,11 +28,11 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
         execute: function() {
             /**
              * Sets up the authentication configuration.
-             *
              */
             AuthConfig = (function () {
                 function AuthConfig(config) {
-                    this.config = config || {};
+                    this.config;
+                    Object = config || {};
                     this._headerName = this.config.headerName || 'Authorization';
                     this._headerPrefix = this.config.headerPrefix || 'Bearer ';
                     this._tokenName = this.config.tokenName || 'id_token';
@@ -61,11 +44,14 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                         jwt: this._jwt
                     };
                 }
+                AuthConfig.headerName = function () {
+                    return this._headerName;
+                };
                 return AuthConfig;
             })();
+            exports_1("AuthConfig", AuthConfig);
             /**
              * Extends BaseRequestOptions and provides it with an authentication header.
-             *
              */
             AuthRequestOptions = (function (_super) {
                 __extends(AuthRequestOptions, _super);
@@ -82,25 +68,28 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
             exports_1("AuthRequestOptions", AuthRequestOptions);
             /**
              * Allows for explicit authenticated HTTP requests.
-             * WIP - need to add proper config
              */
             AuthHttp = (function () {
-                function AuthHttp(http) {
-                    this.http = http;
-                    this.authHeader = new http_1.Headers();
-                    this._headerName = 'Authorization';
-                    this._headerPrefix = 'Bearer ';
-                    this._tokenName = 'id_token';
-                    this._jwt = localStorage.getItem(this._tokenName);
-                    this.authHeader.append(this._headerName, this._headerPrefix + this._jwt);
+                function AuthHttp(config) {
+                    this._config = new AuthConfig(config);
+                    var injector = angular2_1.Injector.resolveAndCreate([http_1.HTTP_PROVIDERS]);
+                    this.http = injector.get(http_1.Http);
                 }
                 AuthHttp.prototype.request = function (method, url, body) {
+                    if (this.getJwt() === null || this.getJwt() === undefined || this.getJwt() === '') {
+                        throw 'No JWT Saved';
+                    }
+                    var authHeader = new http_1.Headers();
+                    authHeader.append(this._config.headerName, this._config.headerPrefix + this.getJwt());
                     return this.http.request(new http_1.Request({
                         method: method,
                         url: url,
                         body: body,
-                        headers: this.authHeader
+                        headers: authHeader
                     }));
+                };
+                AuthHttp.prototype.getJwt = function () {
+                    return localStorage.getItem(this._config.tokenName);
                 };
                 AuthHttp.prototype.get = function (url) {
                     return this.request(http_1.RequestMethods.Get, url);
@@ -125,14 +114,13 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 };
                 AuthHttp = __decorate([
                     angular2_1.Injectable(), 
-                    __metadata('design:paramtypes', [http_1.Http])
+                    __metadata('design:paramtypes', [Object])
                 ], AuthHttp);
                 return AuthHttp;
             })();
             exports_1("AuthHttp", AuthHttp);
             /**
              * Helper class to decode and find JWT expiration.
-             *
              */
             JwtHelper = (function () {
                 function JwtHelper() {

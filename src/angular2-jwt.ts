@@ -1,20 +1,19 @@
-import {Injectable} from 'angular2/angular2';
-import {Http, Headers, BaseRequestOptions, Request, RequestOptions, RequestOptionsArgs, RequestMethods} from 'angular2/http';
+import {Injectable, Injector} from 'angular2/angular2';
+import {Http, HTTP_PROVIDERS, Headers, BaseRequestOptions, Request, RequestOptions, RequestOptionsArgs, RequestMethods} from 'angular2/http';
 
 /**
  * Sets up the authentication configuration.
- *
  */
 
-class AuthConfig {
+export class AuthConfig {
   
   private _headerName: string;
   private _headerPrefix: string;
   private _tokenName: string;
   private _jwt: string;
 
-  constructor(config:Object) {
-    this.config = config || {};
+  constructor(config?:Object) {
+    this.config:Object = config || {};
     this._headerName = this.config.headerName || 'Authorization';
     this._headerPrefix = this.config.headerPrefix || 'Bearer ';
     this._tokenName = this.config.tokenName || 'id_token';
@@ -27,11 +26,14 @@ class AuthConfig {
       jwt: this._jwt
     }
   }
+
+  public static headerName() {
+    return this._headerName;
+  }
 }
 
 /**
  * Extends BaseRequestOptions and provides it with an authentication header.
- *
  */
 
 export class AuthRequestOptions extends BaseRequestOptions {
@@ -40,7 +42,7 @@ export class AuthRequestOptions extends BaseRequestOptions {
   private _authHeader: Headers = new Headers();
   jwt: string;
 
-  constructor(public config:object) {
+  constructor(public config:Object) {
     super();
 
     this._config = new AuthConfig(config);
@@ -48,8 +50,7 @@ export class AuthRequestOptions extends BaseRequestOptions {
     this._authHeader.append(
       this._config.headerName,
       this._config.headerPrefix + this._config.jwt
-    );   
-
+    );
   }
 
   headers: Headers = this._authHeader;
@@ -57,33 +58,38 @@ export class AuthRequestOptions extends BaseRequestOptions {
 
 /**
  * Allows for explicit authenticated HTTP requests.
- * WIP - need to add proper config
  */
 
 @Injectable()
 export class AuthHttp {
 
-  authHeader: Headers = new Headers();
-  private _headerName: string;
-  private _headerPrefix: string;
-  private _tokenName: string;
-  private _jwt: string;
+  private _config: AuthConfig;
 
-  constructor(public http:Http) {
-    this._headerName = 'Authorization';
-    this._headerPrefix = 'Bearer ';
-    this._tokenName = 'id_token';
-    this._jwt = localStorage.getItem(this._tokenName);
-    this.authHeader.append(this._headerName, this._headerPrefix + this._jwt);
+  constructor(config?:Object) {
+    this._config = new AuthConfig(config);
+    var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
+    this.http = injector.get(Http);
   }
 
   request(method:RequestMethods, url:string, body?:string) {
+
+    if(this.getJwt() === null || this.getJwt() === undefined || this.getJwt() === '') {
+      throw 'No JWT Saved';
+    }
+
+    var authHeader = new Headers();
+    authHeader.append(this._config.headerName, this._config.headerPrefix + this.getJwt());
     return this.http.request(new Request({
       method: method,
       url: url,
       body: body,
-      headers: this.authHeader
-    })); 
+      headers: authHeader
+    }));
+
+  }
+
+  getJwt() {
+    return localStorage.getItem(this._config.tokenName);
   }
 
   get(url:string) {
@@ -116,10 +122,8 @@ export class AuthHttp {
   
 }
 
-
 /**
  * Helper class to decode and find JWT expiration.
- *
  */
 
 export class JwtHelper {
@@ -202,27 +206,6 @@ export class AuthStatus {
     else {
       return true;
     }
-  }
-}
-
-/**
- * WIP example of a manual HTTP interceptor.
- * 
- */
-
-export function intercept() {
-
-  declare private _open = XMLHttpRequest.prototype.open;
-
-  XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
-
-    this.addEventListener("readystatechange", function() {
-      if(this.readyState == 1) {
-        this.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('id_token'));
-      }          
-    }, false);
-
-    _open.call(this, method, url, async, user, pass);
   }
 }
 

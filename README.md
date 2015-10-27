@@ -119,7 +119,26 @@ bootstrap(App, [
 ])
 ```
 
-The `AuthHttp` class supports all HTTP verbs that Angular 2 Http does.
+If you wish to configure the `headerName`, `headerPrefix`, or `tokenName`, you can pass a config object when `AuthHttp` is injected.
+
+```js
+// app.ts
+
+...
+
+bootstrap(App, [
+  HTTP_PROVIDERS,
+  provide(AuthHttp, { useFactory: () => {
+    return new AuthHttp({
+      headerName: YOUR_HEADER_NAME,
+      headerPrefix: YOUR_HEADER_PREFIX,
+      tokenName: YOUR_TOKEN_NAME 
+    })
+  }}),
+])
+```
+
+The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
 
 ## Checking Login to Hide/Show Elements and Handle Routing
 
