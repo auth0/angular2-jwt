@@ -27,9 +27,6 @@ export class AuthConfig {
     }
   }
 
-  public static headerName() {
-    return this._headerName;
-  }
 }
 
 /**

@@ -44,9 +44,6 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                         jwt: this._jwt
                     };
                 }
-                AuthConfig.headerName = function () {
-                    return this._headerName;
-                };
                 return AuthConfig;
             })();
             exports_1("AuthConfig", AuthConfig);
