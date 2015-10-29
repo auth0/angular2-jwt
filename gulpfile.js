@@ -1,16 +1,17 @@
-var gulp = require('gulp');
+var gulp       = require('gulp');
+var del        = require('del');
+var typescript = require('gulp-typescript');
+var uglify     = require('gulp-uglify');
 
 var PATHS = {
     src: 'src/*.ts'
 };
 
 gulp.task('clean', function(done) {
-    var del = require('del');
     del(['dist'], done);
 });
 
 gulp.task('ts2js', function() {
-    var typescript = require('gulp-typescript');
     var tsResult = gulp.src(PATHS.src)
         .pipe(typescript({
             noImplicitAny: true,
@@ -25,7 +26,7 @@ gulp.task('ts2js', function() {
 });
 
 gulp.task('watch', function() {
-    gulp.watch(PATHS.src, ['ts2js'])
+    gulp.watch(PATHS.src, ['ts2js']);
 })
 
 gulp.task('default', ['ts2js', 'watch']);

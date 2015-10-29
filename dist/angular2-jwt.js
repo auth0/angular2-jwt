@@ -11,7 +11,23 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var angular2_1, http_1;
-    var AuthConfig, AuthHttp, JwtHelper, AuthStatus;
+    var AuthConfig, AuthHttp, JwtHelper;
+    /**
+     * Checks for presence of token and that token hasn't expired.
+     * For use with the @CanActivate router decorator and NgIf
+     */
+    function tokenNotExpired(tokenName) {
+        var tokenName = tokenName || 'id_token';
+        var token = localStorage.getItem(tokenName);
+        var jwtHelper = new JwtHelper();
+        if (!token || jwtHelper.isTokenExpired(token)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    exports_1("tokenNotExpired", tokenNotExpired);
     return {
         setters:[
             function (angular2_1_1) {
@@ -26,17 +42,14 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
              */
             AuthConfig = (function () {
                 function AuthConfig(config) {
-                    this.config;
-                    Object = config || {};
-                    this._headerName = this.config.headerName || 'Authorization';
-                    this._headerPrefix = this.config.headerPrefix || 'Bearer ';
-                    this._tokenName = this.config.tokenName || 'id_token';
-                    this._jwt = localStorage.getItem(this._tokenName);
+                    this.config = config || {};
+                    this.headerName = this.config.headerName || 'Authorization';
+                    this.headerPrefix = this.config.headerPrefix || 'Bearer ';
+                    this.tokenName = this.config.tokenName || 'id_token';
                     return {
-                        headerName: this._headerName,
-                        headerPrefix: this._headerPrefix,
-                        tokenName: this._tokenName,
-                        jwt: this._jwt
+                        headerName: this.headerName,
+                        headerPrefix: this.headerPrefix,
+                        tokenName: this.tokenName
                     };
                 }
                 return AuthConfig;
@@ -154,30 +167,6 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 return JwtHelper;
             })();
             exports_1("JwtHelper", JwtHelper);
-            /**
-             * Checks for presence of token and that token hasn't expired.
-             * For use with the @CanActivate router decorator.
-             */
-            AuthStatus = (function () {
-                function AuthStatus() {
-                }
-                AuthStatus.tokenNotExpired = function (tokenName) {
-                    this.tokenName = tokenName || 'id_token';
-                    this.token = localStorage.getItem(this.tokenName);
-                    var jwtHelper = new JwtHelper();
-                    if (!this.token) {
-                        throw 'No token saved!';
-                    }
-                    if (jwtHelper.isTokenExpired(this.token)) {
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
-                };
-                return AuthStatus;
-            })();
-            exports_1("AuthStatus", AuthStatus);
         }
     }
 });

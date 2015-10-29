@@ -18,9 +18,11 @@
   "devDependencies": {
     "del": "^1.2.0",
     "gulp": "^3.9.0",
-    "gulp-typescript": "^2.8.0"
+    "gulp-typescript": "^2.8.0",
+    "gulp-uglify": "^1.4.2"
   },
   "dependencies": {
-    "angular2": "2.0.0-alpha.44"
+    "angular2": "2.0.0-alpha.44",
+    "rx": "^4.0.6"
   }
 }

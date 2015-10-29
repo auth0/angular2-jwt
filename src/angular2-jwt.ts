@@ -7,23 +7,22 @@ import {Http, HTTP_PROVIDERS, Headers, BaseRequestOptions, Request, RequestOptio
 
 export class AuthConfig {
   
-  private _headerName: string;
-  private _headerPrefix: string;
-  private _tokenName: string;
-  private _jwt: string;
+  config: any;
+  headerName: string;
+  headerPrefix: string;
+  tokenName: string;
+  jwt: string;
 
-  constructor(config?:Object) {
-    this.config:Object = config || {};
-    this._headerName = this.config.headerName || 'Authorization';
-    this._headerPrefix = this.config.headerPrefix || 'Bearer ';
-    this._tokenName = this.config.tokenName || 'id_token';
-    this._jwt = localStorage.getItem(this._tokenName);
+  constructor(config?:any) {
+    this.config = config || {};
+    this.headerName = this.config.headerName || 'Authorization';
+    this.headerPrefix = this.config.headerPrefix || 'Bearer ';
+    this.tokenName = this.config.tokenName || 'id_token';
 
     return {
-      headerName: this._headerName,
-      headerPrefix: this._headerPrefix,
-      tokenName: this._tokenName,
-      jwt: this._jwt
+      headerName: this.headerName,
+      headerPrefix: this.headerPrefix,
+      tokenName: this.tokenName
     }
   }
 
@@ -37,6 +36,7 @@ export class AuthConfig {
 export class AuthHttp {
 
   private _config: AuthConfig;
+  http: Http;
 
   constructor(config?:Object) {
     this._config = new AuthConfig(config);
@@ -114,7 +114,7 @@ export class JwtHelper {
     return decodeURIComponent(escape(window.atob(output))); //polifyll https://github.com/davidchambers/Base64.js
   }
 
-  public decodeToken(token) {
+  public decodeToken(token:string) {
     var parts = token.split('.');
 
     if (parts.length !== 3) {
@@ -129,8 +129,8 @@ export class JwtHelper {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token) {
-    var decoded;
+  public getTokenExpirationDate(token:string) {
+    var decoded: any;
     decoded = this.decodeToken(token);
 
     if(typeof decoded.exp === "undefined") {
@@ -143,7 +143,7 @@ export class JwtHelper {
     return date;
   }
 
-  public isTokenExpired(token, offsetSeconds) {
+  public isTokenExpired(token:string, offsetSeconds:number) {
     var date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
     if (date === null) {
@@ -157,28 +157,22 @@ export class JwtHelper {
 
 /**
  * Checks for presence of token and that token hasn't expired.
- * For use with the @CanActivate router decorator.
+ * For use with the @CanActivate router decorator and NgIf
  */
 
-export class AuthStatus {
+export function tokenNotExpired(tokenName?:string) {
 
-  public static tokenNotExpired(tokenName?:string) {
+  var tokenName = tokenName || 'id_token';
+  var token = localStorage.getItem(tokenName);
 
-    this.tokenName = tokenName || 'id_token';
-    this.token = localStorage.getItem(this.tokenName);
-    var jwtHelper = new JwtHelper();
+  var jwtHelper = new JwtHelper();
+  
+  if(!token || jwtHelper.isTokenExpired(token)) {
+    return false;
+  }
 
-    if(!this.token) {
-      throw 'No token saved!';
-    }
-    
-    if(jwtHelper.isTokenExpired(this.token)) {
-      return false;
-    }
-
-    else {
-      return true;
-    }
+  else {
+    return true;
   }
 }
 
