@@ -1,9 +1,4 @@
 System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
-    var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
         switch (arguments.length) {
@@ -16,7 +11,7 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var angular2_1, http_1;
-    var AuthConfig, AuthRequestOptions, AuthHttp, JwtHelper, AuthStatus;
+    var AuthConfig, AuthHttp, JwtHelper, AuthStatus;
     return {
         setters:[
             function (angular2_1_1) {
@@ -47,22 +42,6 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 return AuthConfig;
             })();
             exports_1("AuthConfig", AuthConfig);
-            /**
-             * Extends BaseRequestOptions and provides it with an authentication header.
-             */
-            AuthRequestOptions = (function (_super) {
-                __extends(AuthRequestOptions, _super);
-                function AuthRequestOptions(config) {
-                    _super.call(this);
-                    this.config = config;
-                    this._authHeader = new http_1.Headers();
-                    this.headers = this._authHeader;
-                    this._config = new AuthConfig(config);
-                    this._authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.jwt);
-                }
-                return AuthRequestOptions;
-            })(http_1.BaseRequestOptions);
-            exports_1("AuthRequestOptions", AuthRequestOptions);
             /**
              * Allows for explicit authenticated HTTP requests.
              */

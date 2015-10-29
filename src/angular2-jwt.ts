@@ -30,30 +30,6 @@ export class AuthConfig {
 }
 
 /**
- * Extends BaseRequestOptions and provides it with an authentication header.
- */
-
-export class AuthRequestOptions extends BaseRequestOptions {
-  
-  private _config: AuthConfig;
-  private _authHeader: Headers = new Headers();
-  jwt: string;
-
-  constructor(public config:Object) {
-    super();
-
-    this._config = new AuthConfig(config);
-
-    this._authHeader.append(
-      this._config.headerName,
-      this._config.headerPrefix + this._config.jwt
-    );
-  }
-
-  headers: Headers = this._authHeader;
-}
-
-/**
  * Allows for explicit authenticated HTTP requests.
  */
 

@@ -19,71 +19,7 @@ The library comes with several classes that are useful in your Angular 2 apps.
 2. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
 3. `AuthStatus` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
-```js
-// app.ts
-
-import {AuthRequestOptions, AuthHttp, AuthStatus} from 'angular2-jwt/angular2-jwt';
-
-...
-```
-## Sending a JWT for All HTTP Requests
-
-You can use `AuthRequestOptions` to send a JWT in all HTTP requests.
-
-```js
-// app.ts
-
-import {Component, View, bootstrap, provide} from 'angular2/angular2';
-import {HTTP_PROVIDERS, Http, RequestOptions} from 'angular2/http';
-import {AuthRequestOptions} from 'angular2-jwt/angular2-jwt';
-
-...
-
-class App {
-  
-  public static authRequest = new AuthRequestOptions();
-  thing: string;
-
-  constructor(public http:Http) {}
-
-  getThing() {
-    this.http.get('http://example.com/api/thing')
-      .map(res => res.json())
-      .subscribe(
-        data => this.thing = data,
-        err => console.log(error),
-        () => console.log('Request Complete')
-      );
-  }
-}
-
-bootstrap(App, [
-  HTTP_PROVIDERS,
-  provide(RequestOptions, { useValue: App.authRequest })
-])
-```
-
-A default configuration for header and token details is provided:
-
-* Header Name: `Authorization`
-* Header Prefix: `Bearer`
-* Token Name: `id_token`
-
-You may also provide your own configuration by passing a config object when instantiating the `AuthRequestOptions` class.
-
-```js
-// app.ts
-
-...
-
-public static authRequest = new AuthRequestOptions({
-  headerName: YOUR_HEADER_NAME,
-  headerPrefix: YOUR_HEADER_PREFIX,
-  tokenName: YOUR_TOKEN_NAME
-});
-```
-
-## Sending a JWT Only for Specific Requests
+## Sending Authenticated Requests
 
 If you wish to only send a JWT on a specific HTTP request rather than on all requests, you can use the `AuthHttp` class.
 
@@ -120,6 +56,12 @@ bootstrap(App, [
   }})
 ])
 ```
+
+A default configuration for header and token details is provided:
+
+* Header Name: `Authorization`
+* Header Prefix: `Bearer`
+* Token Name: `id_token`
 
 If you wish to configure the `headerName`, `headerPrefix`, or `tokenName`, you can pass a config object when `AuthHttp` is injected.
 
