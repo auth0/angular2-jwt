@@ -6,18 +6,16 @@ angular2-jwt is a helper library for working with [JWTs](http://jwt.io) in your 
 
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
-* Automatically **send the JWT with every request** made to the server
-* Choose to send a JWT on a per-request basis using the explicit `AuthHttp` method
+* Send a JWT on a per-request basis using the explicit `AuthHttp` class
 
 ## Installation
 
 Clone the repo, include `angular2-jwt.js` in your project and `import` it into your Angular 2 app.
 
-The library comes with several classes that are useful in your Angular 2 apps.
+The library comes with several helpers that are useful in your Angular 2 apps.
 
-1. `AuthRequestOptions` - extends `BaseRequestOptions` to add a JWT as a header to all HTTP requests
-2. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
-3. `AuthStatus` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
+1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
+2. `AuthStatus` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
 ## Sending Authenticated Requests
 
@@ -96,7 +94,7 @@ Implementing this as a static method is useful because it can be used with the r
 ...
 
 import {Component, View, bootstrap, provide} from 'angular2/http';
-import {AuthStatus} from 'dist/angular2-jwt';
+import {tokenNotExpired} from 'angular2-jwt/angular2-jwt';
 import {RouteConfig, RouteParams, ROUTER_DIRECTIVES, APP_BASE_HREF, ROUTER_PROVIDERS, CanActivate} from 'angular2/router'
 
 @Component({
@@ -107,7 +105,7 @@ import {RouteConfig, RouteParams, ROUTER_DIRECTIVES, APP_BASE_HREF, ROUTER_PROVI
   template: `<h1>If you see this, you have a JWT</h1>`
 })
 
-@CanActivate(() => AuthStatus.tokenNotExpired())
+@CanActivate(() => tokenNotExpired())
 
 class SecretRoute {}
 ```
