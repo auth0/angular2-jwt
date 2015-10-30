@@ -1,7 +1,6 @@
 var gulp       = require('gulp');
 var del        = require('del');
 var typescript = require('gulp-typescript');
-var uglify     = require('gulp-uglify');
 
 var PATHS = {
     src: 'src/*.ts'

@@ -11,7 +11,7 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var angular2_1, http_1;
-    var AuthConfig, AuthHttp, JwtHelper;
+    var Observable, AuthConfig, AuthHttp, JwtHelper, Auth0Service;
     /**
      * Checks for presence of token and that token hasn't expired.
      * For use with the @CanActivate router decorator and NgIf
@@ -37,6 +37,7 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 http_1 = http_1_1;
             }],
         execute: function() {
+            Observable = Rx.Observable;
             /**
              * Sets up the authentication configuration.
              */
@@ -63,6 +64,7 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                     this._config = new AuthConfig(config);
                     var injector = angular2_1.Injector.resolveAndCreate([http_1.HTTP_PROVIDERS]);
                     this.http = injector.get(http_1.Http);
+                    var obs = new Rx.Observable();
                 }
                 AuthHttp.prototype.request = function (method, url, body) {
                     if (this.getJwt() === null || this.getJwt() === undefined || this.getJwt() === '') {
@@ -167,6 +169,41 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 return JwtHelper;
             })();
             exports_1("JwtHelper", JwtHelper);
+            Auth0Service = (function () {
+                function Auth0Service(clientId, domain) {
+                    var _this = this;
+                    this.lock = new Auth0Lock(clientId, domain);
+                    this._storedToken = localStorage.getItem('id_token');
+                    if (this.storedToken) {
+                        this.token = new Observable(function (obs) {
+                            obs.next(_this._storedToken);
+                        });
+                    }
+                    else {
+                        this.token = null;
+                    }
+                }
+                Auth0Service.prototype.login = function () {
+                    var observableToken = this.observableToken;
+                    var context = this;
+                    this.lock.show(function (err, profile, id_token) {
+                        if (err) {
+                            throw new Error(err);
+                        }
+                        localStorage.setItem('profile', JSON.stringify(profile));
+                        localStorage.setItem('id_token', id_token);
+                        context.token = new Observable(function (obs) {
+                            obs.next(id_token);
+                        });
+                    });
+                };
+                Auth0Service.prototype.logout = function () {
+                    localStorage.removeItem('profile');
+                    localStorage.removeItem('id_token');
+                };
+                return Auth0Service;
+            })();
+            exports_1("Auth0Service", Auth0Service);
         }
     }
 });
