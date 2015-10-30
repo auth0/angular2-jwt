@@ -203,7 +203,6 @@ export class Auth0Service {
   }
 
   login() {
-    var observableToken = this.observableToken;
     let context = this;
     this.lock.show(function(err, profile, id_token) {
 
