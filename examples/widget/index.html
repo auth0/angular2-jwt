@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Auth0 - Angular2 Sample</title>
+</head>
+
+<body>
+    <app>Loading...</app>
+</body>
+
+<!-- ES6-related imports -->
+<script src="/node_modules/es6-shim/es6-shim.min.js"></script>
+<script src="/node_modules/systemjs/dist/system-csp-production.js"></script>
+
+<!-- Auth0 Lock script and AngularJS module -->
+<script src="//cdn.auth0.com/js/lock-7.9.min.js"></script>
+
+<script>
+    //configure system loader
+    System.config({defaultJSExtensions: true});
+</script>
+
+<script src="https://cdn.rawgit.com/robwormald/2bc0c5e7855fd61a53fc/raw/836079eefcdf2464ca3141276379fce7cc729067/rx.js"></script>
+
+<script src="/node_modules/angular2/bundles/angular2.min.js"></script>
+<script src="/node_modules/angular2/bundles/http.js"></script>
+<script src="/node_modules/angular2/bundles/router.dev.js"></script>
+<script src="/angular2-jwt/dist/angular2-jwt.js"></script>
+
+
+<script>
+    //bootstrap the Angular2 application
+    System.import('dist/app').catch(console.log.bind(console));
+</script>
+
+</html>
