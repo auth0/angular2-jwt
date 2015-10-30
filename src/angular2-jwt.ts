@@ -1,5 +1,6 @@
 import {Injectable, Injector} from 'angular2/angular2';
 import {Http, HTTP_PROVIDERS, Headers, BaseRequestOptions, Request, RequestOptions, RequestOptionsArgs, RequestMethods} from 'angular2/http';
+let {Observable} = Rx;
 
 /**
  * Sets up the authentication configuration.
@@ -42,6 +43,8 @@ export class AuthHttp {
     this._config = new AuthConfig(config);
     var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
     this.http = injector.get(Http);
+
+    var obs = new Rx.Observable()
   }
 
   request(method:RequestMethods, url:string, body?:string) {
@@ -174,5 +177,54 @@ export function tokenNotExpired(tokenName?:string) {
   else {
     return true;
   }
+}
+
+export class Auth0Service {
+
+  public token: string;
+  private _storedToken: string;
+
+  constructor(clientId:string, domain:string) {
+
+    this.lock = new Auth0Lock(clientId, domain);
+    
+    this._storedToken = localStorage.getItem('id_token');
+
+    if(this.storedToken) {
+      this.token = new Observable(obs => {
+        obs.next(this._storedToken)
+      });
+    }
+
+    else {
+      this.token = null;
+    }
+
+  }
+
+  login() {
+    var observableToken = this.observableToken;
+    let context = this;
+    this.lock.show(function(err, profile, id_token) {
+
+      if(err) {
+        throw new Error(err);
+      }
+
+      localStorage.setItem('profile', JSON.stringify(profile));
+      localStorage.setItem('id_token', id_token);
+
+      context.token = new Observable(obs => {
+        obs.next(id_token)
+      });
+
+    });
+  }
+
+  logout() {
+    localStorage.removeItem('profile');
+    localStorage.removeItem('id_token');
+  }
+
 }
 
