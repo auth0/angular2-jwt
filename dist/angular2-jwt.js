@@ -1,4 +1,4 @@
-System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
+System.register(['angular2/angular2', 'angular2/http', '@reactivex/rxjs/dist/cjs/Rx'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
         switch (arguments.length) {
@@ -10,17 +10,23 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var angular2_1, http_1;
-    var Observable, AuthConfig, AuthHttp, JwtHelper, Auth0Service;
+    var angular2_1, http_1, Rx_1;
+    var AuthConfig, AuthHttp, JwtHelper;
     /**
      * Checks for presence of token and that token hasn't expired.
      * For use with the @CanActivate router decorator and NgIf
      */
-    function tokenNotExpired(tokenName) {
+    function tokenNotExpired(tokenName, jwt) {
         var tokenName = tokenName || 'id_token';
-        var token = localStorage.getItem(tokenName);
+        var token;
+        if (token) {
+            token = jwt;
+        }
+        else {
+            token = localStorage.getItem(tokenName);
+        }
         var jwtHelper = new JwtHelper();
-        if (!token || jwtHelper.isTokenExpired(token)) {
+        if (!token || jwtHelper.isTokenExpired(token, null)) {
             return false;
         }
         else {
@@ -35,22 +41,29 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
             },
             function (http_1_1) {
                 http_1 = http_1_1;
+            },
+            function (Rx_1_1) {
+                Rx_1 = Rx_1_1;
             }],
         execute: function() {
-            Observable = Rx.Observable;
             /**
              * Sets up the authentication configuration.
              */
             AuthConfig = (function () {
                 function AuthConfig(config) {
+                    var _this = this;
                     this.config = config || {};
                     this.headerName = this.config.headerName || 'Authorization';
                     this.headerPrefix = this.config.headerPrefix || 'Bearer ';
                     this.tokenName = this.config.tokenName || 'id_token';
+                    this.noJwtError = this.config.noJwtError || false;
+                    this.tokenGetter = this.config.tokenGetter || (function () { return localStorage.getItem(_this.tokenName); });
                     return {
                         headerName: this.headerName,
                         headerPrefix: this.headerPrefix,
-                        tokenName: this.tokenName
+                        tokenName: this.tokenName,
+                        tokenGetter: this.tokenGetter,
+                        noJwtError: this.noJwtError
                     };
                 }
                 return AuthConfig;
@@ -61,26 +74,33 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
              */
             AuthHttp = (function () {
                 function AuthHttp(config) {
+                    var _this = this;
                     this._config = new AuthConfig(config);
                     var injector = angular2_1.Injector.resolveAndCreate([http_1.HTTP_PROVIDERS]);
                     this.http = injector.get(http_1.Http);
-                    var obs = new Rx.Observable();
+                    this.tokenStream = new Rx_1.Observable(function (obs) {
+                        obs.next(_this._config.tokenGetter());
+                    });
                 }
                 AuthHttp.prototype.request = function (method, url, body) {
-                    if (this.getJwt() === null || this.getJwt() === undefined || this.getJwt() === '') {
-                        throw 'No JWT Saved';
+                    if (!tokenNotExpired(null, this._config.tokenGetter())) {
+                        if (this._config.noJwtError) {
+                            return this.http.request(new http_1.Request({
+                                method: method,
+                                url: url,
+                                body: body
+                            }));
+                        }
+                        throw 'Invalid JWT';
                     }
                     var authHeader = new http_1.Headers();
-                    authHeader.append(this._config.headerName, this._config.headerPrefix + this.getJwt());
+                    authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
                     return this.http.request(new http_1.Request({
                         method: method,
                         url: url,
                         body: body,
                         headers: authHeader
                     }));
-                };
-                AuthHttp.prototype.getJwt = function () {
-                    return localStorage.getItem(this._config.tokenName);
                 };
                 AuthHttp.prototype.get = function (url) {
                     return this.request(http_1.RequestMethods.Get, url);
@@ -169,41 +189,6 @@ System.register(['angular2/angular2', 'angular2/http'], function(exports_1) {
                 return JwtHelper;
             })();
             exports_1("JwtHelper", JwtHelper);
-            Auth0Service = (function () {
-                function Auth0Service(clientId, domain) {
-                    var _this = this;
-                    this.lock = new Auth0Lock(clientId, domain);
-                    this._storedToken = localStorage.getItem('id_token');
-                    if (this.storedToken) {
-                        this.token = new Observable(function (obs) {
-                            obs.next(_this._storedToken);
-                        });
-                    }
-                    else {
-                        this.token = null;
-                    }
-                }
-                Auth0Service.prototype.login = function () {
-                    var observableToken = this.observableToken;
-                    var context = this;
-                    this.lock.show(function (err, profile, id_token) {
-                        if (err) {
-                            throw new Error(err);
-                        }
-                        localStorage.setItem('profile', JSON.stringify(profile));
-                        localStorage.setItem('id_token', id_token);
-                        context.token = new Observable(function (obs) {
-                            obs.next(id_token);
-                        });
-                    });
-                };
-                Auth0Service.prototype.logout = function () {
-                    localStorage.removeItem('profile');
-                    localStorage.removeItem('id_token');
-                };
-                return Auth0Service;
-            })();
-            exports_1("Auth0Service", Auth0Service);
         }
     }
 });

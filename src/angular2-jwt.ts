@@ -1,6 +1,6 @@
 import {Injectable, Injector} from 'angular2/angular2';
 import {Http, HTTP_PROVIDERS, Headers, BaseRequestOptions, Request, RequestOptions, RequestOptionsArgs, RequestMethods} from 'angular2/http';
-let {Observable} = Rx;
+import {Observable} from '@reactivex/rxjs/dist/cjs/Rx';
 
 /**
  * Sets up the authentication configuration.
@@ -12,18 +12,23 @@ export class AuthConfig {
   headerName: string;
   headerPrefix: string;
   tokenName: string;
-  jwt: string;
+  noJwtError: boolean;
+  tokenGetter: any;
 
   constructor(config?:any) {
     this.config = config || {};
     this.headerName = this.config.headerName || 'Authorization';
     this.headerPrefix = this.config.headerPrefix || 'Bearer ';
     this.tokenName = this.config.tokenName || 'id_token';
+    this.noJwtError = this.config.noJwtError || false;
+    this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
 
     return {
       headerName: this.headerName,
       headerPrefix: this.headerPrefix,
-      tokenName: this.tokenName
+      tokenName: this.tokenName,
+      tokenGetter: this.tokenGetter,
+      noJwtError: this.noJwtError
     }
   }
 
@@ -37,24 +42,35 @@ export class AuthConfig {
 export class AuthHttp {
 
   private _config: AuthConfig;
+  public tokenStream: Observable<string>;
   http: Http;
 
   constructor(config?:Object) {
     this._config = new AuthConfig(config);
     var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
     this.http = injector.get(Http);
-
-    var obs = new Rx.Observable()
+    
+    this.tokenStream = new Observable(obs => {
+      obs.next(this._config.tokenGetter())
+    });
   }
 
   request(method:RequestMethods, url:string, body?:string) {
 
-    if(this.getJwt() === null || this.getJwt() === undefined || this.getJwt() === '') {
-      throw 'No JWT Saved';
+    if(!tokenNotExpired(null, this._config.tokenGetter())) {
+      if(this._config.noJwtError) {
+        return this.http.request(new Request({
+          method: method,
+          url: url,
+          body: body
+        }));
+      }     
+
+      throw 'Invalid JWT';
     }
 
     var authHeader = new Headers();
-    authHeader.append(this._config.headerName, this._config.headerPrefix + this.getJwt());
+    authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
     return this.http.request(new Request({
       method: method,
       url: url,
@@ -62,10 +78,6 @@ export class AuthHttp {
       headers: authHeader
     }));
 
-  }
-
-  getJwt() {
-    return localStorage.getItem(this._config.tokenName);
   }
 
   get(url:string) {
@@ -163,67 +175,26 @@ export class JwtHelper {
  * For use with the @CanActivate router decorator and NgIf
  */
 
-export function tokenNotExpired(tokenName?:string) {
+export function tokenNotExpired(tokenName:string, jwt:string) {
 
   var tokenName = tokenName || 'id_token';
-  var token = localStorage.getItem(tokenName);
+  var token:string;
+
+  if(token) {
+    token = jwt;
+  }
+  else {
+    token = localStorage.getItem(tokenName);
+  }
 
   var jwtHelper = new JwtHelper();
   
-  if(!token || jwtHelper.isTokenExpired(token)) {
+  if(!token || jwtHelper.isTokenExpired(token, null)) {
     return false;
   }
 
   else {
     return true;
   }
-}
-
-export class Auth0Service {
-
-  public token: string;
-  private _storedToken: string;
-
-  constructor(clientId:string, domain:string) {
-
-    this.lock = new Auth0Lock(clientId, domain);
-    
-    this._storedToken = localStorage.getItem('id_token');
-
-    if(this.storedToken) {
-      this.token = new Observable(obs => {
-        obs.next(this._storedToken)
-      });
-    }
-
-    else {
-      this.token = null;
-    }
-
-  }
-
-  login() {
-    let context = this;
-    this.lock.show(function(err, profile, id_token) {
-
-      if(err) {
-        throw new Error(err);
-      }
-
-      localStorage.setItem('profile', JSON.stringify(profile));
-      localStorage.setItem('id_token', id_token);
-
-      context.token = new Observable(obs => {
-        obs.next(id_token)
-      });
-
-    });
-  }
-
-  logout() {
-    localStorage.removeItem('profile');
-    localStorage.removeItem('id_token');
-  }
-
 }
 

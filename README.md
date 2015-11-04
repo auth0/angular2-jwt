@@ -1,12 +1,12 @@
 # angular2-jwt
 
-angular2-jwt is a helper library for working with [JWTs](http://jwt.io) in your Angular 2 applications.
+angular2-jwt is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
 
 ## Key Features
 
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
-* Send a JWT on a per-request basis using the explicit `AuthHttp` class
+* Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
 
 ## Installation
 
@@ -19,7 +19,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 
 ## Sending Authenticated Requests
 
-If you wish to only send a JWT on a specific HTTP request rather than on all requests, you can use the `AuthHttp` class.
+If you wish to only send a JWT on a specific HTTP requests, you can use the `AuthHttp` class.
 
 ```js
 // app.ts
@@ -60,8 +60,12 @@ A default configuration for header and token details is provided:
 * Header Name: `Authorization`
 * Header Prefix: `Bearer`
 * Token Name: `id_token`
+* Token Getter Function: `(() => localStorage.getItem(tokenName))`
+* Error thrown if no JWT is saved: `true`
 
-If you wish to configure the `headerName`, `headerPrefix`, or `tokenName`, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+
+By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JWT' error. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
 
 ```js
 // app.ts
@@ -74,7 +78,9 @@ bootstrap(App, [
     return new AuthHttp({
       headerName: YOUR_HEADER_NAME,
       headerPrefix: YOUR_HEADER_PREFIX,
-      tokenName: YOUR_TOKEN_NAME 
+      tokenName: YOUR_TOKEN_NAME,
+      tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+      noJwtError: true 
     })
   }})
 ])
@@ -82,11 +88,61 @@ bootstrap(App, [
 
 The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
 
+### Using the Observable Token Stream
+
+If you wish to use the JWT as an observable stream, you can call `tokenStream` from `AuthHttp`.
+
+```js
+// app.ts
+
+tokenSubscription() {
+  this.authHttp.tokenStream.subscribe(
+      data => console.log(data),
+      err => console.log(err),
+      () => console.log('Complete')
+    );
+}
+```
+
+This can be useful for cases where you want to make HTTP requests out of obsevable streams. The `tokenStream` can be mapped and combined with other streams at will.
+
+## Using JwtHelper in Components
+
+The `JwtHelper` class has several useful methods that can be utilized in your components:
+
+* `decodeToken`
+* `getTokenExpirationDate`
+* `isTokenExpired`
+
+You can use these methods by passing in the token to be evaluated.
+
+```js
+// app.ts
+
+...
+
+jwtHelper: JwtHelper = new JwtHelper();
+
+...
+
+useJwtHelper() {
+  var token = localStorage.getItem('id_token');
+  
+  console.log(
+    this.jwtHelper.decodeToken(token),
+    this.jwtHelper.getTokenExpirationDate(token),
+    this.jwtHelper.isTokenExpired(token)
+  );
+}
+
+...
+```
+
 ## Checking Login to Hide/Show Elements and Handle Routing
 
-The `AuthStatus` class has one static method, `tokenNotExpired`, that can be used to check whether a JWT exists in storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`. 
+The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`. 
 
-Implementing this as a static method is useful because it can be used with the router's `@CanActivate` lifecycle hook, which is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
+The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
 
 ```js
 // app.ts
@@ -109,6 +165,8 @@ import {RouteConfig, RouteParams, ROUTER_DIRECTIVES, APP_BASE_HREF, ROUTER_PROVI
 
 class SecretRoute {}
 ```
+
+You can pass a different `tokenName` for `@CanActivate` to use as the first argument to the function. If you wish to define your own function for `tokenNotExpired` to use, pass `null` first and then the function.
 
 ## Development
 
