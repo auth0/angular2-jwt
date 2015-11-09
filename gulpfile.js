@@ -13,7 +13,7 @@ gulp.task('clean', function(done) {
 gulp.task('ts2js', function() {
     var tsResult = gulp.src(PATHS.src)
         .pipe(typescript({
-            noImplicitAny: true,
+            noImplicitAny: false,
             module: 'system',
             target: 'ES5',
             moduleResolution: 'node',
@@ -21,11 +21,11 @@ gulp.task('ts2js', function() {
             experimentalDecorators: true
         }));
 
-    return tsResult.js.pipe(gulp.dest('dist'));
+    return tsResult.js.pipe(gulp.dest(''));
 });
 
 gulp.task('watch', function() {
     gulp.watch(PATHS.src, ['ts2js']);
 })
 
-gulp.task('default', ['ts2js', 'watch']);
+gulp.task('default', ['ts2js']);

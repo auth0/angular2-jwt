@@ -12,8 +12,8 @@ export class AuthConfig {
   headerName: string;
   headerPrefix: string;
   tokenName: string;
-  noJwtError: boolean;
   tokenGetter: any;
+  noJwtError: boolean;
 
   constructor(config?:any) {
     this.config = config || {};
@@ -126,6 +126,7 @@ export class JwtHelper {
         throw 'Illegal base64url string!';
       }
     }
+
     return decodeURIComponent(escape(window.atob(output))); //polifyll https://github.com/davidchambers/Base64.js
   }
 
