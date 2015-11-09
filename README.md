@@ -10,7 +10,9 @@ angular2-jwt is a helper library for working with [JWTs](http://jwt.io/introduct
 
 ## Installation
 
-Clone the repo, include `angular2-jwt.js` in your project and `import` it into your Angular 2 app.
+```bash
+npm install angular2-jwt
+```
 
 The library comes with several helpers that are useful in your Angular 2 apps.
 
