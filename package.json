@@ -1,10 +1,13 @@
 {
   "name": "angular2-jwt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Helper library for handling JWTs in Angular 2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/auth0/angular2-jwt.git"
+  },
+  "scripts": {
+    "dev": "tsc --watch"
   },
   "keywords": [
     "angular",
@@ -21,14 +24,9 @@
   "typings": "./angular2-jwt.d.ts",
   "homepage": "https://github.com/auth0/angular2-jwt#readme",
   "devDependencies": {
-    "del": "^1.2.0",
-    "gulp": "^3.9.0",
-    "gulp-typescript": "^2.8.0",
-    "gulp-uglify": "^1.4.2",
     "typescript": "^1.6.2"
   },
   "dependencies": {
-    "angular2": "2.0.0-alpha.45",
     "@reactivex/rxjs": "5.0.0-alpha.7"
   }
 }

@@ -2,6 +2,17 @@ import {Injectable, Injector} from 'angular2/angular2';
 import {Http, HTTP_PROVIDERS, Headers, BaseRequestOptions, Request, RequestOptions, RequestOptionsArgs, RequestMethods} from 'angular2/http';
 import {Observable} from '@reactivex/rxjs/dist/cjs/Rx';
 
+// Avoid TS error "cannot find name escape"
+declare var escape;
+
+export interface IAuthConfig {
+  headerName: string;
+  headerPrefix: string;
+  tokenName: string;
+  tokenGetter: any;
+  noJwtError: boolean;
+}
+
 /**
  * Sets up the authentication configuration.
  */
@@ -22,7 +33,9 @@ export class AuthConfig {
     this.tokenName = this.config.tokenName || 'id_token';
     this.noJwtError = this.config.noJwtError || false;
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+  }
 
+  getConfig() {
     return {
       headerName: this.headerName,
       headerPrefix: this.headerPrefix,
@@ -41,12 +54,12 @@ export class AuthConfig {
 @Injectable()
 export class AuthHttp {
 
-  private _config: AuthConfig;
+  private _config: IAuthConfig;
   public tokenStream: Observable<string>;
   http: Http;
 
   constructor(config?:Object) {
-    this._config = new AuthConfig(config);
+    this._config = new AuthConfig(config).getConfig();
     var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
     this.http = injector.get(Http);
     
@@ -62,7 +75,10 @@ export class AuthHttp {
         return this.http.request(new Request({
           method: method,
           url: url,
-          body: body
+          body: body,
+          headers: null,
+          search: null,
+          merge: null
         }));
       }     
 
@@ -75,7 +91,9 @@ export class AuthHttp {
       method: method,
       url: url,
       body: body,
-      headers: authHeader
+      headers: authHeader,
+      search: null,
+      merge: null
     }));
 
   }
@@ -159,7 +177,7 @@ export class JwtHelper {
     return date;
   }
 
-  public isTokenExpired(token:string, offsetSeconds:number) {
+  public isTokenExpired(token:string, offsetSeconds?:number) {
     var date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
     if (date === null) {
@@ -176,16 +194,16 @@ export class JwtHelper {
  * For use with the @CanActivate router decorator and NgIf
  */
 
-export function tokenNotExpired(tokenName:string, jwt:string) {
+export function tokenNotExpired(tokenName?:string, jwt?:string) {
 
-  var tokenName = tokenName || 'id_token';
+  var authToken:string = tokenName || 'id_token';
   var token:string;
 
-  if(token) {
+  if(jwt) {
     token = jwt;
   }
   else {
-    token = localStorage.getItem(tokenName);
+    token = localStorage.getItem(authToken);
   }
 
   var jwtHelper = new JwtHelper();

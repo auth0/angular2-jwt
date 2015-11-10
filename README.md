@@ -4,9 +4,10 @@ angular2-jwt is a helper library for working with [JWTs](http://jwt.io/introduct
 
 ## Key Features
 
+* Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
-* Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
+* Conditionally allow **route navigation** based on JWT status
 
 ## Installation
 
@@ -21,7 +22,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 
 ## Sending Authenticated Requests
 
-If you wish to only send a JWT on a specific HTTP requests, you can use the `AuthHttp` class.
+If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
 
 ```js
 // app.ts
@@ -63,7 +64,7 @@ A default configuration for header and token details is provided:
 * Header Prefix: `Bearer`
 * Token Name: `id_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
-* Error thrown if no JWT is saved: `true`
+* Supress error and continue with regular HTTP request if no JWT is saved: `false`
 
 If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
 
@@ -170,9 +171,13 @@ class SecretRoute {}
 
 You can pass a different `tokenName` for `@CanActivate` to use as the first argument to the function. If you wish to define your own function for `tokenNotExpired` to use, pass `null` first and then the function.
 
+## Contributing
+
+Pull requests are welcome!
+
 ## Development
 
-To extend or contribute to this library, first clone the repo. A gulp task is set up for transpiling the TypeScript file to ES5. Just run `gulp` and changes will be watched.
+Use `npm run dev` to compile and watch for changes.
 
 ## What is Auth0?
 
