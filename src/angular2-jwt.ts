@@ -70,31 +70,32 @@ export class AuthHttp {
 
   request(method:RequestMethods, url:string, body?:string) {
 
+    var options = new RequestOptions({
+      method: method,
+      url: url,
+      body: body,
+    });
+
     if(!tokenNotExpired(null, this._config.tokenGetter())) {
       if(this._config.noJwtError) {
-        return this.http.request(new Request({
-          method: method,
-          url: url,
-          body: body,
-          headers: null,
-          search: null,
-          merge: null
-        }));
+        return this.http.request(new Request(options));
       }     
 
       throw 'Invalid JWT';
     }
 
     var authHeader = new Headers();
+    
     authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-    return this.http.request(new Request({
+    
+    var authOptions = new RequestOptions({
       method: method,
       url: url,
       body: body,
-      headers: authHeader,
-      search: null,
-      merge: null
-    }));
+      headers: authHeader
+    });
+    
+    return this.http.request(new Request(authOptions));
 
   }
 

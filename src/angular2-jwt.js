@@ -1,15 +1,14 @@
-System.register(['angular2/angular2', 'angular2/http', '@reactivex/rxjs/dist/cjs/Rx'], function(exports_1) {
-    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
-        switch (arguments.length) {
-            case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
-            case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
-            case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
-        }
-    };
-    var __metadata = (this && this.__metadata) || function (k, v) {
-        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-    };
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
+    switch (arguments.length) {
+        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
+        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
+        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
+    }
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};System.register(['angular2/angular2', 'angular2/http', '@reactivex/rxjs/dist/cjs/Rx'], function(exports_1) {
     var angular2_1, http_1, Rx_1;
     var AuthConfig, AuthHttp, JwtHelper;
     /**
@@ -36,14 +35,14 @@ System.register(['angular2/angular2', 'angular2/http', '@reactivex/rxjs/dist/cjs
     exports_1("tokenNotExpired", tokenNotExpired);
     return {
         setters:[
-            function (angular2_1_1) {
-                angular2_1 = angular2_1_1;
+            function (_angular2_1) {
+                angular2_1 = _angular2_1;
             },
-            function (http_1_1) {
-                http_1 = http_1_1;
+            function (_http_1) {
+                http_1 = _http_1;
             },
-            function (Rx_1_1) {
-                Rx_1 = Rx_1_1;
+            function (_Rx_1) {
+                Rx_1 = _Rx_1;
             }],
         execute: function() {
             /**
@@ -85,29 +84,26 @@ System.register(['angular2/angular2', 'angular2/http', '@reactivex/rxjs/dist/cjs
                     });
                 }
                 AuthHttp.prototype.request = function (method, url, body) {
+                    var options = new http_1.RequestOptions({
+                        method: method,
+                        url: url,
+                        body: body,
+                    });
                     if (!tokenNotExpired(null, this._config.tokenGetter())) {
                         if (this._config.noJwtError) {
-                            return this.http.request(new http_1.Request({
-                                method: method,
-                                url: url,
-                                body: body,
-                                headers: null,
-                                search: null,
-                                merge: null
-                            }));
+                            return this.http.request(new http_1.Request(options));
                         }
                         throw 'Invalid JWT';
                     }
                     var authHeader = new http_1.Headers();
                     authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-                    return this.http.request(new http_1.Request({
+                    var authOptions = new http_1.RequestOptions({
                         method: method,
                         url: url,
                         body: body,
-                        headers: authHeader,
-                        search: null,
-                        merge: null
-                    }));
+                        headers: authHeader
+                    });
+                    return this.http.request(new http_1.Request(authOptions));
                 };
                 AuthHttp.prototype.get = function (url) {
                     return this.request(http_1.RequestMethods.Get, url);
