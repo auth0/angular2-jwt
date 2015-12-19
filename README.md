@@ -32,7 +32,7 @@ import {AuthHttp} from 'angular2-jwt';
 ...
 
 class App {
-  
+
   thing: string;
 
   constructor(public authHttp: AuthHttp) {}
@@ -62,8 +62,11 @@ A default configuration for header and token details is provided:
 * Token Name: `id_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
+* Custom Headers: `content-type: application/json`
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, or `customHeaders` object, you can pass a config object when `AuthHttp` is injected.
+
+For custom headers, import the Headers class from angular2/http, then append each new header before returning the new AuthHttp object.
 
 By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JWT' error. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
 
@@ -73,12 +76,17 @@ By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JW
 bootstrap(App, [
   HTTP_PROVIDERS,
   provide(AuthHttp, { useFactory: () => {
+    var headers = new Headers();
+    headers.append('Content-Type', 'application/xml');
+    headers.append('X-Custom', 'Forty Seven');
+
     return new AuthHttp({
       headerName: YOUR_HEADER_NAME,
       headerPrefix: YOUR_HEADER_PREFIX,
       tokenName: YOUR_TOKEN_NAME,
       tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      noJwtError: true 
+      noJwtError: true,
+      customHeaders: headers
     })
   }})
 ])
@@ -124,7 +132,7 @@ jwtHelper: JwtHelper = new JwtHelper();
 
 useJwtHelper() {
   var token = localStorage.getItem('id_token');
-  
+
   console.log(
     this.jwtHelper.decodeToken(token),
     this.jwtHelper.getTokenExpirationDate(token),
@@ -137,7 +145,7 @@ useJwtHelper() {
 
 ## Checking Login to Hide/Show Elements and Handle Routing
 
-The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`. 
+The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
 
 The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
 
@@ -191,5 +199,3 @@ Auth0 helps you to:
 ## License
 
 This project is licensed under the MIT license. See the [LICENSE](LICENSE.txt) file for more info.
-
-
