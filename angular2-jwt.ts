@@ -11,6 +11,7 @@ export interface IAuthConfig {
   tokenName: string;
   tokenGetter: any;
   noJwtError: boolean;
+  customHeaders?: Headers;
 }
 
 /**
@@ -18,13 +19,14 @@ export interface IAuthConfig {
  */
 
 export class AuthConfig {
-  
+
   config: any;
   headerName: string;
   headerPrefix: string;
   tokenName: string;
   tokenGetter: any;
   noJwtError: boolean;
+  customHeaders: Headers;
 
   constructor(config?:any) {
     this.config = config || {};
@@ -33,6 +35,7 @@ export class AuthConfig {
     this.tokenName = this.config.tokenName || 'id_token';
     this.noJwtError = this.config.noJwtError || false;
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+    this.customHeaders = this.config.customHeaders ? new Headers(this.config.customHeaders) : new Headers({'Content-Type': 'application/json'});
   }
 
   getConfig() {
@@ -41,7 +44,8 @@ export class AuthConfig {
       headerPrefix: this.headerPrefix,
       tokenName: this.tokenName,
       tokenGetter: this.tokenGetter,
-      noJwtError: this.noJwtError
+      noJwtError: this.noJwtError,
+      customHeaders: this.customHeaders
     }
   }
 
@@ -62,7 +66,7 @@ export class AuthHttp {
     this._config = new AuthConfig(config).getConfig();
     var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
     this.http = injector.get(Http);
-    
+
     this.tokenStream = new Observable((obs:any) => {
       obs.next(this._config.tokenGetter())
     });
@@ -70,31 +74,37 @@ export class AuthHttp {
 
   request(method:RequestMethod, url:string, body?:string) {
 
+    var allHeaders = new Headers();
+
+    this._config.customHeaders.forEach((values, name, headers) => {
+      var value = this._config.customHeaders.get(name);
+      allHeaders.append(name, value);
+    });
+
     var options = new RequestOptions({
       method: method,
       url: url,
       body: body,
+      headers: allHeaders
     });
 
     if(!tokenNotExpired(null, this._config.tokenGetter())) {
       if(this._config.noJwtError) {
         return this.http.request(new Request(options));
-      }     
+      }
 
       throw 'Invalid JWT';
     }
 
-    var authHeader = new Headers();
-    
-    authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-    
+    allHeaders.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
+
     var authOptions = new RequestOptions({
       method: method,
       url: url,
       body: body,
-      headers: authHeader
+      headers: allHeaders
     });
-    
+
     return this.http.request(new Request(authOptions));
 
   }
@@ -126,7 +136,7 @@ export class AuthHttp {
   patch(url:string, body:string) : Observable<Response> {
     return this.request(RequestMethod.Patch, url, body);
   }
-  
+
 }
 
 /**
@@ -208,7 +218,7 @@ export function tokenNotExpired(tokenName?:string, jwt?:string) {
   }
 
   var jwtHelper = new JwtHelper();
-  
+
   if(!token || jwtHelper.isTokenExpired(token, null)) {
     return false;
   }
