@@ -56,13 +56,10 @@ export class AuthHttp {
 
   private _config: IAuthConfig;
   public tokenStream: Observable<string>;
-  http: Http;
 
-  constructor(config?:Object) {
-    this._config = new AuthConfig(config).getConfig();
-    var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
-    this.http = injector.get(Http);
-    
+  constructor(options:AuthConfig,private http:Http) {
+    this._config = options.getConfig();
+
     this.tokenStream = new Observable((obs:any) => {
       obs.next(this._config.tokenGetter())
     });

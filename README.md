@@ -49,9 +49,12 @@ class App {
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, { useFactory: () => {
-    return new AuthHttp()
-  }})
+  provide(AuthConfig, {
+      useFactory: () => {
+          return new AuthConfig();
+      }
+  }),
+  AuthHttp
 ])
 ```
 
@@ -72,8 +75,8 @@ By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JW
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, { useFactory: () => {
-    return new AuthHttp({
+  provide(AuthConfig, { useFactory: () => {
+    return new AuthConfig({
       headerName: YOUR_HEADER_NAME,
       headerPrefix: YOUR_HEADER_PREFIX,
       tokenName: YOUR_TOKEN_NAME,
