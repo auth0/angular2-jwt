@@ -18,7 +18,7 @@ export interface IAuthConfig {
  */
 
 export class AuthConfig {
-  
+
   config: any;
   headerName: string;
   headerPrefix: string;
@@ -62,71 +62,72 @@ export class AuthHttp {
     this._config = new AuthConfig(config).getConfig();
     var injector = Injector.resolveAndCreate([HTTP_PROVIDERS]);
     this.http = injector.get(Http);
-    
+
     this.tokenStream = new Observable((obs:any) => {
       obs.next(this._config.tokenGetter())
     });
   }
 
-  request(method:RequestMethod, url:string, body?:string) {
+  request(method:RequestMethod, url:string, body?:string, optionsExtra?:RequestOptionsArgs) {
+
 
     var options = new RequestOptions({
       method: method,
       url: url,
       body: body,
+      headers: new Headers()
     });
+
+    if (optionsExtra && optionsExtra.headers) {
+
+      optionsExtra.headers.forEach(function(value, name) {
+        options.headers.append(name, value);
+      });
+
+    }
 
     if(!tokenNotExpired(null, this._config.tokenGetter())) {
       if(this._config.noJwtError) {
         return this.http.request(new Request(options));
-      }     
+      }
 
       throw 'Invalid JWT';
     }
 
-    var authHeader = new Headers();
-    
-    authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-    
-    var authOptions = new RequestOptions({
-      method: method,
-      url: url,
-      body: body,
-      headers: authHeader
-    });
-    
-    return this.http.request(new Request(authOptions));
+    options.headers.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
+
+    return this.http.request(new Request(options));
 
   }
 
-  get(url:string) : Observable<Response> {
-    return this.request(RequestMethod.Get, url, null);
+  get(url:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Get, url, null, options);
   }
 
-  post(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Post, url, body);
+  post(url:string, body:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Post, url, body, options);
   }
 
-  put(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Put, url, body);
+  put(url:string, body:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Put, url, body, options);
   }
 
-  delete(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Delete, url, body);
+  delete(url:string, body?:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Delete, url, body, options);
   }
 
-  options(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Options, url, body);
+  options(url:string, body?:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Options, url, body, options);
   }
 
-  head(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Head, url, body);
+  head(url:string, body?:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Head, url, body, options);
   }
 
-  patch(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Patch, url, body);
+  patch(url:string, body:string, options?: RequestOptionsArgs) : Observable<Response> {
+    return this.request(RequestMethod.Patch, url, body, options);
   }
-  
+
 }
 
 /**
@@ -208,7 +209,7 @@ export function tokenNotExpired(tokenName?:string, jwt?:string) {
   }
 
   var jwtHelper = new JwtHelper();
-  
+
   if(!token || jwtHelper.isTokenExpired(token, null)) {
     return false;
   }
