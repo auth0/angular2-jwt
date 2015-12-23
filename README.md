@@ -51,7 +51,7 @@ bootstrap(App, [
   HTTP_PROVIDERS,
   provide(AuthConfig, {
       useFactory: () => {
-          return new AuthConfig();
+        return new AuthConfig();
       }
   }),
   AuthHttp
@@ -83,7 +83,8 @@ bootstrap(App, [
       tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
       noJwtError: true 
     })
-  }})
+  }}),
+  AuthHttp
 ])
 ```
 
