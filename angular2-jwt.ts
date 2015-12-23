@@ -95,7 +95,7 @@ export class AuthHttp {
         reqopts.headers=new Headers();
       }
       reqopts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-      request= this.http.request(url, options);
+      request= this.http.request(url, reqopts);
     }else{
       let req:Request=<Request>url;
       if (!req.headers){
