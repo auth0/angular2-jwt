@@ -76,57 +76,73 @@ export class AuthHttp {
       body: body,
     });
 
+    return this._request(new Request(options));
+
+  }
+
+  _request(url: string | Request, options?: RequestOptionsArgs): Observable<Response>{
+
+    let request:any;
     if(!tokenNotExpired(null, this._config.tokenGetter())) {
-      if(this._config.noJwtError) {
-        return this.http.request(new Request(options));
-      }     
-
-      throw 'Invalid JWT';
+      if(!this._config.noJwtError) {
+        throw 'Invalid JWT';
+      }else{
+        request=this.http.request(url,options);
+      }
+    }else if(typeof url ==='string'){
+      let reqopts=options||{};
+      if (!reqopts.headers){
+        reqopts.headers=new Headers();
+      }
+      reqopts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
+      request= this.http.request(url, reqopts);
+    }else{
+      let req:Request=<Request>url;
+      if (!req.headers){
+        req.headers=new Headers();
+      }
+      req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
+      request= this.http.request(req);
     }
-
-    var authHeader = new Headers();
-    
-    authHeader.append(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-    
-    var authOptions = new RequestOptions({
-      method: method,
-      url: url,
-      body: body,
-      headers: authHeader
-    });
-    
-    return this.http.request(new Request(authOptions));
-
+    return request;
   }
 
-  get(url:string) : Observable<Response> {
-    return this.request(RequestMethod.Get, url, null);
+  private requestHelper(requestArgs:RequestOptionsArgs, additionalOptions:RequestOptionsArgs):Observable<Response>{
+    let options=new RequestOptions(requestArgs);
+    if(additionalOptions){
+      options= options.merge(additionalOptions)
+    }
+    return this._request(new Request(options))
   }
 
-  post(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Post, url, body);
+  get(url: string, options?: RequestOptionsArgs): Observable<Response>{
+    return this.requestHelper({ url:  url, method: RequestMethod.Get },options);
   }
 
-  put(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Put, url, body);
+  post(url: string, body: string, options?: RequestOptionsArgs): Observable<Response>{
+    return this.requestHelper({ url:  url, body: body, method: RequestMethod.Post },options);
   }
 
-  delete(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Delete, url, body);
+  put(url: string, body: string, options ?: RequestOptionsArgs): Observable<Response>{
+    return this.requestHelper({ url:  url, body: body, method: RequestMethod.Put },options);
   }
 
-  options(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Options, url, body);
+  delete (url: string, options ?: RequestOptionsArgs): Observable<Response>{
+    return this.requestHelper({ url:  url, method: RequestMethod.Delete },options);
   }
 
-  head(url:string, body?:string) : Observable<Response> {
-    return this.request(RequestMethod.Head, url, body);
+  patch(url:string, body:string, options ?: RequestOptionsArgs) : Observable<Response> {
+    return this.requestHelper({ url:  url, body: body, method: RequestMethod.Patch },options);
   }
 
-  patch(url:string, body:string) : Observable<Response> {
-    return this.request(RequestMethod.Patch, url, body);
+  options(url:string, options ?: RequestOptionsArgs) : Observable<Response> {
+    return this.requestHelper({ url:  url, method: RequestMethod.Options },options);
   }
-  
+
+  head(url:string, options ?: RequestOptionsArgs) : Observable<Response> {
+    return this.requestHelper({ url:  url, method: RequestMethod.Head },options);
+  }
+
 }
 
 /**
