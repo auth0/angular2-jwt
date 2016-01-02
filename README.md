@@ -27,7 +27,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
 
 ```ts
-import {AuthHttp} from 'angular2-jwt';
+import {AuthHttp, AuthConfig} from 'angular2-jwt';
 
 ...
 
@@ -50,9 +50,9 @@ class App {
 bootstrap(App, [
   HTTP_PROVIDERS,
   provide(AuthConfig, {
-      useFactory: () => {
-        return new AuthConfig();
-      }
+    useFactory: () => {
+      return new AuthConfig();
+    }
   }),
   AuthHttp
 ])
@@ -89,6 +89,32 @@ bootstrap(App, [
 ```
 
 The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
+
+### Sending Headers
+
+You may send custom headers with your `authHttp` request by passing in an options object.
+
+```ts
+getThing() {
+  var myHeader = new Headers();
+  myHeader.append('Content-Type', 'application/json');
+  
+  this.authHttp.get('http://example.com/api/thing', { headers: myHeader} )
+    .subscribe(
+      data => this.thing = data,
+      err => console.log(error),
+      () => console.log('Request Complete')
+    );
+    
+  // Pass it after the body in a POST request
+  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader} )
+    .subscribe(
+      data => this.thing = data,
+      err => console.log(error),
+      () => console.log('Request Complete')
+    );
+}
+``` 
 
 ### Using the Observable Token Stream
 
