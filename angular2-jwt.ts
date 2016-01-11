@@ -29,7 +29,7 @@ export class AuthConfig {
   constructor(config?: any) {
     this.config = config || {};
     this.headerName = this.config.headerName || 'Authorization';
-    this.headerPrefix = this.config.headerPrefix || 'Bearer ';
+    this.headerPrefix = this.config.headerPrefix + ' ' || 'Bearer ';
     this.tokenName = this.config.tokenName || 'id_token';
     this.noJwtError = this.config.noJwtError || false;
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
