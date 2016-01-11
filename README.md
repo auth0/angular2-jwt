@@ -9,6 +9,7 @@ For examples on integrating **angular2-jwt** with Webpack and SystemJS, see [aut
 * Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
+* Call **Token Refresh** function if the JWT has expired
 * Conditionally allow **route navigation** based on JWT status
 
 ## Installation
@@ -32,7 +33,7 @@ import {AuthHttp, AuthConfig} from 'angular2-jwt';
 ...
 
 class App {
-  
+
   thing: string;
 
   constructor(public authHttp: AuthHttp) {}
@@ -64,9 +65,11 @@ A default configuration for header and token details is provided:
 * Header Prefix: `Bearer`
 * Token Name: `id_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
+* Token Refresh Function `(() => Observable.of(null))`
+* Token Refresh Offset: 60
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `refresh` function, `refreshOffset`, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
 
 By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JWT' error. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
 
@@ -81,7 +84,9 @@ bootstrap(App, [
       headerPrefix: YOUR_HEADER_PREFIX,
       tokenName: YOUR_TOKEN_NAME,
       tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      noJwtError: true 
+      refresh: YOUR_TOKEN_REFRESH_FUNCTION,
+      refreshOffset: YOUR_TOKEN_REFRESH_OFFSET,
+      noJwtError: true
     })
   }}),
   AuthHttp
@@ -98,14 +103,14 @@ You may send custom headers with your `authHttp` request by passing in an option
 getThing() {
   var myHeader = new Headers();
   myHeader.append('Content-Type', 'application/json');
-  
+
   this.authHttp.get('http://example.com/api/thing', { headers: myHeader} )
     .subscribe(
       data => this.thing = data,
       err => console.log(error),
       () => console.log('Request Complete')
     );
-    
+
   // Pass it after the body in a POST request
   this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader} )
     .subscribe(
@@ -114,7 +119,7 @@ getThing() {
       () => console.log('Request Complete')
     );
 }
-``` 
+```
 
 ### Using the Observable Token Stream
 
@@ -154,7 +159,7 @@ jwtHelper: JwtHelper = new JwtHelper();
 
 useJwtHelper() {
   var token = localStorage.getItem('id_token');
-  
+
   console.log(
     this.jwtHelper.decodeToken(token),
     this.jwtHelper.getTokenExpirationDate(token),
@@ -167,7 +172,7 @@ useJwtHelper() {
 
 ## Checking Login to Hide/Show Elements and Handle Routing
 
-The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`. 
+The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
 
 The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
 
