@@ -75,54 +75,53 @@ export class AuthHttp {
     });
   }
 
-  _request(req: Request) : Observable<Response> {
-
-    let request:any;
+  public request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
+    let responseObservable:any;
 
     // this is observable as it may need to come from an http call ...
     let refreshToken:Observable<string>;
 
     var token = this._config.tokenGetter()
-    // do we even have a token?
-    if (token === null) {
-      // no, is this an error?
-      if(this._config.noJwtError) {
-        // no, we can provide this token to the request
-        refreshToken = Observable.of(token)
-      } else {
-        // yes, we can't do anything
-        throw 'Invalid JWT';
-      }
-    } else{
-      // yes, we have a token ... is it still valid? (with some allowance)
-      if (this.jwtHelper.isTokenExpired(token, this._config.refreshOffset)) {
-        // no, it's expired - we'll call the token refresh prior to the call
+    if (token && this.jwtHelper.isTokenExpired(token, this._config.refreshOffset)) {
         refreshToken = this._config.refresh();
-      } else {
-        // yes, it's still good so we can provide this token to the request
-        refreshToken = Observable.of(token);
-      }
+    } else {
+      refreshToken = Observable.of(token);
     }
 
-    if(!req.headers) {
-      req.headers = new Headers();
-    }
-
-    // chain it after the refresh call
-    request = refreshToken.flatMap(token => {
-      if (token === null) {
-        if (!this._config.noJwtError) {
+    responseObservable = refreshToken.flatMap(token => {
+      if (!tokenNotExpired(null, token)) {
+        if (this._config.noJwtError) {
+          token = null;
+        } else {
           return Observable.throw('Invalid JWT');
         }
-      } else {
-        // we add the auth headers here because it may be the new one returned from the refresh method
-        req.headers.set(this._config.headerName, this._config.headerPrefix + token);
       }
-      // and now return the actual call for subscribers to use
-      return this.http.request(req);
+      if(typeof url === 'string') {
+        let reqOpts = options || {};
+
+        if(!reqOpts.headers) {
+          reqOpts.headers = new Headers();
+        }
+
+        if (token) {
+          reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + token);
+        }
+        return this.http.request(url, reqOpts);
+      } else {
+        let req:Request = <Request>url;
+
+        if(!req.headers) {
+          req.headers = new Headers();
+        }
+
+        if (token) {
+          req.headers.set(this._config.headerName, this._config.headerPrefix + token);
+        }
+        return this.http.request(req);
+      }
     });
 
-    return request;
+    return responseObservable;
   }
 
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
@@ -132,7 +131,7 @@ export class AuthHttp {
       options = options.merge(additionalOptions)
     }
 
-    return this._request(new Request(options))
+    return this.request(new Request(options))
   }
 
   get(url: string, options?: RequestOptionsArgs) : Observable<Response> {
