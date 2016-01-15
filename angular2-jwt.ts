@@ -33,7 +33,7 @@ export class AuthConfig {
   constructor(config?: any) {
     this.config = config || {};
     this.headerName = this.config.headerName || 'Authorization';
-    this.headerPrefix = this.config.headerPrefix || 'Bearer';
+    this.headerPrefix = this.config.headerPrefix + ' ' || 'Bearer ';
     this.tokenName = this.config.tokenName || 'id_token';
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
     this.refresh = this.config.refresh || (() => Observable.of(null));
@@ -83,7 +83,7 @@ export class AuthHttp {
 
     var token = this._config.tokenGetter()
     if (token && this.jwtHelper.isTokenExpired(token, this._config.refreshOffset)) {
-        refreshToken = this._config.refresh();
+      refreshToken = this._config.refresh();
     } else {
       refreshToken = Observable.of(token);
     }
