@@ -27,12 +27,12 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
 
 ```ts
-import {AuthHttp} from 'angular2-jwt';
+import {AuthHttp, AuthConfig} from 'angular2-jwt';
 
 ...
 
 class App {
-  
+
   thing: string;
 
   constructor(public authHttp: AuthHttp) {}
@@ -49,9 +49,12 @@ class App {
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, { useFactory: () => {
-    return new AuthHttp()
-  }})
+  provide(AuthConfig, {
+    useFactory: () => {
+      return new AuthConfig();
+    }
+  }),
+  AuthHttp
 ])
 ```
 
@@ -72,19 +75,46 @@ By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JW
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, { useFactory: () => {
-    return new AuthHttp({
+  provide(AuthConfig, { useFactory: () => {
+    return new AuthConfig({
       headerName: YOUR_HEADER_NAME,
       headerPrefix: YOUR_HEADER_PREFIX,
       tokenName: YOUR_TOKEN_NAME,
       tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      noJwtError: true 
+      noJwtError: true
     })
-  }})
+  }}),
+  AuthHttp
 ])
 ```
 
 The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
+
+### Sending Headers
+
+You may send custom headers with your `authHttp` request by passing in an options object.
+
+```ts
+getThing() {
+  var myHeader = new Headers();
+  myHeader.append('Content-Type', 'application/json');
+
+  this.authHttp.get('http://example.com/api/thing', { headers: myHeader} )
+    .subscribe(
+      data => this.thing = data,
+      err => console.log(error),
+      () => console.log('Request Complete')
+    );
+
+  // Pass it after the body in a POST request
+  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader} )
+    .subscribe(
+      data => this.thing = data,
+      err => console.log(error),
+      () => console.log('Request Complete')
+    );
+}
+```
 
 ### Using the Observable Token Stream
 
@@ -124,7 +154,7 @@ jwtHelper: JwtHelper = new JwtHelper();
 
 useJwtHelper() {
   var token = localStorage.getItem('id_token');
-  
+
   console.log(
     this.jwtHelper.decodeToken(token),
     this.jwtHelper.getTokenExpirationDate(token),
@@ -137,7 +167,7 @@ useJwtHelper() {
 
 ## Checking Login to Hide/Show Elements and Handle Routing
 
-The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`. 
+The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
 
 The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
 
@@ -184,12 +214,14 @@ Auth0 helps you to:
 1. Go to [Auth0](https://auth0.com) and click Sign Up.
 2. Use Google, GitHub or Microsoft Account to login.
 
+## Issue Reporting
+
+If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
+
 ## Author
 
-[Auth0](https://auth0.com)
+[Auth0](auth0.com)
 
 ## License
 
-This project is licensed under the MIT license. See the [LICENSE](LICENSE.txt) file for more info.
-
-
+This project is licensed under the MIT license. See the [LICENSE](LICENSE) file for more info.
