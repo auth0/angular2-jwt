@@ -87,8 +87,7 @@ bootstrap(App, [
       }), http);
     },
     deps: [Http]
-  }),
-  AuthHttp
+  })
 ])
 ```
 
