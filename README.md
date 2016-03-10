@@ -4,6 +4,14 @@
 
 For examples on integrating **angular2-jwt** with Webpack and SystemJS, see [auth0-angular2](https://github.com/auth0/auth0-angular2).
 
+## What is This Library For?
+
+**angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
+
+This library does not have any functionality or opinion about how you should be implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
+
+For more on implementing authentication endpoints, see this tutorial for an [example using HapiJS](https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/).
+
 ## Key Features
 
 * Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
