@@ -62,8 +62,7 @@ bootstrap(App, [
       return new AuthHttp(new AuthConfig(), http);
     },
     deps: [Http]
-  }),
-  AuthHttp
+  })
 ])
 ```
 
