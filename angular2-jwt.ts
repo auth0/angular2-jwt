@@ -138,6 +138,9 @@ export class AuthHttp {
     return this.requestHelper({ url:  url, method: RequestMethod.Head }, options);
   }
 
+  options(url: string, options?: RequestOptionsArgs): Observable<Response> {
+    return this.requestHelper({ url: url, method: RequestMethod.Options }, options);
+  }
 }
 
 /**
