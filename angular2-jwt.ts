@@ -69,7 +69,7 @@ export class AuthHttp {
     });
   }
 
-  _request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
+  request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
 
     let request:any;
     
@@ -111,7 +111,7 @@ export class AuthHttp {
       options = options.merge(additionalOptions)
     }
     
-    return this._request(new Request(options))
+    return this.request(new Request(options))
   }
 
   get(url: string, options?: RequestOptionsArgs) : Observable<Response> {
