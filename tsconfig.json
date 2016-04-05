@@ -8,14 +8,8 @@
         "sourceMap": true,
         "declaration": true
     },
-    "exclude": [
-        "node_modules",
-        "typings/main.d.ts",
-        "typings/main"
-    ],
-    "filesGlob": [
-        "*.ts",
-        "!./node_modules/**/*.ts",
+    "files": [
+        "angular2-jwt.ts",
         "typings/browser.d.ts"
     ]
 }
