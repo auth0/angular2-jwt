@@ -6,7 +6,8 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "declaration": true
+        "declaration": true,
+        "moduleResolution":"node"
     },
     "files": [
         "angular2-jwt.ts",
