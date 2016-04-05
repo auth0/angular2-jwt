@@ -4,6 +4,14 @@
 
 For examples on integrating **angular2-jwt** with Webpack and SystemJS, see [auth0-angular2](https://github.com/auth0/auth0-angular2).
 
+## What is This Library For?
+
+**angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
+
+This library does not have any functionality or opinion about how you should be implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
+
+For more on implementing authentication endpoints, see this tutorial for an [example using HapiJS](https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/).
+
 ## Key Features
 
 * Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
@@ -49,12 +57,12 @@ class App {
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthConfig, {
-    useFactory: () => {
-      return new AuthConfig();
-    }
-  }),
-  AuthHttp
+  provide(AuthHttp, {
+    useFactory: (http) => {
+      return new AuthHttp(new AuthConfig(), http);
+    },
+    deps: [Http]
+  })
 ])
 ```
 
@@ -75,16 +83,18 @@ By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JW
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthConfig, { useFactory: () => {
-    return new AuthConfig({
-      headerName: YOUR_HEADER_NAME,
-      headerPrefix: YOUR_HEADER_PREFIX,
-      tokenName: YOUR_TOKEN_NAME,
-      tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      noJwtError: true
-    })
-  }}),
-  AuthHttp
+  provide(AuthHttp, {
+    useFactory: (http) => {
+      return new AuthHttp(new AuthConfig({
+        headerName: YOUR_HEADER_NAME,
+        headerPrefix: YOUR_HEADER_PREFIX,
+        tokenName: YOUR_TOKEN_NAME,
+        tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+        noJwtError: true
+      }), http);
+    },
+    deps: [Http]
+  })
 ])
 ```
 
@@ -170,6 +180,8 @@ useJwtHelper() {
 The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
 
 The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
+
+> **Note:** `tokenNotExpired` will by default assume the token name is `id_token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
 
 ```ts
 
