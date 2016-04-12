@@ -64,7 +64,7 @@ export class AuthHttp {
   constructor(options: AuthConfig, private http: Http) {
     this._config = options.getConfig();
 
-    this.tokenStream = new Observable((obs: any) => {
+    this.tokenStream = new Observable<string>((obs: any) => {
       obs.next(this._config.tokenGetter())
     });
   }
