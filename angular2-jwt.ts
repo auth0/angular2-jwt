@@ -10,6 +10,8 @@ export interface IAuthConfig {
   headerPrefix: string;
   tokenName: string;
   tokenGetter: any;
+  refresh: any;
+  refreshOffset: number;
   noJwtError: boolean;
 }
 
@@ -18,12 +20,14 @@ export interface IAuthConfig {
  */
 
 export class AuthConfig {
-  
+
   config: any;
   headerName: string;
   headerPrefix: string;
   tokenName: string;
   tokenGetter: any;
+  refresh: any;
+  refreshOffset: number;
   noJwtError: boolean;
 
   constructor(config?: any) {
@@ -35,8 +39,10 @@ export class AuthConfig {
       this.headerPrefix = 'Bearer ';
     }
     this.tokenName = this.config.tokenName || 'id_token';
-    this.noJwtError = this.config.noJwtError || false;
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+    this.refresh = this.config.refresh || (() => Observable.of(null));
+    this.refreshOffset = this.config.refreshOffset || 60;
+    this.noJwtError = this.config.noJwtError || false;
   }
 
   getConfig() {
@@ -45,6 +51,8 @@ export class AuthConfig {
       headerPrefix: this.headerPrefix,
       tokenName: this.tokenName,
       tokenGetter: this.tokenGetter,
+      refresh: this.refresh,
+      refreshOffset: this.refreshOffset,
       noJwtError: this.noJwtError
     }
   }
@@ -60,58 +68,74 @@ export class AuthHttp {
 
   private _config: IAuthConfig;
   public tokenStream: Observable<string>;
+  private jwtHelper:JwtHelper;
 
   constructor(options: AuthConfig, private http: Http) {
     this._config = options.getConfig();
+    this.jwtHelper = new JwtHelper();
 
     this.tokenStream = new Observable((obs: any) => {
       obs.next(this._config.tokenGetter())
     });
   }
 
-  _request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
+  public request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
+    let responseObservable:any;
 
-    let request:any;
-    
-    if(!tokenNotExpired(null, this._config.tokenGetter())) {
-      if(!this._config.noJwtError) {
-        throw 'Invalid JWT';
-      } else {
-        request = this.http.request(url, options);
-      }
-      
-    } else if(typeof url === 'string') {
-      let reqOpts = options || {};
-      
-      if(!reqOpts.headers) {
-        reqOpts.headers = new Headers();
-      }
-      
-      reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-      request = this.http.request(url, reqOpts);
-      
+    // this is observable as it may need to come from an http call ...
+    let refreshToken:Observable<string>;
+
+    var token = this._config.tokenGetter()
+    if (token && this.jwtHelper.isTokenExpired(token, this._config.refreshOffset)) {
+      refreshToken = this._config.refresh();
     } else {
-      let req:Request = <Request>url;
-      
-      if(!req.headers) {
-        req.headers = new Headers();
-      }
-      
-      req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-      request = this.http.request(req);
+      refreshToken = Observable.of(token);
     }
-    
-    return request;
+
+    responseObservable = refreshToken.flatMap(token => {
+      if (!tokenNotExpired(null, token)) {
+        if (this._config.noJwtError) {
+          token = null;
+        } else {
+          return Observable.throw('Invalid JWT');
+        }
+      }
+      if(typeof url === 'string') {
+        let reqOpts = options || {};
+
+        if(!reqOpts.headers) {
+          reqOpts.headers = new Headers();
+        }
+
+        if (token) {
+          reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + token);
+        }
+        return this.http.request(url, reqOpts);
+      } else {
+        let req:Request = <Request>url;
+
+        if(!req.headers) {
+          req.headers = new Headers();
+        }
+
+        if (token) {
+          req.headers.set(this._config.headerName, this._config.headerPrefix + token);
+        }
+        return this.http.request(req);
+      }
+    });
+
+    return responseObservable;
   }
 
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
     let options = new RequestOptions(requestArgs);
-    
+
     if(additionalOptions) {
       options = options.merge(additionalOptions)
     }
-    
-    return this._request(new Request(options))
+
+    return this.request(new Request(options))
   }
 
   get(url: string, options?: RequestOptionsArgs) : Observable<Response> {
@@ -219,7 +243,7 @@ export function tokenNotExpired(tokenName?:string, jwt?:string) {
   }
 
   var jwtHelper = new JwtHelper();
-  
+
   if(!token || jwtHelper.isTokenExpired(token, null)) {
     return false;
   }

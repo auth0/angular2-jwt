@@ -17,6 +17,7 @@ For more on implementing authentication endpoints, see this tutorial for an [exa
 * Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
+* Call **Token Refresh** function if the JWT has expired
 * Conditionally allow **route navigation** based on JWT status
 
 ## Installation
@@ -72,9 +73,11 @@ A default configuration for header and token details is provided:
 * Header Prefix: `Bearer`
 * Token Name: `id_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
+* Token Refresh Function `(() => Observable.of(null))`
+* Token Refresh Offset: 60
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `refresh` function, `refreshOffset`, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
 
 By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JWT' error. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
 
@@ -90,6 +93,8 @@ bootstrap(App, [
         headerPrefix: YOUR_HEADER_PREFIX,
         tokenName: YOUR_TOKEN_NAME,
         tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+        refresh: YOUR_TOKEN_REFRESH_FUNCTION,
+        refreshOffset: YOUR_TOKEN_REFRESH_OFFSET,
         noJwtError: true
       }), http);
     },
