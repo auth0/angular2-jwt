@@ -8,8 +8,7 @@
   },
   "scripts": {
     "dev": "tsc --watch",
-    "prepublish": "tsc",
-    "postinstall": "typings install"
+    "prepublish": "typings install && tsc"
   },
   "keywords": [
     "angular",
