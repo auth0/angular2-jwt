@@ -6,16 +6,11 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "declaration": true
+        "declaration": true,
+        "moduleResolution":"node"
     },
-    "exclude": [
-        "node_modules",
-        "typings/main.d.ts",
-        "typings/main"
-    ],
-    "filesGlob": [
-        "*.ts",
-        "!./node_modules/**/*.ts",
+    "files": [
+        "angular2-jwt.ts",
         "typings/browser.d.ts"
     ]
 }
