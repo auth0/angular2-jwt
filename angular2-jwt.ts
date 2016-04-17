@@ -26,13 +26,16 @@ export class AuthConfig {
   tokenName: string;
   tokenGetter: any;
   noJwtError: boolean;
+  noTokenScheme: boolean;
   globalHeaders: Array<Object>;
 
   constructor(config?: any) {
     this.config = config || {};
     this.headerName = this.config.headerName || 'Authorization';
-    if(this.config.headerPrefix) {
+    if (this.config.headerPrefix) {
       this.headerPrefix = this.config.headerPrefix + ' ';
+    } else if (this.config.noTokenScheme) {
+      this.headerPrefix = '';
     } else {
       this.headerPrefix = 'Bearer ';
     }
@@ -49,6 +52,7 @@ export class AuthConfig {
       tokenName: this.tokenName,
       tokenGetter: this.tokenGetter,
       noJwtError: this.noJwtError,
+      emptyHeaderPrefix: this.noTokenScheme,
       globalHeaders: this.globalHeaders
     }
   }
