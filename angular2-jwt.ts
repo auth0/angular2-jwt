@@ -11,6 +11,7 @@ export interface IAuthConfig {
   tokenName: string;
   tokenGetter: any;
   noJwtError: boolean;
+  globalHeaders: Array<Object>;
 }
 
 /**
@@ -25,6 +26,7 @@ export class AuthConfig {
   tokenName: string;
   tokenGetter: any;
   noJwtError: boolean;
+  globalHeaders: Array<Object>;
 
   constructor(config?: any) {
     this.config = config || {};
@@ -37,6 +39,7 @@ export class AuthConfig {
     this.tokenName = this.config.tokenName || 'id_token';
     this.noJwtError = this.config.noJwtError || false;
     this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+    this.globalHeaders = this.config.globalHeaders || null;
   }
 
   getConfig() {
@@ -45,7 +48,8 @@ export class AuthConfig {
       headerPrefix: this.headerPrefix,
       tokenName: this.tokenName,
       tokenGetter: this.tokenGetter,
-      noJwtError: this.noJwtError
+      noJwtError: this.noJwtError,
+      globalHeaders: this.globalHeaders
     }
   }
 
@@ -68,33 +72,50 @@ export class AuthHttp {
       obs.next(this._config.tokenGetter())
     });
   }
-
+  
+  setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
+    headers.forEach((header: Object) => {
+      let key: string = Object.keys(header)[0];
+      let headerValue: string = (<any>header)[key];
+      request.headers.set(key, headerValue);
+    });
+  }
+  
   request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
 
-    let request:any;
+    let request: Observable<Response>;
+    let globalHeaders = this._config.globalHeaders;
     
-    if(!tokenNotExpired(null, this._config.tokenGetter())) {
-      if(!this._config.noJwtError) {
+    if (!tokenNotExpired(null, this._config.tokenGetter())) {
+      if (!this._config.noJwtError) {
         throw 'Invalid JWT';
       } else {
         request = this.http.request(url, options);
       }
       
-    } else if(typeof url === 'string') {
-      let reqOpts = options || {};
+    } else if (typeof url === 'string') {
+      let reqOpts: RequestOptionsArgs = options || {};
       
-      if(!reqOpts.headers) {
+      if (!reqOpts.headers) {
         reqOpts.headers = new Headers();
+      }
+      
+      if (globalHeaders) {
+        this.setGlobalHeaders(globalHeaders, reqOpts);
       }
       
       reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
       request = this.http.request(url, reqOpts);
       
     } else {
-      let req:Request = <Request>url;
+      let req: Request = <Request>url;
       
-      if(!req.headers) {
+      if (!req.headers) {
         req.headers = new Headers();
+      }
+      
+      if (globalHeaders) {
+        this.setGlobalHeaders(globalHeaders, req);
       }
       
       req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
@@ -105,9 +126,9 @@ export class AuthHttp {
   }
 
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
-    let options = new RequestOptions(requestArgs);
+    let options: RequestOptions = new RequestOptions(requestArgs);
     
-    if(additionalOptions) {
+    if (additionalOptions) {
       options = options.merge(additionalOptions)
     }
     
