@@ -61,6 +61,8 @@ bootstrap(App, [
 ])
 ```
 
+## Configuration Options
+
 `AUTH_PROVIDERS` gives a default configuration setup:
 
 * Header Name: `Authorization`
@@ -68,12 +70,21 @@ bootstrap(App, [
 * Token Name: `id_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
+* Global Headers: none
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+
+#### Errors
 
 By default, if there is no valid JWT saved, `AuthHttp` will return an Observable `error` with 'Invalid JWT'. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
 
+#### Token Scheme
+
 The default scheme for the `Authorization` header is `Bearer`, but you may either provide your own by specifying a `headerPrefix`, or you may remove the prefix altogether by setting `noTokenScheme` to `true`.
+
+#### Global Headers
+
+You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
 ```ts
 ...
@@ -87,6 +98,7 @@ bootstrap(App, [
         headerPrefix: YOUR_HEADER_PREFIX,
         tokenName: YOUR_TOKEN_NAME,
         tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+        globalHeaders: [{'Content-Type':'application/json'}],
         noJwtError: true,
         noTokenScheme: true
       }), http);
@@ -98,9 +110,9 @@ bootstrap(App, [
 
 The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
 
-### Sending Headers
+### Sending Per-Request Headers
 
-You may send custom headers with your `authHttp` request by passing in an options object.
+You may also send custom headers on a per-request basis with your `authHttp` request by passing them in an options object.
 
 ```ts
 getThing() {
