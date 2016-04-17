@@ -71,7 +71,9 @@ bootstrap(App, [
 
 If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
 
-By default, if there is no valid JWT saved, `AuthHttp` will throw an 'Invalid JWT' error. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
+By default, if there is no valid JWT saved, `AuthHttp` will return an Observable `error` with 'Invalid JWT'. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
+
+The default scheme for the `Authorization` header is `Bearer`, but you may either provide your own by specifying a `headerPrefix`, or you may remove the prefix altogether by setting `noTokenScheme` to `true`.
 
 ```ts
 ...
@@ -85,7 +87,8 @@ bootstrap(App, [
         headerPrefix: YOUR_HEADER_PREFIX,
         tokenName: YOUR_TOKEN_NAME,
         tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-        noJwtError: true
+        noJwtError: true,
+        noTokenScheme: true
       }), http);
     },
     deps: [Http]
