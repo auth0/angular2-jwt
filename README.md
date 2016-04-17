@@ -35,7 +35,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
 
 ```ts
-import {AuthHttp, AuthConfig} from 'angular2-jwt';
+import {AuthHttp, AuthConfig, AUTH_PROVIDERS} from 'angular2-jwt';
 
 ...
 
@@ -57,16 +57,11 @@ class App {
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, {
-    useFactory: (http) => {
-      return new AuthHttp(new AuthConfig(), http);
-    },
-    deps: [Http]
-  })
+  AUTH_PROVIDERS
 ])
 ```
 
-A default configuration for header and token details is provided:
+`AUTH_PROVIDERS` gives a default configuration setup:
 
 * Header Name: `Authorization`
 * Header Prefix: `Bearer`
