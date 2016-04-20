@@ -28,7 +28,7 @@ npm install angular2-jwt
 The library comes with several helpers that are useful in your Angular 2 apps.
 
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
-2. `AuthStatus` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
+2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
 ## Sending Authenticated Requests
 
