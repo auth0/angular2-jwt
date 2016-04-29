@@ -87,7 +87,7 @@ export class AuthHttp {
   
   request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
 
-    let request: Observable<Response>;
+    let request: any;
     let globalHeaders = this._config.globalHeaders;
     
     if (!tokenNotExpired(null, this._config.tokenGetter())) {
