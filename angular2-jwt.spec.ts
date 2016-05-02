@@ -1,5 +1,10 @@
 import "core-js";
 import {AuthConfig} from "./angular2-jwt";
+import {tokenNotExpired} from "./angular2-jwt";
+
+
+const expiredToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImV4cCI6IjAifQ.bI_ajkRYn0SEmI395jyFEwuDtGVcxLvlaqwrjT5iAEs";
+const validToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImV4cCI6Ijk5OTk5OTk5OTkifQ.1zjdR8DnnoN6AQI6LSwmoBP1IoYmA4b2WSvV7b5SaQE";
 
 
 describe('AuthConfig', ()=> {
@@ -40,6 +45,39 @@ describe('AuthConfig', ()=> {
         expect(config.globalHeaders).toEqual(configExpected.globalHeaders);
         expect(config.tokenGetter).toBeDefined();
         expect(config.tokenGetter()).toBe("this is a token");
+    });
+
+});
+
+describe('tokenNotExpired', ()=> {
+    'use strict';
+    it('should use the passed token when not expired', ()=> {
+        const actual:boolean=tokenNotExpired(null,validToken);
+        expect(actual).toBe(true);
+    });
+    it('should use the passed token when expired', ()=> {
+        const actual:boolean=tokenNotExpired(null,expiredToken);
+        expect(actual).toBe(false);
+    });
+    it('should use the passed tokenName when not expired', ()=> {
+        localStorage.setItem("Valid", validToken);
+        const actual:boolean=tokenNotExpired("Valid");
+        expect(actual).toBe(true);
+    });
+    it('should use the passed tokenName when expired', ()=> {
+        localStorage.setItem("Expired", expiredToken);
+        const actual:boolean=tokenNotExpired("Expired");
+        expect(actual).toBe(false);
+    });
+    it('should use the defaults when not expired', ()=> {
+        localStorage.setItem("id_token", validToken);
+        const actual:boolean=tokenNotExpired();
+        expect(actual).toBe(true);
+    });
+    it('should use the defaults when expired', ()=> {
+        localStorage.setItem("id_token", expiredToken);
+        const actual:boolean=tokenNotExpired();
+        expect(actual).toBe(false);
     });
 
 });
