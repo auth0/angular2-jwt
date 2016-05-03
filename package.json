@@ -24,15 +24,19 @@
   "main": "angular2-jwt.js",
   "typings": "./angular2-jwt.d.ts",
   "homepage": "https://github.com/auth0/angular2-jwt#readme",
-  "dependencies": {
-    "angular2": ">=2.0.0-beta.12",
+  "devDependencies": {
+    "@angular/core": "^2.0.0-rc.0",
+    "@angular/http": "^2.0.0-rc.0",
     "es6-shim": "^0.35.0",
     "reflect-metadata": "0.1.2",
-    "rxjs": "5.0.0-beta.2",
-    "zone.js": "^0.6.6"
-  },
-  "devDependencies": {
+    "rxjs": "5.0.0-beta.6",
     "typescript": "^1.8.9",
-    "typings": "^0.7.12"
+    "typings": "^0.7.12",
+    "zone.js": "~0.6.12"
+  },
+  "peerDependencies": {
+    "@angular/core": "^2.0.0-rc.0",
+    "@angular/http": "^2.0.0-rc.0",
+    "rxjs": "5.0.0-beta.6"
   }
 }
