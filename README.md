@@ -49,7 +49,7 @@ class App {
     this.authHttp.get('http://example.com/api/thing')
       .subscribe(
         data => this.thing = data,
-        err => console.log(error),
+        err => console.log(err),
         () => console.log('Request Complete')
       );
   }
