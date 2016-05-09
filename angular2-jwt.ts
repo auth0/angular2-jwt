@@ -72,8 +72,8 @@ export class AuthHttp {
   constructor(options: AuthConfig, private http: Http) {
     this._config = options.getConfig();
 
-    this.tokenStream = new Observable((obs: any) => {
-      obs.next(this._config.tokenGetter())
+    this.tokenStream = new Observable<string>((obs: any) => {
+      obs.next(this._config.tokenGetter());
     });
   }
   
@@ -92,7 +92,7 @@ export class AuthHttp {
     
     if (!tokenNotExpired(null, this._config.tokenGetter())) {
       if (!this._config.noJwtError) {
-        return new Observable((obs: any) => {
+        return new Observable<Response>((obs: any) => {
           obs.error(new Error('No JWT present'));
         });
       } else {
