@@ -184,7 +184,7 @@ export class JwtHelper {
       }
     }
 
-    return decodeURIComponent(escape(window.atob(output))); //polifyll https://github.com/davidchambers/Base64.js
+    return decodeURIComponent(escape(window.atob(output))); //polyfill https://github.com/davidchambers/Base64.js
   }
 
   public decodeToken(token:string) {
