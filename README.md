@@ -191,6 +191,8 @@ The `tokenNotExpired` function can be used to check whether a JWT exists in loca
 
 The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
 
+> **NOTE**: The `@CanActivate` lifecycle hook has been deprecated in the latest Angular 2 router. To use it, you need to `import` from `@angular/router-deprecated`.
+
 > **Note:** `tokenNotExpired` will by default assume the token name is `id_token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
 
 ```ts
