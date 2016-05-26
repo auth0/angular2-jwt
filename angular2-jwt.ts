@@ -233,27 +233,13 @@ export class JwtHelper {
  * For use with the @CanActivate router decorator and NgIf
  */
 
-export function tokenNotExpired(tokenName?:string, jwt?:string) {
+export function tokenNotExpired(tokenName = 'id_token', jwt?:string):boolean {
 
-  var authToken:string = tokenName || 'id_token';
-  var token:string;
+  const token:string = jwt || localStorage.getItem(tokenName);
 
-  if(jwt) {
-    token = jwt;
-  }
-  else {
-    token = localStorage.getItem(authToken);
-  }
+  const jwtHelper = new JwtHelper();
 
-  var jwtHelper = new JwtHelper();
-  
-  if(!token || jwtHelper.isTokenExpired(token, null)) {
-    return false;
-  }
-
-  else {
-    return true;
-  }
+  return token && !jwtHelper.isTokenExpired(token, null);
 }
 
 export const AUTH_PROVIDERS: any = [
