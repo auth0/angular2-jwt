@@ -12,6 +12,7 @@ export interface IAuthConfig {
   tokenGetter: any;
   noJwtError: boolean;
   globalHeaders: Array<Object>;
+  noTokenScheme?:boolean;
 }
 
 /**
@@ -20,7 +21,6 @@ export interface IAuthConfig {
 
 export class AuthConfig {
   
-  config: any;
   headerName: string;
   headerPrefix: string;
   tokenName: string;
@@ -29,30 +29,30 @@ export class AuthConfig {
   noTokenScheme: boolean;
   globalHeaders: Array<Object>;
 
-  constructor(config?: any) {
-    this.config = config || {};
-    this.headerName = this.config.headerName || 'Authorization';
-    if (this.config.headerPrefix) {
-      this.headerPrefix = this.config.headerPrefix + ' ';
-    } else if (this.config.noTokenScheme) {
+  constructor(config:any={}) {
+    this.headerName = config.headerName || 'Authorization';
+    if (config.headerPrefix) {
+      this.headerPrefix = config.headerPrefix + ' ';
+    } else if (config.noTokenScheme) {
       this.headerPrefix = '';
     } else {
       this.headerPrefix = 'Bearer ';
     }
-    this.tokenName = this.config.tokenName || 'id_token';
-    this.noJwtError = this.config.noJwtError || false;
-    this.tokenGetter = this.config.tokenGetter || (() => localStorage.getItem(this.tokenName));
-    this.globalHeaders = this.config.globalHeaders || null;
+    this.tokenName = config.tokenName || 'id_token';
+    this.noJwtError = config.noJwtError || false;
+    this.tokenGetter = config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+    this.globalHeaders = config.globalHeaders || [];
+    this.noTokenScheme=config.noTokenScheme||false;
   }
 
-  getConfig() {
+  getConfig():IAuthConfig {
     return {
       headerName: this.headerName,
       headerPrefix: this.headerPrefix,
       tokenName: this.tokenName,
       tokenGetter: this.tokenGetter,
       noJwtError: this.noJwtError,
-      emptyHeaderPrefix: this.noTokenScheme,
+      noTokenScheme:this.noTokenScheme,
       globalHeaders: this.globalHeaders
     }
   }
@@ -184,7 +184,7 @@ export class JwtHelper {
       }
     }
 
-    return decodeURIComponent(escape(window.atob(output))); //polifyll https://github.com/davidchambers/Base64.js
+    return decodeURIComponent(escape(window.atob(output))); //polyfill https://github.com/davidchambers/Base64.js
   }
 
   public decodeToken(token:string) {
