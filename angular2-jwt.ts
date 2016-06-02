@@ -1,6 +1,7 @@
 import {provide, Injectable} from '@angular/core';
 import {Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
+import atob = require('atob');
 
 // Avoid TS error "cannot find name escape"
 declare var escape: any;
@@ -184,7 +185,7 @@ export class JwtHelper {
       }
     }
 
-    return decodeURIComponent(escape(window.atob(output))); //polyfill https://github.com/davidchambers/Base64.js
+    return decodeURIComponent(escape(typeof window === 'undefined' ? atob(output) : window.atob(output))); //polyfill https://github.com/davidchambers/Base64.js
   }
 
   public decodeToken(token:string) {
