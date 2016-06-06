@@ -69,7 +69,7 @@ export class AuthHttp {
   private _config: IAuthConfig;
   public tokenStream: Observable<string>;
 
-  constructor(options: AuthConfig, private http: Http) {
+  constructor(options: AuthConfig, private http: Http, private _defOpts?: RequestOptions) {
     this._config = options.getConfig();
 
     this.tokenStream = new Observable<string>((obs: any) => {
@@ -78,67 +78,55 @@ export class AuthHttp {
   }
   
   setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
+    if ( ! request.headers ) {
+      request.headers = new Headers();
+    }
     headers.forEach((header: Object) => {
       let key: string = Object.keys(header)[0];
       let headerValue: string = (<any>header)[key];
       request.headers.set(key, headerValue);
     });
   }
-  
-  request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
 
-    let request: any;
-    let globalHeaders = this._config.globalHeaders;
-    
+  request(url: string | Request, options?: RequestOptionsArgs) : Observable<Response> {
+    if (typeof url === 'string') {
+      return this.get(url, options); // Recursion: transform url from String to Request
+    }
+    // else if ( ! url instanceof Request ) {
+    //   throw new Error('First argument must be a url string or Request instance.');
+    // }
+
+    // from this point url is always an instance of Request;
+    let req: Request = <Request>url;
     if (!tokenNotExpired(null, this._config.tokenGetter())) {
       if (!this._config.noJwtError) {
         return new Observable<Response>((obs: any) => {
           obs.error(new Error('No JWT present'));
         });
-      } else {
-        request = this.http.request(url, options);
       }
-      
-    } else if (typeof url === 'string') {
-      let reqOpts: RequestOptionsArgs = options || {};
-      
-      if (!reqOpts.headers) {
-        reqOpts.headers = new Headers();
-      }
-      
-      if (globalHeaders) {
-        this.setGlobalHeaders(globalHeaders, reqOpts);
-      }
-      
-      reqOpts.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-      request = this.http.request(url, reqOpts);
-      
     } else {
-      let req: Request = <Request>url;
-      
-      if (!req.headers) {
-        req.headers = new Headers();
-      }
-      
-      if (globalHeaders) {
-        this.setGlobalHeaders(globalHeaders, req);
-      }
-      
       req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
-      request = this.http.request(req);
     }
-    
-    return request;
+    return this.http.request(req);
+  }
+
+  private mergeOptions(defaultOpts: RequestOptions, providedOpts: RequestOptionsArgs) {
+    let newOptions = defaultOpts || new RequestOptions();
+    if (this._config.globalHeaders) {
+      this.setGlobalHeaders(this._config.globalHeaders, providedOpts);
+    }
+
+    newOptions = newOptions.merge(new RequestOptions(providedOpts));
+
+    return newOptions;
   }
 
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
-    let options: RequestOptions = new RequestOptions(requestArgs);
-    
+    let options = new RequestOptions(requestArgs);
     if (additionalOptions) {
-      options = options.merge(additionalOptions)
+      options.merge(additionalOptions);
     }
-    
-    return this.request(new Request(options))
+    return this.request(new Request(this.mergeOptions(this._defOpts, options)));
   }
 
   get(url: string, options?: RequestOptionsArgs) : Observable<Response> {
