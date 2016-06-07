@@ -8,5 +8,6 @@ Thumbs.db
 *.js
 *.map
 *.d.ts
+!custom.d.ts
 .idea/
 *.iml
