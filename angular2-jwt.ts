@@ -251,3 +251,14 @@ export const AUTH_PROVIDERS: any = [
     deps: [Http]
   })
 ];
+
+export function provideAuth(config = {}) {
+  return [
+    provide(AuthHttp, {
+      useFactory: (http: Http) => {
+        return new AuthHttp(new AuthConfig(config), http);
+      },
+      deps: [Http]
+    })
+  ];
+}
