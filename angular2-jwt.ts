@@ -7,12 +7,12 @@ import atob = require('atob');
 declare var escape: any;
 
 export interface IAuthConfig {
-  headerName: string;
-  headerPrefix: string;
-  tokenName: string;
-  tokenGetter: any;
-  noJwtError: boolean;
-  globalHeaders: Array<Object>;
+  headerName?: string;
+  headerPrefix?: string;
+  tokenName?: string;
+  tokenGetter?: any;
+  noJwtError?: boolean;
+  globalHeaders?: Array<Object>;
   noTokenScheme?:boolean;
 }
 
