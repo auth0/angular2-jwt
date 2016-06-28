@@ -243,7 +243,7 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?:string):boolean {
   return token && !jwtHelper.isTokenExpired(token, null);
 }
 
-export const AUTH_PROVIDERS: any = [
+export const AUTH_PROVIDERS: Array<any> = [
   provide(AuthHttp, {
     useFactory: (http: Http) => {
       return new AuthHttp(new AuthConfig(), http);
@@ -252,7 +252,7 @@ export const AUTH_PROVIDERS: any = [
   })
 ];
 
-export function provideAuth(config = {}) {
+export function provideAuth(config: IAuthConfig = {}): Array<any> {
   return [
     provide(AuthHttp, {
       useFactory: (http: Http) => {
