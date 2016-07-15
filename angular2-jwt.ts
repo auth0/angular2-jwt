@@ -7,12 +7,12 @@ import atob = require('atob');
 declare var escape: any;
 
 export interface IAuthConfig {
-  headerName: string;
-  headerPrefix: string;
-  tokenName: string;
-  tokenGetter: any;
-  noJwtError: boolean;
-  globalHeaders: Array<Object>;
+  headerName?: string;
+  headerPrefix?: string;
+  tokenName?: string;
+  tokenGetter?: any;
+  noJwtError?: boolean;
+  globalHeaders?: Array<Object>;
   noTokenScheme?:boolean;
 }
 
@@ -231,7 +231,7 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?:string):boolean {
   return token && !jwtHelper.isTokenExpired(token, null);
 }
 
-export const AUTH_PROVIDERS: any = [
+export const AUTH_PROVIDERS: Array<any> = [
   provide(AuthHttp, {
     useFactory: (http: Http) => {
       return new AuthHttp(new AuthConfig(), http);
@@ -240,7 +240,7 @@ export const AUTH_PROVIDERS: any = [
   })
 ];
 
-export function provideAuth(config = {}) {
+export function provideAuth(config: IAuthConfig = {}): Array<any> {
   return [
     provide(AuthHttp, {
       useFactory: (http: Http) => {
