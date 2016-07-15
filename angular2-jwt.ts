@@ -94,7 +94,7 @@ export class AuthHttp {
     if (!tokenNotExpired(null, this._config.tokenGetter())) {
       if (!this._config.noJwtError) {
         return new Observable<Response>((obs: any) => {
-          obs.error(new Error('No JWT present'));
+          obs.error(new Error('No JWT present or has expired'));
         });
       } else {
         request = this.http.request(url, options);
