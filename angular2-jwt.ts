@@ -1,7 +1,6 @@
 import {provide, Injectable} from '@angular/core';
 import {Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
-import atob = require('atob');
 
 // Avoid TS error "cannot find name escape"
 declare var escape: any;
@@ -233,20 +232,20 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?:string):boolean {
 
 export const AUTH_PROVIDERS: any = [
   provide(AuthHttp, {
-    useFactory: (http: Http) => {
-      return new AuthHttp(new AuthConfig(), http);
+    useFactory: (http: Http, options: RequestOptions) => {
+      return new AuthHttp(new AuthConfig(), http, options);
     },
-    deps: [Http]
+    deps: [Http, RequestOptions]
   })
 ];
 
-export function provideAuth(config = {}) {
+export function provideAuth(config = {}): any[] {
   return [
     provide(AuthHttp, {
-      useFactory: (http: Http) => {
-        return new AuthHttp(new AuthConfig(config), http);
+      useFactory: (http: Http, options: RequestOptions) => {
+        return new AuthHttp(new AuthConfig(config), http, options);
       },
-      deps: [Http]
+      deps: [Http, RequestOptions]
     })
   ];
 }
