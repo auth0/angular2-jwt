@@ -124,7 +124,7 @@ export class AuthHttp {
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions: RequestOptionsArgs) : Observable<Response> {
     let options = new RequestOptions(requestArgs);
     if (additionalOptions) {
-      options.merge(additionalOptions);
+      options = options.merge(additionalOptions);
     }
     return this.request(new Request(this.mergeOptions(this._defOpts, options)));
   }
