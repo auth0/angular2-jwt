@@ -133,11 +133,11 @@ export class AuthHttp {
     return this.requestHelper({ url:  url, method: RequestMethod.Get }, options);
   }
 
-  post(url: string, body: string, options?: RequestOptionsArgs) : Observable<Response> {
+  post(url: string, body: any, options?: RequestOptionsArgs) : Observable<Response> {
     return this.requestHelper({ url:  url, body: body, method: RequestMethod.Post }, options);
   }
 
-  put(url: string, body: string, options ?: RequestOptionsArgs) : Observable<Response> {
+  put(url: string, body: any, options ?: RequestOptionsArgs) : Observable<Response> {
     return this.requestHelper({ url:  url, body: body, method: RequestMethod.Put }, options);
   }
 
@@ -145,7 +145,7 @@ export class AuthHttp {
     return this.requestHelper({ url:  url, method: RequestMethod.Delete }, options);
   }
 
-  patch(url: string, body:string, options?: RequestOptionsArgs) : Observable<Response> {
+  patch(url: string, body:any, options?: RequestOptionsArgs) : Observable<Response> {
     return this.requestHelper({ url:  url, body: body, method: RequestMethod.Patch }, options);
   }
 
