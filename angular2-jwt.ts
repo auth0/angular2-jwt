@@ -108,8 +108,8 @@ export class AuthHttp {
       req.headers.set(this._config.headerName, this._config.headerPrefix + this._config.tokenGetter());
     }
     // work around Angular2 RC5 bug https://github.com/angular/angular/issues/10612
-    if (req._body === undefined || req._body === null)
-      req._body = "";
+    if ((<any>req)._body === undefined || (<any>req)._body === null)
+      (<any>req)._body = "";
     return this.http.request(req, options);
   }
 
