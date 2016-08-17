@@ -77,7 +77,7 @@ export class AuthHttp {
     });
   }
 
-  private mergeOptions(defaultOpts: RequestOptions | undefined, providedOpts: RequestOptionsArgs) {
+  private mergeOptions(providedOpts: RequestOptionsArgs, defaultOpts?: RequestOptions) {
     let newOptions = defaultOpts || new RequestOptions();
     if (this.config.globalHeaders) {
       this.setGlobalHeaders(this.config.globalHeaders, providedOpts);
@@ -93,7 +93,7 @@ export class AuthHttp {
     if (additionalOptions) {
       options = options.merge(additionalOptions);
     }
-    return this.request(new Request(this.mergeOptions(this.defOpts, options)));
+    return this.request(new Request(this.mergeOptions(options, this.defOpts)));
   }
 
   public setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
@@ -102,8 +102,8 @@ export class AuthHttp {
     }
     headers.forEach((header: Object) => {
       let key: string = Object.keys(header)[0];
-      let headerValue: string = (header)[key];
-      request.headers!.set(key, headerValue);
+      let headerValue: string = (header as any)[key];
+      (request.headers as Headers).set(key, headerValue);
     });
   }
 
@@ -116,7 +116,7 @@ export class AuthHttp {
     // }
 
     // from this point url is always an instance of Request;
-    let req: Request = url;
+    let req: Request = url as Request;
     if (!tokenNotExpired(undefined, this.config.tokenGetter())) {
       if (!this.config.noJwtError) {
         return new Observable<Response>((obs: any) => {
@@ -194,12 +194,12 @@ export class JwtHelper {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token: string): Date | null {
+  public getTokenExpirationDate(token: string): Date {
     let decoded: any;
     decoded = this.decodeToken(token);
 
     if (typeof decoded.exp === 'undefined') {
-      return null;
+      return new Date(0);
     }
 
     let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
@@ -211,9 +211,6 @@ export class JwtHelper {
   public isTokenExpired(token: string, offsetSeconds?: number): boolean {
     let date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
-    if (date === null) {
-      return false;
-    }
 
     // Token expired?
     return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
