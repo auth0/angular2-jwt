@@ -113,10 +113,10 @@ You may also send custom headers on a per-request basis with your `authHttp` req
 
 ```ts
 getThing() {
-  var myHeader = new Headers();
+  let myHeader = new Headers();
   myHeader.append('Content-Type', 'application/json');
 
-  this.authHttp.get('http://example.com/api/thing', { headers: myHeader} )
+  this.authHttp.get('http://example.com/api/thing', { headers: myHeader })
     .subscribe(
       data => this.thing = data,
       err => console.log(error),
@@ -124,7 +124,7 @@ getThing() {
     );
 
   // Pass it after the body in a POST request
-  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader} )
+  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader })
     .subscribe(
       data => this.thing = data,
       err => console.log(error),
