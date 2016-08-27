@@ -91,19 +91,14 @@ You may set as many global headers as you like by passing an array of header-sha
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, {
-    useFactory: (http) => {
-      return new AuthHttp(new AuthConfig({
-        headerName: YOUR_HEADER_NAME,
-        headerPrefix: YOUR_HEADER_PREFIX,
-        tokenName: YOUR_TOKEN_NAME,
-        tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-        globalHeaders: [{'Content-Type':'application/json'}],
-        noJwtError: true,
-        noTokenScheme: true
-      }), http);
-    },
-    deps: [Http]
+  provideAuth({
+    headerName: YOUR_HEADER_NAME,
+    headerPrefix: YOUR_HEADER_PREFIX,
+    tokenName: YOUR_TOKEN_NAME,
+    tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+    globalHeaders: [{'Content-Type':'application/json'}],
+    noJwtError: true,
+    noTokenScheme: true
   })
 ])
 ```
