@@ -1,5 +1,5 @@
-import { provide, Injectable } from '@angular/core';
-import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
+import { Injectable, NgModule, ModuleWithProviders } from '@angular/core';
+import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response, HttpModule } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 // Avoid TS error "cannot find name escape"
@@ -231,22 +231,22 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
   return token != null && !jwtHelper.isTokenExpired(token);
 }
 
-export const AUTH_PROVIDERS: any = [
-  provide(AuthHttp, {
-    deps: [Http, RequestOptions],
-    useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(), http, options);
+@NgModule({
+  imports: [ HttpModule ]
+})
+export default class Angular2JwtModule {
+  static provideAuth(config = {}): ModuleWithProviders {
+    return {
+      ngModule: Angular2JwtModule,
+      providers: [
+        {
+          provide: AuthHttp,
+          deps: [Http, RequestOptions],
+          useFactory: (http: Http, options: RequestOptions) => {
+            return new AuthHttp(new AuthConfig(config), http, options);
+          }
+        }
+      ]
     }
-  })
-];
-
-export function provideAuth(config = {}): any[] {
-  return [
-    provide(AuthHttp, {
-      deps: [Http, RequestOptions],
-      useFactory: (http: Http, options: RequestOptions) => {
-        return new AuthHttp(new AuthConfig(config), http, options);
-      }
-    })
-  ];
+  }
 }

@@ -11,7 +11,7 @@
     },
     "files": [
         "angular2-jwt.ts",
-        "typings/browser.d.ts",
+        "typings/index.d.ts",
         "custom.d.ts"
     ]
 }
