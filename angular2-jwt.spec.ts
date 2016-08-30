@@ -1,7 +1,8 @@
 import "core-js";
-import {AuthConfig} from "./angular2-jwt";
+import {AuthConfig, AuthHttp} from "./angular2-jwt";
 import {tokenNotExpired} from "./angular2-jwt";
 import {JwtHelper} from "./angular2-jwt";
+import {Observable} from "rxjs";
 
 
 const expiredToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjB9.m2OKoK5-Fnbbg4inMrsAQKsehq2wpQYim8695uLdogk";
@@ -140,4 +141,33 @@ describe('tokenNotExpired', ()=> {
         expect(actual).toBe(false);
     });
 
+});
+
+describe("AuthHttp", () => {
+    describe("request", () => {
+        it("handles tokenGetters returning string", () => {
+            let authHttp: AuthHttp = new AuthHttp(new AuthConfig({
+                tokenGetter: () => validToken
+            }), null);
+
+            spyOn(authHttp, "requestWithToken").and.stub();
+
+            authHttp.request(null);
+
+            expect(authHttp["requestWithToken"]).toHaveBeenCalledWith(null, validToken);
+        });
+
+        it("handles tokenGetters returning Promise\<string\>", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(new AuthConfig({
+                tokenGetter: () => Promise.resolve(validToken)
+            }), null);
+
+            spyOn(authHttp, "requestWithToken").and.returnValue(Observable.of(""));
+
+            authHttp.request(null).subscribe(() => {
+                expect(authHttp["requestWithToken"]).toHaveBeenCalledWith(null, validToken);
+                done();
+            });
+        });
+    });
 });
