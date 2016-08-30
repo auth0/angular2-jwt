@@ -1,6 +1,8 @@
 import { provide, Injectable } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap';
 
 // Avoid TS error "cannot find name escape"
 declare var escape: any;
@@ -117,15 +119,26 @@ export class AuthHttp {
 
     // from this point url is always an instance of Request;
     let req: Request = url as Request;
-    if (!tokenNotExpired(undefined, this.config.tokenGetter())) {
+    let token: string & Promise<string> = this.config.tokenGetter();
+    if(token.then) {
+      return Observable.fromPromise(token)
+          .flatMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+    } else {
+      return this.requestWithToken(req, token);
+    }
+  }
+
+  private requestWithToken(req: Request, token: string): Observable<Response> {
+    if (!tokenNotExpired(undefined, token)) {
       if (!this.config.noJwtError) {
         return new Observable<Response>((obs: any) => {
           obs.error(new Error('No JWT present or has expired'));
         });
       }
     } else {
-      req.headers.set(this.config.headerName, this.config.headerPrefix + this.config.tokenGetter());
+      req.headers.set(this.config.headerName, this.config.headerPrefix + token);
     }
+
     return this.http.request(req);
   }
 
