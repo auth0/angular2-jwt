@@ -75,6 +75,7 @@ describe('JwtHelper', ()=> {
             const actual:boolean=jwtHelper.isTokenExpired(expiredToken);
             expect(actual).toBe(true);
         });
+        // This test fails since no exp means exp is set to epoch.
         it('should return false when the token doesn\'t have an expiry date', ()=> {
             const actual:boolean=jwtHelper.isTokenExpired(noExpiryToken);
             expect(actual).toBe(false);
