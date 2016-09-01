@@ -1,4 +1,4 @@
-import { provide, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
@@ -211,8 +211,8 @@ export class JwtHelper {
     let decoded: any;
     decoded = this.decodeToken(token);
 
-    if (typeof decoded.exp === 'undefined') {
-      return new Date(0);
+    if (!decoded.hasOwnProperty('exp')) {
+      return new Date();
     }
 
     let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
@@ -223,7 +223,11 @@ export class JwtHelper {
 
   public isTokenExpired(token: string, offsetSeconds?: number): boolean {
     let date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0;
+    offsetSeconds = offsetSeconds || 0; 
+
+    if (date.getSeconds() === new Date().getSeconds()) {
+      return false;
+    }
 
     // Token expired?
     return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
@@ -244,22 +248,20 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
   return token != null && !jwtHelper.isTokenExpired(token);
 }
 
-export const AUTH_PROVIDERS: any = [
-  provide(AuthHttp, {
+export const AUTH_PROVIDERS: any = {
+  provide: AuthHttp,
+  deps: [Http, RequestOptions],
+  useFactory: (http: Http, options: RequestOptions) => {
+    return new AuthHttp(new AuthConfig, http, options);
+  }
+};
+
+export function provideAuth(config = {}): any {
+  return {
+    provide: AuthHttp,
     deps: [Http, RequestOptions],
     useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(), http, options);
+      return new AuthHttp(new AuthConfig(config), http, options);
     }
-  })
-];
-
-export function provideAuth(config = {}): any[] {
-  return [
-    provide(AuthHttp, {
-      deps: [Http, RequestOptions],
-      useFactory: (http: Http, options: RequestOptions) => {
-        return new AuthHttp(new AuthConfig(config), http, options);
-      }
-    })
-  ];
+  };
 }
