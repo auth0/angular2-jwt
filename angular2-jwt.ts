@@ -120,7 +120,7 @@ export class AuthHttp {
     // from this point url is always an instance of Request;
     let req: Request = url as Request;
     let token: string & Promise<string> = this.config.tokenGetter();
-    if(token.then) {
+    if(token&&token.then) {
       return Observable.fromPromise(token)
           .flatMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
     } else {
