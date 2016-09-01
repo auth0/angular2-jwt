@@ -35,7 +35,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
 
 ```ts
-import {AuthHttp, AuthConfig, AUTH_PROVIDERS} from 'angular2-jwt';
+import { AuthHttp, AuthConfig, AUTH_PROVIDERS } from 'angular2-jwt';
 
 ...
 
@@ -87,23 +87,20 @@ The default scheme for the `Authorization` header is `Bearer`, but you may eithe
 You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
 ```ts
+import { provideAuth } from 'angular2-jwt';
+
 ...
 
 bootstrap(App, [
   HTTP_PROVIDERS,
-  provide(AuthHttp, {
-    useFactory: (http) => {
-      return new AuthHttp(new AuthConfig({
-        headerName: YOUR_HEADER_NAME,
-        headerPrefix: YOUR_HEADER_PREFIX,
-        tokenName: YOUR_TOKEN_NAME,
-        tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-        globalHeaders: [{'Content-Type':'application/json'}],
-        noJwtError: true,
-        noTokenScheme: true
-      }), http);
-    },
-    deps: [Http]
+  provideAuth({
+    headerName: YOUR_HEADER_NAME,
+    headerPrefix: YOUR_HEADER_PREFIX,
+    tokenName: YOUR_TOKEN_NAME,
+    tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+    globalHeaders: [{'Content-Type':'application/json'}],
+    noJwtError: true,
+    noTokenScheme: true
   })
 ])
 ```
@@ -116,10 +113,10 @@ You may also send custom headers on a per-request basis with your `authHttp` req
 
 ```ts
 getThing() {
-  var myHeader = new Headers();
+  let myHeader = new Headers();
   myHeader.append('Content-Type', 'application/json');
 
-  this.authHttp.get('http://example.com/api/thing', { headers: myHeader} )
+  this.authHttp.get('http://example.com/api/thing', { headers: myHeader })
     .subscribe(
       data => this.thing = data,
       err => console.log(error),
@@ -127,7 +124,7 @@ getThing() {
     );
 
   // Pass it after the body in a POST request
-  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader} )
+  this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader })
     .subscribe(
       data => this.thing = data,
       err => console.log(error),
@@ -185,34 +182,73 @@ useJwtHelper() {
 ...
 ```
 
-## Checking Login to Hide/Show Elements and Handle Routing
+## Checking Authentication to Hide/Show Elements and Handle Routing
 
 The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
-
-The router's `@CanActivate` lifecycle hook can be used with `tokenNotExpired` to determine if a route should be accessible. This lifecycle hook is run before the component class instantiates. If `@CanActivate` receives `true`, the router will allow navigation, and if it receives `false`, it won't.
-
-> **NOTE**: The `@CanActivate` lifecycle hook has been deprecated in the latest Angular 2 router. To use it, you need to `import` from `@angular/router-deprecated`.
 
 > **Note:** `tokenNotExpired` will by default assume the token name is `id_token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
 
 ```ts
+// auth.service.ts
+
+import { tokenNotExpired } from 'angular2-jwt';
 
 ...
 
-@Component({
-  selector: 'secret-route'
-})
+loggedIn() {
+  return tokenNotExpired();
+}
 
-@View({
-  template: `<h1>If you see this, you have a JWT</h1>`
-})
-
-@CanActivate(() => tokenNotExpired())
-
-class SecretRoute {}
+...
 ```
 
-You can pass a different `tokenName` for `@CanActivate` to use as the first argument to the function. If you wish to define your own function for `tokenNotExpired` to use, pass `null` first and then the function.
+The `loggedIn` method can now be used in views to conditionally hide and show elements.
+
+```html
+ <button id="login" *ngIf="!auth.loggedIn()">Log In</button>
+ <button id="logout" *ngIf="auth.loggedIn()">Log Out</button>
+```
+
+To guard routes that should be limited to authenticated users, set up an `AuthGuard`.
+
+```ts
+// auth-guard.service.ts
+
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { CanActivate } from '@angular/router';
+import { Auth } from './auth.service';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+
+  constructor(private auth: Auth, private router: Router) {}
+
+  canActivate() {
+    if(this.auth.loggedIn()) {
+      return true;
+    } else {
+      this.router.navigate(['unauthorized']);
+      return false;
+    }
+  }
+}
+```
+
+With the guard in place, you can use it in your route configuration.
+
+```ts
+...
+
+import { AuthGuard } from './auth.guard';
+
+export const routes: RouterConfig = [
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+  { path: 'unauthorized', component: UnauthorizedComponent }
+];
+
+...
+```
 
 ## Contributing
 
