@@ -1,4 +1,4 @@
-import { provide, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
@@ -120,7 +120,7 @@ export class AuthHttp {
     // from this point url is always an instance of Request;
     let req: Request = url as Request;
     let token: string & Promise<string> = this.config.tokenGetter();
-    if(token.then) {
+    if (token.then) {
       return Observable.fromPromise(token)
           .flatMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
     } else {
@@ -244,22 +244,20 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
   return token != null && !jwtHelper.isTokenExpired(token);
 }
 
-export const AUTH_PROVIDERS: any = [
-  provide(AuthHttp, {
-    deps: [Http, RequestOptions],
-    useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(), http, options);
-    }
-  })
-];
+export const AUTH_PROVIDERS: any = [{
+  provide: AuthHttp,
+  deps: [Http, RequestOptions],
+  useFactory: (http: Http, options: RequestOptions) => {
+    return new AuthHttp(new AuthConfig(), http, options);
+  }
+}];
 
 export function provideAuth(config = {}): any[] {
-  return [
-    provide(AuthHttp, {
-      deps: [Http, RequestOptions],
-      useFactory: (http: Http, options: RequestOptions) => {
-        return new AuthHttp(new AuthConfig(config), http, options);
-      }
-    })
-  ];
+  return [{
+    provide: AuthHttp,
+    deps: [Http, RequestOptions],
+    useFactory: (http: Http, options: RequestOptions) => {
+      return new AuthHttp(new AuthConfig(config), http, options);
+    }
+  }];
 }
