@@ -1,4 +1,4 @@
-import { provide, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
@@ -245,21 +245,21 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
 }
 
 export const AUTH_PROVIDERS: any = [
-  provide(AuthHttp, {
+  {
+    provide: AuthHttp,
     deps: [Http, RequestOptions],
     useFactory: (http: Http, options: RequestOptions) => {
       return new AuthHttp(new AuthConfig(), http, options);
     }
-  })
+  }
 ];
 
 export function provideAuth(config = {}): any[] {
-  return [
-    provide(AuthHttp, {
-      deps: [Http, RequestOptions],
-      useFactory: (http: Http, options: RequestOptions) => {
-        return new AuthHttp(new AuthConfig(config), http, options);
-      }
-    })
-  ];
+  return [{
+    provide: AuthHttp,
+    deps: [Http, RequestOptions],
+    useFactory: (http: Http, options: RequestOptions) => {
+      return new AuthHttp(new AuthConfig(config), http, options);
+    }
+  }];
 }
