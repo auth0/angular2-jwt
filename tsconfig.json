@@ -9,10 +9,20 @@
         "declaration": true,
         "moduleResolution":"node"
     },
+    "lib": [
+        "dom",
+        "es6"
+    ],
     "files": [
         "angular2-jwt.ts",
         "angular2-jwt.spec.ts",
-        "typings/browser.d.ts",
         "custom.d.ts"
+    ],
+    "types": [
+        "jasmine",
+        "es6-shim"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }
