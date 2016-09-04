@@ -56,6 +56,9 @@ export class AuthConfig {
 
 }
 
+export class AuthHttpError extends Error {
+}
+
 /**
  * Allows for explicit authenticated HTTP requests.
  */
@@ -93,6 +96,20 @@ export class AuthHttp {
     return this.request(new Request(this.mergeOptions(options, this.defOpts)));
   }
 
+  private requestWithToken(req: Request, token: string): Observable<Response> {
+    if (!tokenNotExpired(undefined, token)) {
+      if (!this.config.noJwtError) {
+        return new Observable<Response>((obs: any) => {
+          obs.error(new AuthHttpError('No JWT present or has expired'));
+        });
+      }
+    } else {
+      req.headers.set(this.config.headerName, this.config.headerPrefix + token);
+    }
+
+    return this.http.request(req);
+  }
+
   public setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
     if (!request.headers) {
       request.headers = new Headers();
@@ -120,20 +137,6 @@ export class AuthHttp {
     } else {
       return this.requestWithToken(req, token);
     }
-  }
-
-  private requestWithToken(req: Request, token: string): Observable<Response> {
-    if (!tokenNotExpired(undefined, token)) {
-      if (!this.config.noJwtError) {
-        return new Observable<Response>((obs: any) => {
-          obs.error(new Error('No JWT present or has expired'));
-        });
-      }
-    } else {
-      req.headers.set(this.config.headerName, this.config.headerPrefix + token);
-    }
-
-    return this.http.request(req);
   }
 
   public get(url: string, options?: RequestOptionsArgs): Observable<Response> {
