@@ -205,7 +205,7 @@ export class JwtHelper {
     let decoded: any;
     decoded = this.decodeToken(token);
 
-    if (typeof decoded.exp === 'undefined') {
+    if (!decoded.hasOwnProperty('exp')) {
       return null;
     }
 
@@ -217,7 +217,11 @@ export class JwtHelper {
 
   public isTokenExpired(token: string, offsetSeconds?: number): boolean {
     let date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0;
+    offsetSeconds = offsetSeconds || 0; 
+
+    if (date.getSeconds() === new Date().getSeconds()) {
+      return false;
+    }
 
     if (date == null) {
       return false;
@@ -247,7 +251,7 @@ export const AUTH_PROVIDERS: Provider[] = [
     provide: AuthHttp,
     deps: [Http, RequestOptions],
     useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(), http, options);
+        return new AuthHttp(new AuthConfig(), http, options);
     }
   }
 ];
