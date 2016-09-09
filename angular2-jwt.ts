@@ -1,6 +1,8 @@
 import { Injectable, Provider } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap'; 
 
 export interface IAuthConfig {
   globalHeaders: Array<Object>;
@@ -133,7 +135,7 @@ export class AuthHttp {
     let req: Request = url as Request;
     let token: string | Promise<string> = this.config.tokenGetter();
     if (token instanceof Promise) {
-      return Observable.fromPromise(token).flatMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+      return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
     } else {
       return this.requestWithToken(req, token);
     }
