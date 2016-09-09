@@ -1,11 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Provider } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap';
-
-// Avoid TS error "cannot find name escape"
-declare var escape: any;
+import 'rxjs/add/operator/mergeMap'; 
 
 export interface IAuthConfig {
   globalHeaders: Array<Object>;
@@ -13,7 +10,7 @@ export interface IAuthConfig {
   headerPrefix: string;
   noJwtError: boolean;
   noTokenScheme?: boolean;
-  tokenGetter: any;
+  tokenGetter: () => string | Promise<string>;
   tokenName: string;
 }
 
@@ -28,7 +25,7 @@ export class AuthConfig {
   public headerPrefix: string;
   public noJwtError: boolean;
   public noTokenScheme: boolean;
-  public tokenGetter: any;
+  public tokenGetter: () => string | Promise<string>;
   public tokenName: string;
 
   constructor(config: any = {}) {
@@ -43,7 +40,7 @@ export class AuthConfig {
     }
     this.noJwtError = config.noJwtError || false;
     this.noTokenScheme = config.noTokenScheme || false;
-    this.tokenGetter = config.tokenGetter || (() => localStorage.getItem(this.tokenName));
+    this.tokenGetter = config.tokenGetter || (() => localStorage.getItem(this.tokenName) as string);
     this.tokenName = config.tokenName || 'id_token';
   }
 
@@ -59,6 +56,9 @@ export class AuthConfig {
     };
   }
 
+}
+
+export class AuthHttpError extends Error {
 }
 
 /**
@@ -98,6 +98,20 @@ export class AuthHttp {
     return this.request(new Request(this.mergeOptions(options, this.defOpts)));
   }
 
+  private requestWithToken(req: Request, token: string): Observable<Response> {
+    if (!tokenNotExpired(undefined, token)) {
+      if (!this.config.noJwtError) {
+        return new Observable<Response>((obs: any) => {
+          obs.error(new AuthHttpError('No JWT present or has expired'));
+        });
+      }
+    } else {
+      req.headers.set(this.config.headerName, this.config.headerPrefix + token);
+    }
+
+    return this.http.request(req);
+  }
+
   public setGlobalHeaders(headers: Array<Object>, request: Request | RequestOptionsArgs) {
     if (!request.headers) {
       request.headers = new Headers();
@@ -119,27 +133,12 @@ export class AuthHttp {
 
     // from this point url is always an instance of Request;
     let req: Request = url as Request;
-    let token: string & Promise<string> = this.config.tokenGetter();
-    if(token&&token.then) {
-      return Observable.fromPromise(token)
-          .flatMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+    let token: string | Promise<string> = this.config.tokenGetter();
+    if (token instanceof Promise) {
+      return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
     } else {
       return this.requestWithToken(req, token);
     }
-  }
-
-  private requestWithToken(req: Request, token: string): Observable<Response> {
-    if (!tokenNotExpired(undefined, token)) {
-      if (!this.config.noJwtError) {
-        return new Observable<Response>((obs: any) => {
-          obs.error(new Error('No JWT present or has expired'));
-        });
-      }
-    } else {
-      req.headers.set(this.config.headerName, this.config.headerPrefix + token);
-    }
-
-    return this.http.request(req);
   }
 
   public get(url: string, options?: RequestOptionsArgs): Observable<Response> {
@@ -189,7 +188,7 @@ export class JwtHelper {
       }
     }
 
-    return decodeURIComponent(escape(typeof window === 'undefined' ? atob(output) : window.atob(output))); //polyfill https://github.com/davidchambers/Base64.js
+    return decodeURIComponent(encodeURI(typeof window === 'undefined' ? atob(output) : window.atob(output)));
   }
 
   public decodeToken(token: string): any {
@@ -212,7 +211,7 @@ export class JwtHelper {
     decoded = this.decodeToken(token);
 
     if (!decoded.hasOwnProperty('exp')) {
-      return new Date();
+      return null;
     }
 
     let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
@@ -223,9 +222,9 @@ export class JwtHelper {
 
   public isTokenExpired(token: string, offsetSeconds?: number): boolean {
     let date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0; 
+    offsetSeconds = offsetSeconds || 0;
 
-    if (date.getSeconds() === new Date().getSeconds()) {
+    if (date == null) {
       return false;
     }
 
@@ -248,20 +247,24 @@ export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
   return token != null && !jwtHelper.isTokenExpired(token);
 }
 
-export const AUTH_PROVIDERS: any = {
-  provide: AuthHttp,
-  deps: [Http, RequestOptions],
-  useFactory: (http: Http, options: RequestOptions) => {
-    return new AuthHttp(new AuthConfig, http, options);
-  }
-};
-
-export function provideAuth(config = {}): any {
-  return {
+export const AUTH_PROVIDERS: Provider[] = [
+  {
     provide: AuthHttp,
     deps: [Http, RequestOptions],
     useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(config), http, options);
+        return new AuthHttp(new AuthConfig(), http, options);
     }
-  };
+  }
+];
+
+export function provideAuth(config = {}): Provider[] {
+  return [
+    {
+      provide: AuthHttp,
+      deps: [Http, RequestOptions],
+      useFactory: (http: Http, options: RequestOptions) => {
+        return new AuthHttp(new AuthConfig(config), http, options);
+      }
+    }
+  ];
 }
