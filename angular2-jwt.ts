@@ -59,6 +59,9 @@ export class AuthConfig {
 }
 
 export class AuthHttpError extends Error {
+    constructor(message?: string) {
+        super(message);
+    }
 }
 
 /**
