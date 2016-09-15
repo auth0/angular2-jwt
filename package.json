@@ -26,10 +26,10 @@
   "typings": "./angular2-jwt.d.ts",
   "homepage": "https://github.com/auth0/angular2-jwt#readme",
   "devDependencies": {
-    "@angular/common": "^2.0.0-rc.6",
-    "@angular/core": "^2.0.0-rc.6",
-    "@angular/http": "^2.0.0-rc.6",
-    "@angular/platform-browser": "^2.0.0-rc.6",
+    "@angular/common": "^2.0.0",
+    "@angular/core": "^2.0.0",
+    "@angular/http": "^2.0.0",
+    "@angular/platform-browser": "^2.0.0",
     "awesome-typescript-loader": "^0.17.0",
     "core-js": "^2.3.0",
     "es6-shim": "^0.35.0",
@@ -42,16 +42,16 @@
     "karma-webpack": "^1.7.0",
     "phantomjs-prebuilt": "^2.1.7",
     "reflect-metadata": "0.1.2",
-    "rxjs": "5.0.0-beta.11",
+    "rxjs": "5.0.0-beta.12",
     "typescript": "^2.0.2",
     "typings": "^0.7.12",
     "webpack": "^1.13.0",
     "zone.js": "~0.6.12"
   },
   "peerDependencies": {
-    "@angular/core": "^2.0.0-rc.6",
-    "@angular/http": "^2.0.0-rc.6",
-    "rxjs": "5.0.0-beta.11"
+    "@angular/core": "^2.0.0",
+    "@angular/http": "^2.0.0",
+    "rxjs": "5.0.0-beta.12"
   },
   "dependencies": {
     "atob": "^2.0.3"
