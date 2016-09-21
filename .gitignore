@@ -6,6 +6,7 @@ Thumbs.db
 .DS_Store
 
 *.js
+!karma.conf.js
 *.map
 *.d.ts
 !custom.d.ts
