@@ -7,20 +7,18 @@
         "experimentalDecorators": true,
         "sourceMap": true,
         "declaration": true,
+        "lib": [
+            "dom",
+            "es2015.collection",
+            "es2015.promise",
+            "es5"
+        ],
         "moduleResolution":"node"
     },
-    "lib": [
-        "dom",
-        "es6"
-    ],
     "files": [
         "angular2-jwt.ts",
         "angular2-jwt.spec.ts",
         "custom.d.ts"
-    ],
-    "types": [
-        "jasmine",
-        "es6-shim"
     ],
     "exclude": [
         "node_modules"
