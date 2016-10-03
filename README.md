@@ -149,7 +149,7 @@ tokenSubscription() {
 }
 ```
 
-This can be useful for cases where you want to make HTTP requests out of obsevable streams. The `tokenStream` can be mapped and combined with other streams at will.
+This can be useful for cases where you want to make HTTP requests out of observable streams. The `tokenStream` can be mapped and combined with other streams at will.
 
 ## Using JwtHelper in Components
 
