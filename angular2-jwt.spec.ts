@@ -1,5 +1,5 @@
 import "core-js";
-import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
+import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper, AuthHttpError} from "./angular2-jwt";
 import {Observable} from "rxjs";
 import {Base64} from "js-base64";
 
@@ -173,4 +173,26 @@ describe("AuthHttp", () => {
             });
         });
     });
+});
+
+describe("AuthHttpError", () => {
+    
+  'use strict';
+
+  it("constructor fails to set the error message", () => {
+    const message = 'This is an error';
+    let error = new AuthHttpError(message);
+    expect(error.message).toBe('');
+  });
+});
+
+describe("Error", () => {
+
+  'use strict';
+
+  it("constructor should set the error message", () => {
+    const message = 'This is an error';
+    let error = new Error(message);    
+    expect(error.message).toBe(message);
+  });
 });
