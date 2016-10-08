@@ -2,13 +2,13 @@
 
 **angular2-jwt** is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
 
-For examples on integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
+For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
 
 ## What is This Library For?
 
 **angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
 
-This library does not have any functionality or opinion about how you should be implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
+This library does not have any functionality for (or opinion about) implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
 
 For more on implementing authentication endpoints, see this tutorial for an [example using HapiJS](https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/).
 
@@ -30,12 +30,33 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
 2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
-## Sending Authenticated Requests
+## Using the `AUTH_PROVIDERS`
 
-If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class.
+Add `AUTH_PROVIDERS` to the `providers` array in your `@NgModule`.
 
 ```ts
-import { AuthHttp, AuthConfig, AUTH_PROVIDERS } from 'angular2-jwt';
+import { NgModule } from '@angular/core';
+import { AUTH_PROVIDERS } from 'angular2-jwt';
+
+...
+
+@NgModule({
+  ...
+  
+  providers: [
+    AUTH_PROVIDERS
+  ],
+  
+  ...
+})
+```
+
+## Sending Authenticated Requests
+
+If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class. This class is a wrapper for Angular 2's `Http` and thus supports all the same HTTP methods.
+
+```ts
+import { AuthHttp } from 'angular2-jwt';
 
 ...
 
@@ -54,11 +75,6 @@ class App {
       );
   }
 }
-
-bootstrap(App, [
-  HTTP_PROVIDERS,
-  AUTH_PROVIDERS
-])
 ```
 
 ## Configuration Options
@@ -72,7 +88,7 @@ bootstrap(App, [
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
 * Global Headers: none
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can pass a config object when `AuthHttp` is injected.
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can using `provideAuth` or the factory pattern (see below).
 
 #### Errors
 
@@ -86,26 +102,84 @@ The default scheme for the `Authorization` header is `Bearer`, but you may eithe
 
 You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
+### Configuring angular2-jwt with `provideAuth`
+
+You may customize any of the above options using `provideAuth` in the `providers` array in your `@NgModule`.
+
 ```ts
+import { NgModule } from '@angular/core';
 import { provideAuth } from 'angular2-jwt';
 
 ...
 
-bootstrap(App, [
-  HTTP_PROVIDERS,
-  provideAuth({
-    headerName: YOUR_HEADER_NAME,
-    headerPrefix: YOUR_HEADER_PREFIX,
-    tokenName: YOUR_TOKEN_NAME,
-    tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-    globalHeaders: [{'Content-Type':'application/json'}],
-    noJwtError: true,
-    noTokenScheme: true
-  })
-])
+@NgModule({
+  ...
+  
+  providers: [
+    provideAuth({
+      headerName: YOUR_HEADER_NAME,
+      headerPrefix: YOUR_HEADER_PREFIX,
+      tokenName: YOUR_TOKEN_NAME,
+      tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
+      globalHeaders: [{'Content-Type':'application/json'}],
+      noJwtError: true,
+      noTokenScheme: true
+    })
+  ],
+  
+  ...
+})
 ```
 
-The `AuthHttp` class supports all the same HTTP verbs as Angular 2's Http.
+### Configuation for Ionic 2
+
+To configure angular2-jwt in Ionic 2 applications, use the factory pattern in your `@NgModule`. Since Ionic 2 provides its own API for accessing local storage, configure the `tokenGetter` to use it.
+
+```ts
+import { AuthHttp, AuthConfig } from 'angular2-jwt';
+import { Http } from '@angular/http';
+import { Storage } from '@ionic/storage';
+
+let storage = new Storage();
+
+export function getAuthHttp(http) {
+  return new AuthHttp(new AuthConfig({
+    headerPrefix: YOUR_HEADER_PREFIX,
+    noJwtError: true,
+    globalHeaders: [{'Accept': 'application/json'}],
+    tokenGetter: (() => storage.get('id_token')),
+  }), http);
+}
+
+@NgModule({
+  imports: [
+    IonicModule.forRoot(MyApp),
+  ],
+  providers: [
+    {
+      provide: AuthHttp,
+      useFactory: getAuthHttp,
+      deps: [Http]
+    },
+    
+  ...
+  
+  bootstrap: [IonicApp],
+  
+  ...
+})
+```
+
+To use `tokenNotExpired` with Ionic 2, use the `Storage` class directly in the function.
+
+```ts
+import { Storage } from '@ionic/storage';
+import { tokenNotExpired } from 'angular2-jwt';
+
+let storage = new Storage();
+
+console.log(tokenNotExpired(null, storage.get('id_token')); // true/false
+```
 
 ### Sending Per-Request Headers
 
