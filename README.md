@@ -3,8 +3,29 @@
 **angular2-jwt** is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
 
 For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
-
-## What is This Library For?
+##Contents
+ - [What is this Library for?](#what-is-this-library-for)
+ - [Key Features](#key-features)
+ - [Installation](#installation)
+ - [Using `AUTH_PROVIDERS`](#using-auth_providers)
+ - [Sending Authenticated Requests](#sending-authenticated-requests)
+ - [Configuration Options](#configuration-options)
+ - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
+    - [Use with SystemJS](#use-with-systemjs)
+    - [Configuation for Ionic 2](#configuation-for-ionic-2)
+    - [Sending Per-Request Headers](#sending-per-request-headers)
+    - [Using the Observable Token Stream](#using-the-observable-token-stream)
+    - [Using JwtHelper in Components](#using-jwthelper-in-components)
+ - [Checking Authentication to Hide/Show Elements and Handle Routing](#checking-authentication-to-hideshow-elements-and-handle-routing)
+ - [Contributing](#contributing)
+ - [Development](#development)
+ - [What is Auth0?](#what-is-auth0)
+ - [Create a free account in Auth0](#create-a-free-account-in-auth0)
+ - [Issue Reporting](#issue-reporting)
+ - [Author](#author)
+ - [License](#license)
+ 
+## What is this Library for?
 
 **angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
 
@@ -30,7 +51,7 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
 2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
-## Using the `AUTH_PROVIDERS`
+## Using `AUTH_PROVIDERS`
 
 Add `AUTH_PROVIDERS` to the `providers` array in your `@NgModule`.
 
@@ -130,6 +151,18 @@ import { provideAuth } from 'angular2-jwt';
   ...
 })
 ```
+
+### Use with SystemJS
+
+Angular2-jwt depends on `js-base64`, which in turn potentially uses `buffer`. If you are 
+using SystemJS, you need to add the following to the map section of your system config:
+
+```
+      'angular2-jwt': 'npm:angular2-jwt/angular2-jwt.js',
+      'js-base64':'npm:js-base64/base64.js',
+      'buffer':'@empty'
+```
+Note that if you wish to use buffer, you are free to depend on and provide it.
 
 ### Configuation for Ionic 2
 
