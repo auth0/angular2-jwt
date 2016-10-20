@@ -1,4 +1,3 @@
-import { Base64 } from 'js-base64';
 import { Injectable, Provider } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -188,8 +187,14 @@ export class JwtHelper {
         throw 'Illegal base64url string!';
       }
     }
-    // This does not use btoa because it does not support unicode and the various fixes were... wonky.
-    return Base64.decode(output);
+    return this.b64DecodeUnicode(output);
+  }
+
+  // https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
+  private b64DecodeUnicode(str) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
   }
 
   public decodeToken(token: string): any {

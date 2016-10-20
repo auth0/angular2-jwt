@@ -1,7 +1,6 @@
 import "core-js";
 import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
 import {Observable} from "rxjs";
-import {Base64} from "js-base64";
 
 const expiredToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjB9.m2OKoK5-Fnbbg4inMrsAQKsehq2wpQYim8695uLdogk";
 const validToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjk5OTk5OTk5OTl9.K_lUwtGbvjCHP8Ff-gW9GykydkkXzHKRPbACxItvrFU";
@@ -58,7 +57,7 @@ describe('JwtHelper', ()=> {
     describe('urlBase64Decode',()=>{
         it('should successfully decode payloads with funny symbols (A Euro symbol in this case) simplified',()=>{
             const expected="€";
-            const payload=Base64.encode(expected);
+            const payload="4oKs"
             const actual:any=jwtHelper.urlBase64Decode(payload);
             expect(actual).toBe(expected);
         });
