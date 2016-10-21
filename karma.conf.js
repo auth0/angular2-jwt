@@ -6,14 +6,14 @@ module.exports = function (config) {
         frameworks: ["jasmine"],
         // list of files / patterns to load in the browser
         files: [
-            {pattern: 'angular2-jwt.spec.ts', watched: false}
+            {pattern: '*.spec.ts', watched: false}            
         ],
 
         // list of files / patterns to exclude
         exclude: [],
 
         preprocessors: {
-            'angular2-jwt.spec.ts': [ 'webpack', 'sourcemap']
+            '*.spec.ts': [ 'webpack', 'sourcemap']
         },
 
 
@@ -35,18 +35,18 @@ module.exports = function (config) {
         logLevel: config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes
-        autoWatch: false,
+        autoWatch: true,
 
         browsers: [
             //"Firefox",
-            //"Chrome",
+            "Chrome",
             //"IE",
-            "PhantomJS"
+            //"PhantomJS"
         ],
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
-        singleRun: true,
+        singleRun: false,
 
         reporters: ['progress'],
 
