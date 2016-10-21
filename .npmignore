@@ -4,3 +4,16 @@ npm-debug.log
 # OS generated files
 Thumbs.db
 .DS_Store
+
+# TypeScript source files, apart generated type definitions
+*.ts
+!*.d.ts
+
+# Other generated files
+*.spec.*
+*.map
+
+# Other build-related files
+.travis.yml
+karma.*
+tsconfig.*
