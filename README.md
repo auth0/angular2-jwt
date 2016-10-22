@@ -13,7 +13,6 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Sending Authenticated Requests](#sending-authenticated-requests)
  - [Configuration Options](#configuration-options)
  - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
-    - [Use with SystemJS](#use-with-systemjs)
     - [Configuation for Ionic 2](#configuation-for-ionic-2)
     - [Sending Per-Request Headers](#sending-per-request-headers)
     - [Using the Observable Token Stream](#using-the-observable-token-stream)
@@ -153,18 +152,6 @@ import { provideAuth } from 'angular2-jwt';
   ...
 })
 ```
-
-### Use with SystemJS
-
-Angular2-jwt depends on `js-base64`, which in turn potentially uses `buffer`. If you are 
-using SystemJS, you need to add the following to the map section of your system config:
-
-```
-      'angular2-jwt': 'npm:angular2-jwt/angular2-jwt.js',
-      'js-base64':'npm:js-base64/base64.js',
-      'buffer':'@empty'
-```
-Note that if you wish to use buffer, you are free to depend on and provide it.
 
 ### Configuation for Ionic 2
 

@@ -199,8 +199,8 @@ export class JwtHelper {
   }
 
   // https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
-  private b64DecodeUnicode(str) {
-    return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+  private b64DecodeUnicode(str: any) {
+    return decodeURIComponent(Array.prototype.map.call(atob(str), (c: any) => {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
   }
