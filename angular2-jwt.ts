@@ -3,7 +3,8 @@ import { Injectable, Provider } from '@angular/core';
 import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap'; 
+import 'rxjs/add/operator/mergeMap';
+import objectAssign = require('object-assign');
 
 export interface IAuthConfig {
   globalHeaders: Array<Object>;
@@ -15,46 +16,54 @@ export interface IAuthConfig {
   tokenName: string;
 }
 
+export interface IAuthConfigOptional {
+    headerName?: string;
+    headerPrefix?: string;
+    tokenName?: string;
+    tokenGetter?: () => string | Promise<string>;
+    noJwtError?: boolean;
+    globalHeaders?: Array<Object>;
+    noTokenScheme?: boolean;
+}
+
+export class AuthConfigConsts {
+    public static DEFAULT_TOKEN_NAME = 'id_token';
+    public static DEFAULT_HEADER_NAME = 'Authorization';
+    public static HEADER_PREFIX_BEARER = 'Bearer ';
+}
+
+const AuthConfigDefaults: IAuthConfig = {
+    headerName: AuthConfigConsts.DEFAULT_HEADER_NAME,
+    headerPrefix: null,
+    tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
+    tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
+    noJwtError: false,
+    globalHeaders: [],
+    noTokenScheme: false
+};
+
 /**
  * Sets up the authentication configuration.
  */
 
 export class AuthConfig {
 
-  public globalHeaders: Array<Object>;
-  public headerName: string;
-  public headerPrefix: string;
-  public noJwtError: boolean;
-  public noTokenScheme: boolean;
-  public tokenGetter: () => string | Promise<string>;
-  public tokenName: string;
+  private _config: IAuthConfig;
 
-  constructor(config: any = {}) {
-    this.globalHeaders = config.globalHeaders || [];
-    this.headerName = config.headerName || 'Authorization';
-    if (config.headerPrefix) {
-      this.headerPrefix = config.headerPrefix + ' ';
-    } else if (config.noTokenScheme) {
-      this.headerPrefix = '';
+  constructor(config?: IAuthConfigOptional) {
+    config = config || {};
+    this._config = objectAssign({}, AuthConfigDefaults, config);
+    if (this._config.headerPrefix) {
+      this._config.headerPrefix += ' ';
+    } else if (this._config.noTokenScheme) {
+      this._config.headerPrefix = '';
     } else {
-      this.headerPrefix = 'Bearer ';
+      this._config.headerPrefix = AuthConfigConsts.HEADER_PREFIX_BEARER;
     }
-    this.noJwtError = config.noJwtError || false;
-    this.noTokenScheme = config.noTokenScheme || false;
-    this.tokenGetter = config.tokenGetter || (() => localStorage.getItem(this.tokenName) as string);
-    this.tokenName = config.tokenName || 'id_token';
   }
 
-  public getConfig(): IAuthConfig {
-    return {
-      globalHeaders: this.globalHeaders,
-      headerName: this.headerName,
-      headerPrefix: this.headerPrefix,
-      noJwtError: this.noJwtError,
-      noTokenScheme: this.noTokenScheme,
-      tokenGetter: this.tokenGetter,
-      tokenName: this.tokenName
-    };
+  public getConfig():IAuthConfig {
+    return this._config;
   }
 
 }
@@ -238,8 +247,7 @@ export class JwtHelper {
  * Checks for presence of token and that token hasn't expired.
  * For use with the @CanActivate router decorator and NgIf
  */
-
-export function tokenNotExpired(tokenName = 'id_token', jwt?: string): boolean {
+export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?:string): boolean {
 
   const token: string = jwt || localStorage.getItem(tokenName);
 
@@ -253,12 +261,12 @@ export const AUTH_PROVIDERS: Provider[] = [
     provide: AuthHttp,
     deps: [Http, RequestOptions],
     useFactory: (http: Http, options: RequestOptions) => {
-        return new AuthHttp(new AuthConfig(), http, options);
+      return new AuthHttp(new AuthConfig(), http, options);
     }
   }
 ];
 
-export function provideAuth(config = {}): Provider[] {
+export function provideAuth(config?: IAuthConfigOptional): Provider[] {
   return [
     {
       provide: AuthHttp,
