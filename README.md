@@ -200,7 +200,10 @@ import { tokenNotExpired } from 'angular2-jwt';
 
 let storage = new Storage();
 
-console.log(tokenNotExpired(null, storage.get('id_token')); // true/false
+this.storage.get('id_token').then(token => {
+    console.log(tokenNotExpired(null, token)); // Returns true/false
+});
+
 ```
 
 ### Sending Per-Request Headers
