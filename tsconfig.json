@@ -16,8 +16,8 @@
         "moduleResolution":"node"
     },
     "files": [
-        "angular2-jwt.ts",
-        "angular2-jwt.spec.ts",
+        "index.ts",
+        "index.spec.ts",
         "custom.d.ts"
     ],
     "exclude": [

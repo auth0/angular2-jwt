@@ -8,7 +8,7 @@ export interface IAuthConfig {
   globalHeaders: Array<Object>;
   headerName: string;
   headerPrefix: string;
-  noJwtError: boolean;
+  noTokenError: boolean;
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
   tokenName: string;
@@ -19,13 +19,13 @@ export interface IAuthConfigOptional {
     headerPrefix?: string;
     tokenName?: string;
     tokenGetter?: () => string | Promise<string>;
-    noJwtError?: boolean;
+    noTokenError?: boolean;
     globalHeaders?: Array<Object>;
     noTokenScheme?: boolean;
 }
 
 export class AuthConfigConsts {
-    public static DEFAULT_TOKEN_NAME = 'id_token';
+    public static DEFAULT_TOKEN_NAME = 'access_token';
     public static DEFAULT_HEADER_NAME = 'Authorization';
     public static HEADER_PREFIX_BEARER = 'Bearer ';
 }
@@ -35,7 +35,7 @@ const AuthConfigDefaults: IAuthConfig = {
     headerPrefix: null,
     tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
     tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
-    noJwtError: false,
+    noTokenError: false,
     globalHeaders: [],
     noTokenScheme: false
 };
@@ -107,10 +107,10 @@ export class AuthHttp {
   }
 
   private requestWithToken(req: Request, token: string): Observable<Response> {
-    if (!tokenNotExpired(undefined, token)) {
-      if (!this.config.noJwtError) {
+    if (!tokenIsPresent(undefined, token)) {
+      if (!this.config.noTokenError) {
         return new Observable<Response>((obs: any) => {
-          obs.error(new AuthHttpError('No JWT present or has expired'));
+          obs.error(new AuthHttpError('No Token present'));
         });
       }
     } else {
@@ -143,7 +143,7 @@ export class AuthHttp {
     let req: Request = url as Request;
     let token: string | Promise<string> = this.config.tokenGetter();
     if (token instanceof Promise) {
-      return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+      return Observable.fromPromise(token).mergeMap((token: string) => this.requestWithToken(req, token));
     } else {
       return this.requestWithToken(req, token);
     }
@@ -180,84 +180,13 @@ export class AuthHttp {
 }
 
 /**
- * Helper class to decode and find JWT expiration.
- */
-
-export class JwtHelper {
-
-  public urlBase64Decode(str: string): string {
-    let output = str.replace(/-/g, '+').replace(/_/g, '/');
-    switch (output.length % 4) {
-      case 0: { break; }
-      case 2: { output += '=='; break; }
-      case 3: { output += '='; break; }
-      default: {
-        throw 'Illegal base64url string!';
-      }
-    }
-    return this.b64DecodeUnicode(output);
-  }
-
-  // https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
-  private b64DecodeUnicode(str: any) {
-    return decodeURIComponent(Array.prototype.map.call(atob(str), (c: any) => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  }
-
-  public decodeToken(token: string): any {
-    let parts = token.split('.');
-
-    if (parts.length !== 3) {
-      throw new Error('JWT must have 3 parts');
-    }
-
-    let decoded = this.urlBase64Decode(parts[1]);
-    if (!decoded) {
-      throw new Error('Cannot decode the token');
-    }
-
-    return JSON.parse(decoded);
-  }
-
-  public getTokenExpirationDate(token: string): Date {
-    let decoded: any;
-    decoded = this.decodeToken(token);
-
-    if (!decoded.hasOwnProperty('exp')) {
-      return null;
-    }
-
-    let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
-    date.setUTCSeconds(decoded.exp);
-
-    return date;
-  }
-
-  public isTokenExpired(token: string, offsetSeconds?: number): boolean {
-    let date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0;
-
-    if (date == null) {
-      return false;
-    }
-
-    // Token expired?
-    return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
-  }
-}
-
-/**
- * Checks for presence of token and that token hasn't expired.
+ * Checks for presence of token.
  * For use with the @CanActivate router decorator and NgIf
  */
-export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?:string): boolean {
+export function tokenIsPresent(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, token?:string): boolean {
 
-  const token: string = jwt || localStorage.getItem(tokenName);
-
-  const jwtHelper = new JwtHelper();
-
-  return token != null && !jwtHelper.isTokenExpired(token);
+  const _token: string = token || localStorage.getItem(tokenName);
+  return _token != null;
 }
 
 export const AUTH_PROVIDERS: Provider[] = [

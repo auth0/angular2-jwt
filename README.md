@@ -1,10 +1,11 @@
-# angular2-jwt
-[![Build Status](https://travis-ci.org/auth0/angular2-jwt.svg?branch=master)](https://travis-ci.org/auth0/angular2-jwt)
-[![npm version](https://img.shields.io/npm/v/angular2-jwt.svg)](https://www.npmjs.com/package/angular2-jwt) [![license](https://img.shields.io/npm/l/angular2-jwt.svg)](https://www.npmjs.com/package/angular2-jwt)
+# ng2-bearer
+[![Build Status](https://travis-ci.org/angulab/ng2-bearer.svg?branch=master)](https://travis-ci.org/auth0/ng2-bearer)
+[![npm version](https://img.shields.io/npm/v/ng2-bearer.svg)](https://www.npmjs.com/package/ng2-bearer) [![license](https://img.shields.io/npm/l/ng2-bearer.svg)](https://www.npmjs.com/package/ng2-bearer)
 
-**angular2-jwt** is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
+**ng2-bearer** is a helper library for working with [Bearer Tokens](https://tools.ietf.org/html/rfc6750) in your Angular 2 applications.
 
-For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
+It is based on [angular2-jwt](https://github.com/auth0/angular2-jwt), but it allows to use any kind of Bearer Token, while `angular2-jwt` only supports [JWTs](https://tools.ietf.org/html/rfc7519).
+
 ##Contents
  - [What is this Library for?](#what-is-this-library-for)
  - [Key Features](#key-features)
@@ -12,45 +13,38 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Using `AUTH_PROVIDERS`](#using-auth_providers)
  - [Sending Authenticated Requests](#sending-authenticated-requests)
  - [Configuration Options](#configuration-options)
- - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
+ - [Configuring ng2-bearer with `provideAuth`](#configuring-ng2-bearer-with-provideauth)
     - [Configuation for Ionic 2](#configuation-for-ionic-2)
     - [Sending Per-Request Headers](#sending-per-request-headers)
     - [Using the Observable Token Stream](#using-the-observable-token-stream)
-    - [Using JwtHelper in Components](#using-jwthelper-in-components)
  - [Checking Authentication to Hide/Show Elements and Handle Routing](#checking-authentication-to-hideshow-elements-and-handle-routing)
  - [Contributing](#contributing)
  - [Development](#development)
- - [What is Auth0?](#what-is-auth0)
- - [Create a free account in Auth0](#create-a-free-account-in-auth0)
  - [Issue Reporting](#issue-reporting)
  - [Author](#author)
  - [License](#license)
  
 ## What is this Library for?
 
-**angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
+**ng2-bearer** is a small and unopinionated library that is useful for automatically attaching a [Bearer Token](https://tools.ietf.org/html/rfc6750) as an `Authorization` header when making HTTP requests from an Angular 2 app.
 
-This library does not have any functionality for (or opinion about) implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
-
-For more on implementing authentication endpoints, see this tutorial for an [example using HapiJS](https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/).
+This library does not have any functionality for (or opinion about) implementing user authentication and retrieving tokens to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their tokens in local storage or in a cookie if successful.
 
 ## Key Features
 
-* Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
-* **Decode a JWT** from your Angular 2 app
-* Check the **expiration date** of the JWT
-* Conditionally allow **route navigation** based on JWT status
+* Send a Token on a per-request basis using the **explicit `AuthHttp`** class
+* Conditionally allow **route navigation** based on Token presence
 
 ## Installation
 
 ```bash
-npm install angular2-jwt
+npm install ng2-bearer
 ```
 
 The library comes with several helpers that are useful in your Angular 2 apps.
 
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
-2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
+2. `tokenIsPresent` - allows you to check whether the token is present in the local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
 ## Using `AUTH_PROVIDERS`
 
@@ -58,7 +52,7 @@ Add `AUTH_PROVIDERS` to the `providers` array in your `@NgModule`.
 
 ```ts
 import { NgModule } from '@angular/core';
-import { AUTH_PROVIDERS } from 'angular2-jwt';
+import { AUTH_PROVIDERS } from 'ng2-bearer';
 
 ...
 
@@ -75,10 +69,10 @@ import { AUTH_PROVIDERS } from 'angular2-jwt';
 
 ## Sending Authenticated Requests
 
-If you wish to only send a JWT on a specific HTTP request, you can use the `AuthHttp` class. This class is a wrapper for Angular 2's `Http` and thus supports all the same HTTP methods.
+If you wish to only send a token on a specific HTTP request, you can use the `AuthHttp` class. This class is a wrapper for Angular 2's `Http` and thus supports all the same HTTP methods.
 
 ```ts
-import { AuthHttp } from 'angular2-jwt';
+import { AuthHttp } from 'ng2-bearer';
 
 ...
 
@@ -105,16 +99,16 @@ class App {
 
 * Header Name: `Authorization`
 * Header Prefix: `Bearer`
-* Token Name: `id_token`
+* Token Name: `access_token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
-* Supress error and continue with regular HTTP request if no JWT is saved: `false`
+* Supress error and continue with regular HTTP request if no token is saved: `false`
 * Global Headers: none
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can using `provideAuth` or the factory pattern (see below).
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noTokenError` boolean, you can using `provideAuth` or the factory pattern (see below).
 
 #### Errors
 
-By default, if there is no valid JWT saved, `AuthHttp` will return an Observable `error` with 'Invalid JWT'. If you would like to continue with an unauthenticated request instead, you can set `noJwtError` to `true`.
+By default, if there is no valid Token saved, `AuthHttp` will return an Observable `error` with 'Invalid Token'. If you would like to continue with an unauthenticated request instead, you can set `noTokenError` to `true`.
 
 #### Token Scheme
 
@@ -124,13 +118,13 @@ The default scheme for the `Authorization` header is `Bearer`, but you may eithe
 
 You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
-### Configuring angular2-jwt with `provideAuth`
+### Configuring ng2-bearer with `provideAuth`
 
 You may customize any of the above options using `provideAuth` in the `providers` array in your `@NgModule`.
 
 ```ts
 import { NgModule } from '@angular/core';
-import { provideAuth } from 'angular2-jwt';
+import { provideAuth } from 'ng2-bearer';
 
 ...
 
@@ -144,7 +138,7 @@ import { provideAuth } from 'angular2-jwt';
       tokenName: YOUR_TOKEN_NAME,
       tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
       globalHeaders: [{'Content-Type':'application/json'}],
-      noJwtError: true,
+      noTokenError: true,
       noTokenScheme: true
     })
   ],
@@ -155,10 +149,10 @@ import { provideAuth } from 'angular2-jwt';
 
 ### Configuation for Ionic 2
 
-To configure angular2-jwt in Ionic 2 applications, use the factory pattern in your `@NgModule`. Since Ionic 2 provides its own API for accessing local storage, configure the `tokenGetter` to use it.
+To configure ng2-bearer in Ionic 2 applications, use the factory pattern in your `@NgModule`. Since Ionic 2 provides its own API for accessing local storage, configure the `tokenGetter` to use it.
 
 ```ts
-import { AuthHttp, AuthConfig } from 'angular2-jwt';
+import { AuthHttp, AuthConfig } from 'ng2-bearer';
 import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 
@@ -167,9 +161,9 @@ let storage = new Storage();
 export function getAuthHttp(http) {
   return new AuthHttp(new AuthConfig({
     headerPrefix: YOUR_HEADER_PREFIX,
-    noJwtError: true,
+    noTokenError: true,
     globalHeaders: [{'Accept': 'application/json'}],
-    tokenGetter: (() => storage.get('id_token')),
+    tokenGetter: (() => storage.get('access_token')),
   }), http);
 }
 
@@ -192,16 +186,16 @@ export function getAuthHttp(http) {
 })
 ```
 
-To use `tokenNotExpired` with Ionic 2, use the `Storage` class directly in the function.
+To use `tokenIsPresent` with Ionic 2, use the `Storage` class directly in the function.
 
 ```ts
 import { Storage } from '@ionic/storage';
-import { tokenNotExpired } from 'angular2-jwt';
+import { tokenIsPresent } from 'ng2-bearer';
 
 let storage = new Storage();
 
-this.storage.get('id_token').then(token => {
-    console.log(tokenNotExpired(null, token)); // Returns true/false
+this.storage.get('access_token').then(token => {
+    console.log(tokenIsPresent(null, token)); // Returns true/false
 });
 
 ```
@@ -234,7 +228,7 @@ getThing() {
 
 ### Using the Observable Token Stream
 
-If you wish to use the JWT as an observable stream, you can call `tokenStream` from `AuthHttp`.
+If you wish to use the token as an observable stream, you can call `tokenStream` from `AuthHttp`.
 
 ```ts
 ...
@@ -250,52 +244,21 @@ tokenSubscription() {
 
 This can be useful for cases where you want to make HTTP requests out of observable streams. The `tokenStream` can be mapped and combined with other streams at will.
 
-## Using JwtHelper in Components
-
-The `JwtHelper` class has several useful methods that can be utilized in your components:
-
-* `decodeToken`
-* `getTokenExpirationDate`
-* `isTokenExpired`
-
-You can use these methods by passing in the token to be evaluated.
-
-```ts
-
-...
-
-jwtHelper: JwtHelper = new JwtHelper();
-
-...
-
-useJwtHelper() {
-  var token = localStorage.getItem('id_token');
-
-  console.log(
-    this.jwtHelper.decodeToken(token),
-    this.jwtHelper.getTokenExpirationDate(token),
-    this.jwtHelper.isTokenExpired(token)
-  );
-}
-
-...
-```
-
 ## Checking Authentication to Hide/Show Elements and Handle Routing
 
-The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
+The `tokenIsPresent` function can be used to check whether a token exists in local storage. If the token is present, `tokenIsPresent` returns `true`, otherwise it returns `false`.
 
-> **Note:** `tokenNotExpired` will by default assume the token name is `id_token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
+> **Note:** `tokenIsPresent` will by default assume the token name is `access_token` unless a token name is passed to it, ex: `tokenIsPresent('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
 
 ```ts
 // auth.service.ts
 
-import { tokenNotExpired } from 'angular2-jwt';
+import { tokenIsPresent } from 'ng2-bearer';
 
 ...
 
 loggedIn() {
-  return tokenNotExpired();
+  return tokenIsPresent();
 }
 
 ...
@@ -357,29 +320,15 @@ Pull requests are welcome!
 
 Use `npm run dev` to compile and watch for changes.
 
-## What is Auth0?
-
-Auth0 helps you to:
-
-* Add authentication with [multiple authentication sources](https://docs.auth0.com/identityproviders), either social like **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce, among others**, or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS or any SAML Identity Provider**.
-* Add authentication through more traditional **[username/password databases](https://docs.auth0.com/mysql-connection-tutorial)**.
-* Add support for **[linking different user accounts](https://docs.auth0.com/link-accounts)** with the same user.
-* Support for generating signed [Json Web Tokens](https://docs.auth0.com/jwt) to call your APIs and **flow the user identity** securely.
-* Analytics of how, when and where users are logging in.
-* Pull data from other sources and add it to the user profile, through [JavaScript rules](https://docs.auth0.com/rules).
-
-## Create a free account in Auth0
-
-1. Go to [Auth0](https://auth0.com) and click Sign Up.
-2. Use Google, GitHub or Microsoft Account to login.
 
 ## Issue Reporting
 
 If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
 
-## Author
+## Authors
 
-[Auth0](auth0.com)
+- [Auth0](auth0.com)
+- Andre Soares
 
 ## License
 

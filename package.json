@@ -1,10 +1,10 @@
 {
-  "name": "angular2-jwt",
+  "name": "ng2-bearer",
   "version": "0.1.25",
-  "description": "Helper library for handling JWTs in Angular 2",
+  "description": "Helper library for sending the Authorization Bearer header in Angular 2",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/auth0/angular2-jwt.git"
+    "url": "git+https://github.com/angulab/ng2-bearer.git"
   },
   "scripts": {
     "dev": "tsc --watch",
@@ -14,17 +14,18 @@
   "keywords": [
     "angular",
     "angular2",
-    "jwt",
-    "authentication"
+    "bearer",
+    "authentication",
+    "authorization"
   ],
-  "author": "ryanchenkie",
+  "author": "andregsilv",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/auth0/angular2-jwt/issues"
+    "url": "https://github.com/angulab/ng2-bearer/issues"
   },
-  "main": "angular2-jwt.js",
-  "typings": "./angular2-jwt.d.ts",
-  "homepage": "https://github.com/auth0/angular2-jwt#readme",
+  "main": "index.js",
+  "typings": "./index.d.ts",
+  "homepage": "https://github.com/angulab/ng2-bearer#readme",
   "devDependencies": {
     "@angular/common": "^2.0.0",
     "@angular/core": "^2.0.0",
