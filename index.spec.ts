@@ -3,7 +3,7 @@ import {AuthConfig, AuthHttp, tokenIsPresent} from "./index";
 import {Observable} from "rxjs";
 
 const validToken="vrPUTkACk5O5FkIRtOTXzHKx";
-const emptyToken="";
+const emptyToken="    ";
 const nullToken:string=null;
 const undefinedToken:string=undefined;
 describe('AuthConfig', ()=> {
@@ -14,7 +14,7 @@ describe('AuthConfig', ()=> {
         expect(config).toBeDefined();
         expect(config.headerName).toBe("Authorization");
         expect(config.headerPrefix).toBe("Bearer ");
-        expect(config.tokenName).toBe("id_token");
+        expect(config.tokenName).toBe("access_token");
         expect(config.noTokenError).toBe(false);
         expect(config.noTokenScheme).toBe(false);
         expect(config.globalHeaders).toEqual([]);
@@ -91,18 +91,8 @@ describe('tokenIsPresent', ()=> {
         const actual:boolean=tokenIsPresent();
         expect(actual).toBe(true);
     });
-    it('should use the defaults when empty', ()=> {
-        localStorage.setItem("access_token", emptyToken);
-        const actual:boolean=tokenIsPresent();
-        expect(actual).toBe(false);
-    });
-    it('should use the defaults when null', ()=> {
-        localStorage.setItem("access_token", nullToken);
-        const actual:boolean=tokenIsPresent();
-        expect(actual).toBe(false);
-    });
-    it('should use the defaults when undefined', ()=> {
-        localStorage.setItem("access_token", undefinedToken);
+    it('should use the defaults when missing', ()=> {
+        localStorage.removeItem("access_token");
         const actual:boolean=tokenIsPresent();
         expect(actual).toBe(false);
     });

@@ -186,7 +186,7 @@ export class AuthHttp {
 export function tokenIsPresent(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, token?:string): boolean {
 
   const _token: string = token || localStorage.getItem(tokenName);
-  return _token != null;
+  return _token != null && _token.trim().length > 0;
 }
 
 export const AUTH_PROVIDERS: Provider[] = [
