@@ -114,6 +114,7 @@ export class AuthHttp {
         });
       }
     } else {
+      req.withCredentials = this.http._defaultOptions.withCredentials;
       req.headers.set(this.config.headerName, this.config.headerPrefix + token);
     }
 
