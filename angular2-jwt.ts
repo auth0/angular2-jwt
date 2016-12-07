@@ -58,6 +58,10 @@ export class AuthConfig {
     } else {
       this._config.headerPrefix = AuthConfigConsts.HEADER_PREFIX_BEARER;
     }
+    
+    if (config.tokenName && !config.tokenGetter) {
+      this._config.tokenGetter = () => localStorage.getItem(config.tokenName) as string;
+    }
   }
 
   public getConfig():IAuthConfig {
