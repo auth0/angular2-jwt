@@ -1,8 +1,17 @@
-import { Injectable, Provider } from '@angular/core';
-import { Http, Headers, Request, RequestOptions, RequestOptionsArgs, RequestMethod, Response } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap';
+import {
+    Http,
+    Headers,
+    Request,
+    RequestOptions,
+    RequestOptionsArgs,
+    RequestMethod,
+    Response,
+    HttpModule
+} from "@angular/http";
+import {Injectable, Provider, NgModule, Optional, SkipSelf, ModuleWithProviders} from "@angular/core";
+import {Observable} from "rxjs/Observable";
+import "rxjs/add/observable/fromPromise";
+import "rxjs/add/operator/mergeMap";
 
 export interface IAuthConfig {
   globalHeaders: Array<Object>;
@@ -345,4 +354,29 @@ function objectAssign(target: any, ...source: any[]) {
     }
   }
   return to;
+}
+/**
+ * Module for angular2-jwt
+ * @experimental
+ */
+@NgModule({
+  imports: [HttpModule],
+  providers: [AuthHttp, JwtHelper]
+})
+export class AuthModule {
+  constructor(@Optional() @SkipSelf() parentModule: AuthModule) {
+    if (parentModule) {
+      throw new Error(
+          'AuthModule is already loaded. Import it in the AppModule only');
+    }
+  }
+
+  static forRoot(config: AuthConfig): ModuleWithProviders {
+    return {
+      ngModule: AuthModule,
+      providers: [
+        {provide: AuthConfig, useValue: config}
+      ]
+    };
+  }
 }
