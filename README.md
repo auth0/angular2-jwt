@@ -13,7 +13,7 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Sending Authenticated Requests](#sending-authenticated-requests)
  - [Configuration Options](#configuration-options)
  - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
-    - [Configuation for Ionic 2](#configuation-for-ionic-2)
+    - [Configuration for Ionic 2](#configuration-for-ionic-2)
     - [Sending Per-Request Headers](#sending-per-request-headers)
     - [Using the Observable Token Stream](#using-the-observable-token-stream)
     - [Using JwtHelper in Components](#using-jwthelper-in-components)
@@ -153,7 +153,7 @@ import { provideAuth } from 'angular2-jwt';
 })
 ```
 
-### Configuation for Ionic 2
+### Configuration for Ionic 2
 
 To configure angular2-jwt in Ionic 2 applications, use the factory pattern in your `@NgModule`. Since Ionic 2 provides its own API for accessing local storage, configure the `tokenGetter` to use it.
 
