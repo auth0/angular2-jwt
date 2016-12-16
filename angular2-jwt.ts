@@ -9,6 +9,7 @@ export interface IAuthConfig {
   headerName: string;
   headerPrefix: string;
   noJwtError: boolean;
+  noClientCheck: boolean;
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
   tokenName: string;
@@ -20,6 +21,7 @@ export interface IAuthConfigOptional {
     tokenName?: string;
     tokenGetter?: () => string | Promise<string>;
     noJwtError?: boolean;
+    noClientCheck?: boolean;
     globalHeaders?: Array<Object>;
     noTokenScheme?: boolean;
 }
@@ -36,6 +38,7 @@ const AuthConfigDefaults: IAuthConfig = {
     tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
     tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
     noJwtError: false,
+    noClientCheck: false,
     globalHeaders: [],
     noTokenScheme: false
 };
@@ -111,7 +114,7 @@ export class AuthHttp {
   }
 
   private requestWithToken(req: Request, token: string): Observable<Response> {
-    if (!tokenNotExpired(undefined, token)) {
+    if (!this.config.noClientCheck && !tokenNotExpired(undefined, token)) {
       if (!this.config.noJwtError) {
         return new Observable<Response>((obs: any) => {
           obs.error(new AuthHttpError('No JWT present or has expired'));
