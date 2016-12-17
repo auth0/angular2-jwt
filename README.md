@@ -126,30 +126,31 @@ You may set as many global headers as you like by passing an array of header-sha
 
 ### Configuring angular2-jwt with `provideAuth`
 
-You may customize any of the above options using `provideAuth` in the `providers` array in your `@NgModule`.
+You may customize any of the above options using a factory which returns an `AuthHttp` instance with the options you would like to change.
 
 ```ts
 import { NgModule } from '@angular/core';
 import { provideAuth } from 'angular2-jwt';
 
-...
+function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig({
+    tokenName: 'token',
+		  tokenGetter: (() => sessionStorage.getItem('token')),
+		  globalHeaders: [{'Content-Type':'application/json'}],
+	 }), http, options);
+}
 
 @NgModule({
-  ...
+  // ...
   
   providers: [
-    provideAuth({
-      headerName: YOUR_HEADER_NAME,
-      headerPrefix: YOUR_HEADER_PREFIX,
-      tokenName: YOUR_TOKEN_NAME,
-      tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      globalHeaders: [{'Content-Type':'application/json'}],
-      noJwtError: true,
-      noTokenScheme: true
-    })
-  ],
-  
-  ...
+    // ...
+    {
+      provide: AuthHttp,
+      useFactory: authHttpServiceFactory,
+      deps: [Http, RequestOptions]
+    }
+  ]
 })
 ```
 
