@@ -1,10 +1,21 @@
 import "core-js";
 import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
 import {Observable} from "rxjs";
+import {encodeTestToken} from "./angular2-jwt-test-helpers";
 
-const expiredToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjB9.m2OKoK5-Fnbbg4inMrsAQKsehq2wpQYim8695uLdogk";
-const validToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjk5OTk5OTk5OTl9.K_lUwtGbvjCHP8Ff-gW9GykydkkXzHKRPbACxItvrFU";
-const noExpiryToken="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ";
+
+
+const expiredToken=encodeTestToken({
+    "exp": 0
+});
+const validToken=encodeTestToken({
+    "exp": 9999999999
+});
+const noExpiryToken=encodeTestToken({
+    "sub": "1234567890",
+    "name": "John Doe",
+    "admin": true
+});
 
 describe('AuthConfig', ()=> {
     'use strict';
@@ -45,6 +56,16 @@ describe('AuthConfig', ()=> {
         expect(config.tokenGetter).toBeDefined();
         expect(config.tokenGetter()).toBe("this is a token");
     });
+    
+    it('should use custom token name in default tokenGetter', ()=> {
+      const configExpected = { tokenName: 'Token' };
+      const token = 'token';
+      const config = new AuthConfig(configExpected).getConfig();
+      localStorage.setItem(configExpected.tokenName, token);
+      expect(config).toBeDefined();
+      expect(config.tokenName).toBe(configExpected.tokenName);
+      expect(config.tokenGetter()).toBe(token);
+    });
 
 });
 
@@ -63,7 +84,14 @@ describe('JwtHelper', ()=> {
         });
     });
     describe('decodeToken',()=>{
-
+        it('should handle a valid token', ()=> {
+            const payload = {
+                exp: 0
+            };
+            const token = encodeTestToken(payload);
+            const actual = jwtHelper.decodeToken(token);
+            expect(actual).toEqual(payload);
+        });
     });
     describe('getTokenExpirationDate',()=>{
 

@@ -13,7 +13,7 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Sending Authenticated Requests](#sending-authenticated-requests)
  - [Configuration Options](#configuration-options)
  - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
-    - [Configuation for Ionic 2](#configuation-for-ionic-2)
+    - [Configuration for Ionic 2](#configuration-for-ionic-2)
     - [Sending Per-Request Headers](#sending-per-request-headers)
     - [Using the Observable Token Stream](#using-the-observable-token-stream)
     - [Using JwtHelper in Components](#using-jwthelper-in-components)
@@ -126,34 +126,35 @@ You may set as many global headers as you like by passing an array of header-sha
 
 ### Configuring angular2-jwt with `provideAuth`
 
-You may customize any of the above options using `provideAuth` in the `providers` array in your `@NgModule`.
+You may customize any of the above options using a factory which returns an `AuthHttp` instance with the options you would like to change.
 
 ```ts
 import { NgModule } from '@angular/core';
 import { provideAuth } from 'angular2-jwt';
 
-...
+function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig({
+    tokenName: 'token',
+		  tokenGetter: (() => sessionStorage.getItem('token')),
+		  globalHeaders: [{'Content-Type':'application/json'}],
+	 }), http, options);
+}
 
 @NgModule({
-  ...
+  // ...
   
   providers: [
-    provideAuth({
-      headerName: YOUR_HEADER_NAME,
-      headerPrefix: YOUR_HEADER_PREFIX,
-      tokenName: YOUR_TOKEN_NAME,
-      tokenGetter: YOUR_TOKEN_GETTER_FUNCTION,
-      globalHeaders: [{'Content-Type':'application/json'}],
-      noJwtError: true,
-      noTokenScheme: true
-    })
-  ],
-  
-  ...
+    // ...
+    {
+      provide: AuthHttp,
+      useFactory: authHttpServiceFactory,
+      deps: [Http, RequestOptions]
+    }
+  ]
 })
 ```
 
-### Configuation for Ionic 2
+### Configuration for Ionic 2
 
 To configure angular2-jwt in Ionic 2 applications, use the factory pattern in your `@NgModule`. Since Ionic 2 provides its own API for accessing local storage, configure the `tokenGetter` to use it.
 
@@ -379,7 +380,7 @@ If you have found a bug or if you have a feature request, please report them at 
 
 ## Author
 
-[Auth0](auth0.com)
+[Auth0](https://auth0.com)
 
 ## License
 
