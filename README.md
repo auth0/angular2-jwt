@@ -132,7 +132,7 @@ You may customize any of the above options using a factory which returns an `Aut
 import { NgModule } from '@angular/core';
 import { provideAuth } from 'angular2-jwt';
 
-function authHttpServiceFactory(http: Http, options: RequestOptions) {
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
 		  tokenGetter: (() => sessionStorage.getItem('token')),
