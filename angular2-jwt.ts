@@ -304,16 +304,6 @@ export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME,
   return token != null && !jwtHelper.isTokenExpired(token);
 }
 
-export const AUTH_PROVIDERS: Provider[] = [
-  {
-    provide: AuthHttp,
-    deps: [Http, RequestOptions],
-    useFactory: (http: Http, options: RequestOptions) => {
-      return new AuthHttp(new AuthConfig(), http, options);
-    }
-  }
-];
-
 export function provideAuth(config?: IAuthConfigOptional): Provider[] {
   return [
     {
@@ -333,7 +323,7 @@ function toObject(val: any) {
   if (val === null || val === undefined) {
     throw new TypeError('Object.assign cannot be called with null or undefined');
   }
-  
+
   return Object(val);
 }
 
@@ -341,16 +331,16 @@ function objectAssign(target: any, ...source: any[]) {
   let from: any;
   let to = toObject(target);
   let symbols: any;
-  
+
   for (var s = 1; s < arguments.length; s++) {
     from = Object(arguments[s]);
-    
+
     for (var key in from) {
       if (hasOwnProperty.call(from, key)) {
         to[key] = from[key];
       }
     }
-    
+
     if ((<any>Object).getOwnPropertySymbols) {
       symbols = (<any>Object).getOwnPropertySymbols(from);
       for (var i = 0; i < symbols.length; i++) {

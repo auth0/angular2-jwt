@@ -25,7 +25,7 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Issue Reporting](#issue-reporting)
  - [Author](#author)
  - [License](#license)
- 
+
 ## What is this Library for?
 
 **angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
@@ -68,7 +68,7 @@ import { AUTH_PROVIDERS } from 'angular2-jwt';
   providers: [
     AUTH_PROVIDERS
   ],
-  
+
   ...
 })
 ```
@@ -142,7 +142,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
 
 @NgModule({
   // ...
-  
+
   providers: [
     // ...
     {
@@ -184,11 +184,11 @@ export function getAuthHttp(http) {
       useFactory: getAuthHttp,
       deps: [Http]
     },
-    
+
   ...
-  
+
   bootstrap: [IonicApp],
-  
+
   ...
 })
 ```
