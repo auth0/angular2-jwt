@@ -52,6 +52,6 @@
   "peerDependencies": {
     "@angular/core": "^2.4.1",
     "@angular/http": "^2.4.1",
-    "rxjs": "5.0.0-beta.12"
+    "rxjs": "^5.0.1"
   }
 }
