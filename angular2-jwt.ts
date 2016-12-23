@@ -17,39 +17,39 @@ export interface IAuthConfig {
   globalHeaders: Array<Object>;
   headerName: string;
   headerPrefix: string;
-  noJwtError: boolean;
   noClientCheck: boolean;
+  noJwtError: boolean;
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
   tokenName: string;
 }
 
 export interface IAuthConfigOptional {
-    headerName?: string;
-    headerPrefix?: string;
-    tokenName?: string;
-    tokenGetter?: () => string | Promise<string>;
-    noJwtError?: boolean;
-    noClientCheck?: boolean;
-    globalHeaders?: Array<Object>;
-    noTokenScheme?: boolean;
+  globalHeaders?: Array<Object>;
+  headerName?: string;
+  headerPrefix?: string;
+  noClientCheck?: boolean;
+  noJwtError?: boolean;
+  noTokenScheme?: boolean;
+  tokenGetter?: () => string | Promise<string>;
+  tokenName?: string;
 }
 
 export class AuthConfigConsts {
-    public static DEFAULT_TOKEN_NAME = 'id_token';
-    public static DEFAULT_HEADER_NAME = 'Authorization';
-    public static HEADER_PREFIX_BEARER = 'Bearer ';
+  public static DEFAULT_TOKEN_NAME = 'id_token';
+  public static DEFAULT_HEADER_NAME = 'Authorization';
+  public static HEADER_PREFIX_BEARER = 'Bearer ';
 }
 
 const AuthConfigDefaults: IAuthConfig = {
-    headerName: AuthConfigConsts.DEFAULT_HEADER_NAME,
-    headerPrefix: null,
-    tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
-    tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
-    noJwtError: false,
-    noClientCheck: false,
-    globalHeaders: [],
-    noTokenScheme: false
+  headerName: AuthConfigConsts.DEFAULT_HEADER_NAME,
+  headerPrefix: null,
+  tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
+  tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
+  noJwtError: false,
+  noClientCheck: false,
+  globalHeaders: [],
+  noTokenScheme: false
 };
 
 /**
