@@ -8,6 +8,7 @@ Thumbs.db
 # TypeScript source files, apart generated type definitions
 *.ts
 !*.d.ts
+!*.ngfactory.ts
 
 # Other generated files
 *.spec.*
