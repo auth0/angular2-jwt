@@ -372,8 +372,6 @@ export class AuthModule {
   }
 
   static forRoot(config?: IAuthConfigOptional): ModuleWithProviders {
-    // const authConfig = new AuthConfig(config);
-
     return {
       ngModule: AuthModule,
       providers: [
