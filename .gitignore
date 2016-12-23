@@ -12,3 +12,8 @@ Thumbs.db
 !custom.d.ts
 .idea/
 *.iml
+
+# Angular AoT files
+*.ngsummary.json
+*.metadata.json
+*.ngfactory.ts
