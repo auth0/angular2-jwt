@@ -12,3 +12,6 @@ Thumbs.db
 !custom.d.ts
 .idea/
 *.iml
+*.metadata.json
+*.ngsummary.json
+*.ngfactory.ts
