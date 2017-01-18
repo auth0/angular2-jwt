@@ -9,10 +9,10 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [What is this Library for?](#what-is-this-library-for)
  - [Key Features](#key-features)
  - [Installation](#installation)
- - [Using `AUTH_PROVIDERS`](#using-auth_providers)
+ - [Basic Configuration](#basic-configuration)
  - [Sending Authenticated Requests](#sending-authenticated-requests)
  - [Configuration Options](#configuration-options)
- - [Configuring angular2-jwt with `provideAuth`](#configuring-angular2-jwt-with-provideauth)
+    - [Advanced Configuration](#advanced-configuration)
     - [Configuration for Ionic 2](#configuration-for-ionic-2)
     - [Sending Per-Request Headers](#sending-per-request-headers)
     - [Using the Observable Token Stream](#using-the-observable-token-stream)
@@ -52,24 +52,28 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
 2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
-## Using `AUTH_PROVIDERS`
+## Basic Configuration
 
-Add `AUTH_PROVIDERS` to the `providers` array in your `@NgModule`.
+Create a factory function to use as a provider for `AuthHttp`. This will allow you to configure angular2-jwt in the `AuthConfig` instance later on.
 
 ```ts
 import { NgModule } from '@angular/core';
-import { AUTH_PROVIDERS } from 'angular2-jwt';
 
-...
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig(), http, options);
+}
 
 @NgModule({
-  ...
+  // ...
   
   providers: [
-    AUTH_PROVIDERS
-  ],
-  
-  ...
+    // ...
+    {
+      provide: AuthHttp,
+      useFactory: authHttpServiceFactory,
+      deps: [Http, RequestOptions]
+    }
+  ]
 })
 ```
 
@@ -79,9 +83,7 @@ If you wish to only send a JWT on a specific HTTP request, you can use the `Auth
 
 ```ts
 import { AuthHttp } from 'angular2-jwt';
-
-...
-
+// ...
 class App {
 
   thing: string;
@@ -124,19 +126,18 @@ The default scheme for the `Authorization` header is `Bearer`, but you may eithe
 
 You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
-### Configuring angular2-jwt with `provideAuth`
+### Advanced Configuration
 
 You may customize any of the above options using a factory which returns an `AuthHttp` instance with the options you would like to change.
 
 ```ts
 import { NgModule } from '@angular/core';
-import { provideAuth } from 'angular2-jwt';
 
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
-		  tokenGetter: (() => sessionStorage.getItem('token')),
-		  globalHeaders: [{'Content-Type':'application/json'}],
+		tokenGetter: (() => sessionStorage.getItem('token')),
+		globalHeaders: [{'Content-Type':'application/json'}],
 	 }), http, options);
 }
 
@@ -183,13 +184,10 @@ export function getAuthHttp(http) {
       provide: AuthHttp,
       useFactory: getAuthHttp,
       deps: [Http]
-    },
-    
-  ...
-  
-  bootstrap: [IonicApp],
-  
-  ...
+    },    
+  // ...  
+  bootstrap: [IonicApp],  
+  // ...
 })
 ```
 
@@ -238,8 +236,6 @@ getThing() {
 If you wish to use the JWT as an observable stream, you can call `tokenStream` from `AuthHttp`.
 
 ```ts
-...
-
 tokenSubscription() {
   this.authHttp.tokenStream.subscribe(
       data => console.log(data),
@@ -262,12 +258,7 @@ The `JwtHelper` class has several useful methods that can be utilized in your co
 You can use these methods by passing in the token to be evaluated.
 
 ```ts
-
-...
-
 jwtHelper: JwtHelper = new JwtHelper();
-
-...
 
 useJwtHelper() {
   var token = localStorage.getItem('id_token');
@@ -278,8 +269,6 @@ useJwtHelper() {
     this.jwtHelper.isTokenExpired(token)
   );
 }
-
-...
 ```
 
 ## Checking Authentication to Hide/Show Elements and Handle Routing
@@ -293,13 +282,9 @@ The `tokenNotExpired` function can be used to check whether a JWT exists in loca
 
 import { tokenNotExpired } from 'angular2-jwt';
 
-...
-
 loggedIn() {
   return tokenNotExpired();
 }
-
-...
 ```
 
 The `loggedIn` method can now be used in views to conditionally hide and show elements.
@@ -338,16 +323,12 @@ export class AuthGuard implements CanActivate {
 With the guard in place, you can use it in your route configuration.
 
 ```ts
-...
-
 import { AuthGuard } from './auth.guard';
 
 export const routes: RouterConfig = [
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
   { path: 'unauthorized', component: UnauthorizedComponent }
 ];
-
-...
 ```
 
 ## Contributing
