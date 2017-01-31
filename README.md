@@ -5,6 +5,8 @@
 **angular2-jwt** is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
 
 For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
+
+
 ##Contents
  - [What is this Library for?](#what-is-this-library-for)
  - [Key Features](#key-features)
@@ -25,7 +27,8 @@ For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2]
  - [Issue Reporting](#issue-reporting)
  - [Author](#author)
  - [License](#license)
- 
+
+
 ## What is this Library for?
 
 **angular2-jwt** is a small and unopinionated library that is useful for automatically attaching a [JSON Web Token (JWT)](http://jwt.io/introduction) as an `Authorization` header when making HTTP requests from an Angular 2 app. It also has a number of helper methods that are useful for doing things like decoding JWTs.
@@ -34,12 +37,14 @@ This library does not have any functionality for (or opinion about) implementing
 
 For more on implementing authentication endpoints, see this tutorial for an [example using HapiJS](https://auth0.com/blog/2016/03/07/hapijs-authentication-secure-your-api-with-json-web-tokens/).
 
+
 ## Key Features
 
 * Send a JWT on a per-request basis using the **explicit `AuthHttp`** class
 * **Decode a JWT** from your Angular 2 app
 * Check the **expiration date** of the JWT
 * Conditionally allow **route navigation** based on JWT status
+
 
 ## Installation
 
@@ -52,22 +57,22 @@ The library comes with several helpers that are useful in your Angular 2 apps.
 1. `AuthHttp` - allows for individual and explicit authenticated HTTP requests
 2. `tokenNotExpired` - allows you to check whether there is a non-expired JWT in local storage. This can be used for conditionally showing/hiding elements and stopping navigation to certain routes if the user isn't authenticated
 
+
 ## Basic Configuration
 
-Create a factory function to use as a provider for `AuthHttp`. This will allow you to configure angular2-jwt in the `AuthConfig` instance later on.
+Create a new `auth.module.ts` file with the following code:
 
 ```ts
 import { NgModule } from '@angular/core';
+import { Http, RequestOptions } from '@angular/http';
+import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig(), http, options);
 }
 
 @NgModule({
-  // ...
-  
   providers: [
-    // ...
     {
       provide: AuthHttp,
       useFactory: authHttpServiceFactory,
@@ -75,7 +80,11 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     }
   ]
 })
+export class AuthModule {}
 ```
+
+We added a factory function to use as a provider for `AuthHttp`. This will allow you to configure angular2-jwt in the `AuthConfig` instance later on.
+
 
 ## Sending Authenticated Requests
 
@@ -100,6 +109,7 @@ class App {
   }
 }
 ```
+
 
 ## Configuration Options
 
@@ -132,20 +142,19 @@ You may customize any of the above options using a factory which returns an `Aut
 
 ```ts
 import { NgModule } from '@angular/core';
+import { Http, RequestOptions } from '@angular/http';
+import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
 		tokenGetter: (() => sessionStorage.getItem('token')),
 		globalHeaders: [{'Content-Type':'application/json'}],
-	 }), http, options);
+	}), http, options);
 }
 
 @NgModule({
-  // ...
-  
   providers: [
-    // ...
     {
       provide: AuthHttp,
       useFactory: authHttpServiceFactory,
@@ -153,6 +162,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     }
   ]
 })
+export class AuthModule {}
 ```
 
 ### Configuration for Ionic 2
@@ -184,9 +194,9 @@ export function getAuthHttp(http) {
       provide: AuthHttp,
       useFactory: getAuthHttp,
       deps: [Http]
-    },    
-  // ...  
-  bootstrap: [IonicApp],  
+    },
+  // ...
+  bootstrap: [IonicApp],
   // ...
 })
 ```
@@ -247,6 +257,7 @@ tokenSubscription() {
 
 This can be useful for cases where you want to make HTTP requests out of observable streams. The `tokenStream` can be mapped and combined with other streams at will.
 
+
 ## Using JwtHelper in Components
 
 The `JwtHelper` class has several useful methods that can be utilized in your components:
@@ -270,6 +281,7 @@ useJwtHelper() {
   );
 }
 ```
+
 
 ## Checking Authentication to Hide/Show Elements and Handle Routing
 
@@ -331,13 +343,16 @@ export const routes: RouterConfig = [
 ];
 ```
 
+
 ## Contributing
 
 Pull requests are welcome!
 
+
 ## Development
 
 Use `npm run dev` to compile and watch for changes.
+
 
 ## What is Auth0?
 
@@ -350,18 +365,22 @@ Auth0 helps you to:
 * Analytics of how, when and where users are logging in.
 * Pull data from other sources and add it to the user profile, through [JavaScript rules](https://docs.auth0.com/rules).
 
+
 ## Create a free account in Auth0
 
 1. Go to [Auth0](https://auth0.com) and click Sign Up.
 2. Use Google, GitHub or Microsoft Account to login.
 
+
 ## Issue Reporting
 
 If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Responsible Disclosure Program](https://auth0.com/whitehat) details the procedure for disclosing security issues.
 
+
 ## Author
 
 [Auth0](https://auth0.com)
+
 
 ## License
 
