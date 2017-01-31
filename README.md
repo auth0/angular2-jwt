@@ -235,7 +235,7 @@ getThing() {
   this.authHttp.post('http://example.com/api/thing', 'post body', { headers: myHeader })
     .subscribe(
       data => this.thing = data,
-      err => console.log(error),
+      err => console.log(err),
       () => console.log('Request Complete')
     );
 }
