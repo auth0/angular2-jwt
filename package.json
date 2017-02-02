@@ -1,6 +1,6 @@
 {
   "name": "ng2-bearer",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "Helper library for sending the Authorization Bearer header in Angular 2",
   "repository": {
     "type": "git",
