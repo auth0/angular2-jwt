@@ -72,15 +72,11 @@ describe('AuthConfig', ()=> {
 
 describe('JwtHelper', ()=> {
     'use strict';
-    let jwtHelper:JwtHelper;
-    beforeEach(()=>{
-        jwtHelper=new JwtHelper();
-    });
     describe('urlBase64Decode',()=>{
         it('should successfully decode payloads with funny symbols (A Euro symbol in this case) simplified',()=>{
             const expected="€";
             const payload="4oKs"
-            const actual:any=jwtHelper.urlBase64Decode(payload);
+            const actual:any = JwtHelper.urlBase64Decode(payload);
             expect(actual).toBe(expected);
         });
     });
@@ -90,8 +86,8 @@ describe('JwtHelper', ()=> {
                 exp: 0
             };
             const token = encodeTestToken(payload);
-            const actual = jwtHelper.decodeToken(token);
-            expect(actual).toEqual(payload);
+            const actual = JwtHelper.decodeToken(token);
+            expect((<any>actual)._data).toEqual(payload);
         });
     });
     describe('getTokenExpirationDate',()=>{
@@ -99,15 +95,15 @@ describe('JwtHelper', ()=> {
     });
     describe('isTokenExpired',()=>{
         it('should return false when the token is not expired', ()=> {
-            const actual:boolean=jwtHelper.isTokenExpired(validToken);
+            const actual:boolean=JwtHelper.decodeToken(validToken).isTokenExpired();
             expect(actual).toBe(false);
         });
         it('should return true when the token is expired', ()=> {
-            const actual:boolean=jwtHelper.isTokenExpired(expiredToken);
+            const actual:boolean=JwtHelper.decodeToken(expiredToken).isTokenExpired();
             expect(actual).toBe(true);
         });
         it('should return false when the token doesn\'t have an expiry date', ()=> {
-            const actual:boolean=jwtHelper.isTokenExpired(noExpiryToken);
+            const actual:boolean=JwtHelper.decodeToken(noExpiryToken).isTokenExpired();
             expect(actual).toBe(false);
         });
         // it('should return false when the token is expired, but within the grace period', ()=> {

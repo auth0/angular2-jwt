@@ -53,6 +53,72 @@ const AuthConfigDefaults: IAuthConfig = {
     noTokenScheme: false
 };
 
+export class JsonWebToken {
+  constructor(private readonly _data: any, private readonly _token: string) {}
+
+  public get audience(): string[] {
+    return this._data.aud;
+  }
+
+  public get expiration(): number {
+    return this._data.exp;
+  }
+
+  public get expirationDate(): Date {
+    return this.createDate(this.expiration);
+  }
+
+  public get issuedAt(): number {
+    return this._data.iat;
+  }
+
+  public get issuer(): string {
+    return this._data.iss;
+  }
+
+  public get jwtId(): string {
+    return this._data.jti;
+  }
+
+  public get notBefore(): number {
+    return this._data.nbf;
+  }
+
+  public get subject(): string {
+    return this._data.sub;
+  }
+
+  public getData(key: string): any {
+    return this._data[key];
+  }
+
+  public isTokenExpired(offsetSeconds?: number): boolean {
+    if (this.expiration == null) {
+      return false;
+    }
+
+    offsetSeconds = offsetSeconds || 0;
+
+    // Token expired?
+    return !(this.expirationDate.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
+  }
+
+  public toString(): string {
+    return this._token;
+  }
+
+  private createDate(timestamp: number): Date {
+    if (timestamp == null) {
+      return null;
+    }
+
+    let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
+    date.setUTCSeconds(+timestamp);
+
+    return date;
+  }
+}
+
 /**
  * Sets up the authentication configuration.
  */
@@ -163,7 +229,7 @@ export class AuthHttp {
     return Observable.defer(() => {
       let token: string | Promise<string> = this.config.tokenGetter();
       if (token instanceof Promise) {
-        return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+        return Observable.fromPromise(token).mergeMap((token: string) => this.requestWithToken(req, token));
       } else {
         return this.requestWithToken(req, token);
       }
@@ -206,7 +272,7 @@ export class AuthHttp {
 
 export class JwtHelper {
 
-  public urlBase64Decode(str: string): string {
+  public static urlBase64Decode(str: string): string {
     let output = str.replace(/-/g, '+').replace(/_/g, '/');
     switch (output.length % 4) {
       case 0: { break; }
@@ -216,11 +282,11 @@ export class JwtHelper {
         throw 'Illegal base64url string!';
       }
     }
-    return this.b64DecodeUnicode(output);
+    return JwtHelper.b64DecodeUnicode(output);
   }
 
   // credits for decoder goes to https://github.com/atk
-  private b64decode(str: string): string {
+  private static b64decode(str: string): string {
     let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     let output: string = '';
 
@@ -248,51 +314,25 @@ export class JwtHelper {
   }
 
   // https://developer.mozilla.org/en/docs/Web/API/WindowBase64/Base64_encoding_and_decoding#The_Unicode_Problem
-  private b64DecodeUnicode(str: any) {
-    return decodeURIComponent(Array.prototype.map.call(this.b64decode(str), (c: any) => {
+  private static b64DecodeUnicode(str: any) {
+    return decodeURIComponent(Array.prototype.map.call(JwtHelper.b64decode(str), (c: any) => {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
   }
 
-  public decodeToken(token: string): any {
+  public static decodeToken(token: string): JsonWebToken {
     let parts = token.split('.');
 
     if (parts.length !== 3) {
       throw new Error('JWT must have 3 parts');
     }
 
-    let decoded = this.urlBase64Decode(parts[1]);
+    let decoded = JwtHelper.urlBase64Decode(parts[1]);
     if (!decoded) {
       throw new Error('Cannot decode the token');
     }
 
-    return JSON.parse(decoded);
-  }
-
-  public getTokenExpirationDate(token: string): Date {
-    let decoded: any;
-    decoded = this.decodeToken(token);
-
-    if (!decoded.hasOwnProperty('exp')) {
-      return null;
-    }
-
-    let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
-    date.setUTCSeconds(decoded.exp);
-
-    return date;
-  }
-
-  public isTokenExpired(token: string, offsetSeconds?: number): boolean {
-    let date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0;
-
-    if (date == null) {
-      return false;
-    }
-
-    // Token expired?
-    return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
+    return new JsonWebToken(JSON.parse(decoded), token);
   }
 }
 
@@ -300,13 +340,15 @@ export class JwtHelper {
  * Checks for presence of token and that token hasn't expired.
  * For use with the @CanActivate router decorator and NgIf
  */
-export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?:string): boolean {
+export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?: string): boolean {
+  const tokenString: string = jwt || localStorage.getItem(tokenName);
+  if (tokenString == null) {
+    return false;
+  }
 
-  const token: string = jwt || localStorage.getItem(tokenName);
+  const token: JsonWebToken = JwtHelper.decodeToken(tokenString);
 
-  const jwtHelper = new JwtHelper();
-
-  return token != null && !jwtHelper.isTokenExpired(token);
+  return !token.isTokenExpired();
 }
 
 export const AUTH_PROVIDERS: Provider[] = [
