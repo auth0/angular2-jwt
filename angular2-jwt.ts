@@ -110,7 +110,19 @@ export class AuthHttp {
       this.setGlobalHeaders(this.config.globalHeaders, providedOpts);
     }
 
-    newOptions = newOptions.merge(new RequestOptions(providedOpts));
+    let providedOptions = new RequestOptions(providedOpts);
+    if (newOptions.headers && newOptions.headers.keys().length > 0) {
+      newOptions.headers.forEach((header: Object, name: string) => {
+
+        // set only not existing header keys
+        if (!providedOptions.headers.has(name)) {
+          let headerValue: string = (header as any)[Object.keys(header)[0]];
+          providedOptions.headers.set(name, headerValue);
+        }
+      });
+    }
+
+    newOptions = newOptions.merge(providedOptions);
 
     return newOptions;
   }
