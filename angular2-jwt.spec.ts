@@ -2,6 +2,7 @@ import "core-js";
 import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
 import {Observable} from "rxjs";
 import {encodeTestToken} from "./angular2-jwt-test-helpers";
+import {Request} from '@angular/http';
 
 
 
@@ -182,7 +183,7 @@ describe("AuthHttp", () => {
 
             spyOn(authHttp, "requestWithToken").and.stub();
 
-            authHttp.request(null);
+            authHttp.request(null).subscribe();
 
             expect(authHttp["requestWithToken"]).toHaveBeenCalledWith(null, validToken);
         });
@@ -198,6 +199,35 @@ describe("AuthHttp", () => {
                 expect(authHttp["requestWithToken"]).toHaveBeenCalledWith(null, validToken);
                 done();
             });
+        });
+
+        it('loads the token on each http subscription', () => {
+            const HEADER_NAME = "JWT";
+            let firstToken = encodeTestToken({ "sub": 123, "name": "first token"});
+            let secondToken = encodeTestToken({ "sub": 345, "name": "second token"});
+            let currentToken = firstToken;
+
+            let usedTokens: string[] = [];
+
+            let httpSpy = jasmine.createSpyObj('http', [ 'request' ]);
+            httpSpy.request.and.callFake((req: Request) => {
+                usedTokens.push(req.headers.get(HEADER_NAME).trim());
+                return Observable.of(null);
+            });
+
+            let authHttp = new AuthHttp(new AuthConfig({
+                headerName: HEADER_NAME,
+                headerPrefix: " ",
+                tokenGetter: () => currentToken
+            }), httpSpy);
+
+            let observer = authHttp.request(new Request({url: 'http://test.local'}));
+            observer.subscribe(() => {});
+            currentToken = secondToken;
+            observer.subscribe(() => {});
+
+            expect(httpSpy["request"]).toHaveBeenCalledTimes(2);
+            expect(usedTokens).toEqual([firstToken, secondToken]);
         });
     });
 });

@@ -157,12 +157,16 @@ export class AuthHttp {
 
     // from this point url is always an instance of Request;
     let req: Request = url as Request;
-    let token: string | Promise<string> = this.config.tokenGetter();
-    if (token instanceof Promise) {
-      return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
-    } else {
-      return this.requestWithToken(req, token);
-    }
+
+    // Create a cold observable and load the token just in time
+    return Observable.defer(() => {
+      let token: string | Promise<string> = this.config.tokenGetter();
+      if (token instanceof Promise) {
+        return Observable.fromPromise(token).mergeMap((jwtToken: string) => this.requestWithToken(req, jwtToken));
+      } else {
+        return this.requestWithToken(req, token);
+      }
+    });
   }
 
   public get(url: string, options?: RequestOptionsArgs): Observable<Response> {
