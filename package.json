@@ -1,6 +1,6 @@
 {
   "name": "ng2-bearer",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "description": "Helper library for sending the Authorization Bearer header in Angular 2",
   "repository": {
     "type": "git",
@@ -27,32 +27,31 @@
   "typings": "./index.d.ts",
   "homepage": "https://github.com/angulab/ng2-bearer#readme",
   "devDependencies": {
-    "@angular/common": "^2.4.5",
-    "@angular/core": "^2.4.5",
-    "@angular/http": "^2.4.5",
-    "@angular/platform-browser": "^2.4.5",
-    "@types/jasmine": "^2.5.41",
+    "@angular/common": "^2.4.9",
+    "@angular/core": "^2.4.9",
+    "@angular/http": "^2.4.9",
+    "@angular/platform-browser": "^2.4.9",
+    "@types/jasmine": "^2.5.45",
     "@types/js-base64": "^2.1.3",
     "awesome-typescript-loader": "^3.0.0-beta.18",
-    "core-js": "^2.3.0",
+    "core-js": "^2.4.1",
     "es6-shim": "^0.35.3",
-    "jasmine-core": "^2.4.1",
-    "karma": "^1.4.0",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.5.0",
     "karma-chrome-launcher": "^2.0.0",
-    "karma-jasmine": "^1.0.2",
+    "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.2",
     "phantomjs-prebuilt": "^2.1.7",
     "reflect-metadata": "^0.1.9",
-    "rxjs": "^5.0.3",
-    "typescript": "^2.1.5",
-    "webpack": "^1.13.0",
-    "zone.js": "~0.7.2"
+    "rxjs": "^5.2.0",
+    "typescript": "^2.2.1",
+    "zone.js": "~0.8.0"
   },
   "peerDependencies": {
-    "@angular/core": "^2.4.5",
-    "@angular/http": "^2.4.5",
-    "rxjs": "^5.0.3"
+    "@angular/core": "^2.4.9",
+    "@angular/http": "^2.4.9",
+    "rxjs": "^5.2.0"
   }
 }
