@@ -189,7 +189,7 @@ export function tokenIsPresent(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, 
   return _token != null && _token.trim().length > 0;
 }
 
-export const AUTH_PROVIDERS: Provider[] = [
+/*export const AUTH_PROVIDERS: Provider[] = [
   {
     provide: AuthHttp,
     deps: [Http, RequestOptions],
@@ -197,7 +197,7 @@ export const AUTH_PROVIDERS: Provider[] = [
       return new AuthHttp(new AuthConfig(), http, options);
     }
   }
-];
+];*/
 
 export function provideAuth(config?: IAuthConfigOptional): Provider[] {
   return [
