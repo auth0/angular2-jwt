@@ -104,24 +104,38 @@ export class AuthHttp {
     });
   }
 
+  private mergeHeaders(requestArgs: RequestOptions, fallbackOptions: RequestOptionsArgs) {
+    if (!fallbackOptions.headers) {
+      // no headers for merge available
+      return;
+    }
+    if (!requestArgs.headers) {
+      // target has no headers instance yet
+      requestArgs.headers = new Headers();
+    }
+
+    fallbackOptions.headers.forEach((header: Object, name: string) => {
+      let headerValue: string = (header as any)[Object.keys(header)[0]];
+      // set only not existing header keys to allow override hierarchy, requestArgs headers win
+      if (!requestArgs.headers.has(name)) {
+        requestArgs.headers.set(name, headerValue);
+      }
+    });
+  }
+
   private mergeOptions(providedOpts: RequestOptionsArgs, defaultOpts?: RequestOptions) {
     let newOptions = defaultOpts || new RequestOptions();
     if (this.config.globalHeaders) {
-      this.setGlobalHeaders(this.config.globalHeaders, providedOpts);
+      // merge default headers with global headers, overwrite on duplicate
+      this.setGlobalHeaders(this.config.globalHeaders, newOptions);
     }
 
     let providedOptions = new RequestOptions(providedOpts);
-    if (newOptions.headers && newOptions.headers.keys().length > 0) {
-      newOptions.headers.forEach((header: Object, name: string) => {
+    // merge new Headers values into provided Headers instance
+    this.mergeHeaders(providedOptions, newOptions);
 
-        // set only not existing header keys
-        if (!providedOptions.headers.has(name)) {
-          let headerValue: string = (header as any)[Object.keys(header)[0]];
-          providedOptions.headers.set(name, headerValue);
-        }
-      });
-    }
-
+    // RequestOptions.merge overwrites the headers field and does not merge them
+    // https://github.com/angular/angular/blob/3e51a1998304ab6a15e5bea6bc66e7a8c636a8ad/packages/http/src/base_request_options.ts#L101
     newOptions = newOptions.merge(providedOptions);
 
     return newOptions;
@@ -130,7 +144,7 @@ export class AuthHttp {
   private requestHelper(requestArgs: RequestOptionsArgs, additionalOptions?: RequestOptionsArgs): Observable<Response> {
     let options = new RequestOptions(requestArgs);
     if (additionalOptions) {
-      options = options.merge(additionalOptions);
+      this.mergeHeaders(options, additionalOptions);
     }
     return this.request(new Request(this.mergeOptions(options, this.defOpts)));
   }
