@@ -52,10 +52,10 @@ module.exports = function (config) {
 
         webpack: {
             resolve: {
-                extensions: ['', '.ts', '.js']
+                extensions: ['.ts', '.js']
             },
             module: {
-                loaders: [
+                rules: [
                     {test: /\.ts$/,loader: 'awesome-typescript-loader'}
                 ]
             },
@@ -63,7 +63,6 @@ module.exports = function (config) {
                 colors: true,
                 reasons: true
             },
-            debug: false,
             devtool: 'inline-source-map'
         }
     });

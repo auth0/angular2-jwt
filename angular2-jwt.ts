@@ -122,7 +122,7 @@ export class AuthHttp {
     return this.request(new Request(this.mergeOptions(options, this.defOpts)));
   }
 
-  private requestWithToken(req: Request, token: string): Observable<Response> {
+  public requestWithToken(req: Request, token: string): Observable<Response> {
     if (!this.config.noClientCheck && !tokenNotExpired(undefined, token)) {
       if (!this.config.noJwtError) {
         return new Observable<Response>((obs: any) => {
