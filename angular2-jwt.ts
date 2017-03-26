@@ -11,6 +11,7 @@ import {
 import {Injectable, Provider, NgModule, Optional, SkipSelf, ModuleWithProviders} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/observable/fromPromise";
+import "rxjs/add/observable/defer";
 import "rxjs/add/operator/mergeMap";
 
 export interface IAuthConfig {
