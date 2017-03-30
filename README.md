@@ -67,7 +67,7 @@ import { NgModule } from '@angular/core';
 import { Http, RequestOptions } from '@angular/http';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
-function authHttpServiceFactory(http: Http, options: RequestOptions) {
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig(), http, options);
 }
 
@@ -145,7 +145,7 @@ import { NgModule } from '@angular/core';
 import { Http, RequestOptions } from '@angular/http';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
-function authHttpServiceFactory(http: Http, options: RequestOptions) {
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
 		tokenGetter: (() => sessionStorage.getItem('token')),
