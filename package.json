@@ -1,7 +1,7 @@
 {
   "name": "angular2-jwt",
-  "version": "0.1.28",
-  "description": "Helper library for handling JWTs in Angular 2",
+  "version": "0.2.1",
+  "description": "Helper library for handling JWTs in Angular 2+",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/auth0/angular2-jwt.git"
