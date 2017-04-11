@@ -37,7 +37,7 @@ export interface IAuthConfigOptional {
 }
 
 export class AuthConfigConsts {
-    public static DEFAULT_TOKEN_NAME = 'access_token';
+    public static DEFAULT_TOKEN_NAME = 'token';
     public static DEFAULT_HEADER_NAME = 'Authorization';
     public static HEADER_PREFIX_BEARER = 'Bearer ';
 }

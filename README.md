@@ -117,7 +117,7 @@ class App {
 
 * Header Name: `Authorization`
 * Header Prefix: `Bearer`
-* Token Name: `access_token`
+* Token Name: `token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
 * Global Headers: none
@@ -181,7 +181,7 @@ export function getAuthHttp(http) {
     headerPrefix: YOUR_HEADER_PREFIX,
     noJwtError: true,
     globalHeaders: [{'Accept': 'application/json'}],
-    tokenGetter: (() => storage.get('access_token')),
+    tokenGetter: (() => storage.get('token')),
   }), http);
 }
 
@@ -258,7 +258,7 @@ You can use these methods by passing in the token to be evaluated.
 jwtHelper: JwtHelper = new JwtHelper();
 
 useJwtHelper() {
-  var token = localStorage.getItem('access_token');
+  var token = localStorage.getItem('token');
 
   console.log(
     this.jwtHelper.decodeToken(token),
@@ -273,7 +273,7 @@ useJwtHelper() {
 
 The `tokenNotExpired` function can be used to check whether a JWT exists in local storage, and if it does, whether it has expired or not. If the token is valid, `tokenNotExpired` returns `true`, otherwise it returns `false`.
 
-> **Note:** `tokenNotExpired` will by default assume the token name is `access_token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
+> **Note:** `tokenNotExpired` will by default assume the token name is `token` unless a token name is passed to it, ex: `tokenNotExpired('token_name')`. This will be changed in a future release to automatically use the token name that is set in `AuthConfig`.
 
 ```ts
 // auth.service.ts
