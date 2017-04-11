@@ -26,7 +26,7 @@ describe('AuthConfig', ()=> {
         expect(config).toBeDefined();
         expect(config.headerName).toBe("Authorization");
         expect(config.headerPrefix).toBe("Bearer ");
-        expect(config.tokenName).toBe("id_token");
+        expect(config.tokenName).toBe("access_token");
         expect(config.noJwtError).toBe(false);
         expect(config.noTokenScheme).toBe(false);
         expect(config.globalHeaders).toEqual([]);
@@ -162,12 +162,12 @@ describe('tokenNotExpired', ()=> {
         expect(actual).toBe(false);
     });
     it('should use the defaults when not expired', ()=> {
-        localStorage.setItem("id_token", validToken);
+        localStorage.setItem("access_token", validToken);
         const actual:boolean=tokenNotExpired();
         expect(actual).toBe(true);
     });
     it('should use the defaults when expired', ()=> {
-        localStorage.setItem("id_token", expiredToken);
+        localStorage.setItem("access_token", expiredToken);
         const actual:boolean=tokenNotExpired();
         expect(actual).toBe(false);
     });
