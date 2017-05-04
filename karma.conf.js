@@ -43,6 +43,10 @@ module.exports = function (config) {
             //"IE",
             "PhantomJS"
         ],
+        
+        mime: {
+            'text/x-typescript': ['ts']
+        },
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
