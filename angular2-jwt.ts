@@ -255,11 +255,7 @@ export class JwtHelper {
   }
 
   public decodeToken(token: string): any {
-    let parts = token.split('.');
-
-    if (parts.length !== 3) {
-      throw new Error('JWT must have 3 parts');
-    }
+    let parts = this.splitToken(token);
 
     let decoded = this.urlBase64Decode(parts[1]);
     if (!decoded) {
@@ -269,16 +265,23 @@ export class JwtHelper {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token: string): Date {
-    let decoded: any;
-    decoded = this.decodeToken(token);
 
-    if (!decoded.hasOwnProperty('exp')) {
+  public getTokenExpirationDate(token: string): Date {
+    let parts = this.splitToken(token);
+
+    let decoded = this.urlBase64Decode(parts[0]);
+    if (!decoded) {
+      throw new Error('Cannot decode the token');
+    }
+
+    let header = JSON.parse(decoded);
+
+    if (!header.hasOwnProperty('exp')) {
       return null;
     }
 
     let date = new Date(0); // The 0 here is the key, which sets the date to the epoch
-    date.setUTCSeconds(decoded.exp);
+    date.setUTCSeconds(header.exp);
 
     return date;
   }
@@ -293,6 +296,16 @@ export class JwtHelper {
 
     // Token expired?
     return !(date.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
+  }
+
+  private splitToken(token: string) {
+    let parts = token.split('.');
+
+    if (parts.length !== 3) {
+      throw new Error('JWT must have 3 parts');
+    }
+
+    return parts;
   }
 }
 
