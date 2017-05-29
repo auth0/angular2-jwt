@@ -347,8 +347,8 @@ function objectAssign(target: any, ...source: any[]) {
   let to = toObject(target);
   let symbols: any;
   
-  for (var s = 1; s < arguments.length; s++) {
-    from = Object(arguments[s]);
+  for (var s = 0; s < source.length; s++) {
+    from = Object(source[s]);
     
     for (var key in from) {
       if (hasOwnProperty.call(from, key)) {
