@@ -298,8 +298,7 @@ To guard routes that should be limited to authenticated users, set up an `AuthGu
 // auth-guard.service.ts
 
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { CanActivate } from '@angular/router';
+import { Router, CanActivate } from '@angular/router';
 import { Auth } from './auth.service';
 
 @Injectable()
