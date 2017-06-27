@@ -7,7 +7,7 @@
 For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
 
 
-##Contents
+## Contents
  - [What is this Library for?](#what-is-this-library-for)
  - [Key Features](#key-features)
  - [Installation](#installation)
