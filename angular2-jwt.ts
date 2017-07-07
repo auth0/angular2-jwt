@@ -25,8 +25,8 @@ export interface IAuthConfig {
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
   tokenName: string;
-  onRetrieve?: (res: Response) => Observable<any>
-  onError?: (error: Response | any) => Observable<any>
+  onRetrieve?: (res: Response) => Promise<any> | Observable<any> | any;
+  onError?: (error: Response | any) => Observable<any>;
 }
 
 export interface IAuthConfigOptional {
@@ -38,6 +38,8 @@ export interface IAuthConfigOptional {
   noClientCheck?: boolean;
   globalHeaders?: Array<Object>;
   noTokenScheme?: boolean;
+  onRetrieve?: (res: Response) => Observable<any> | Promise<any> | any;
+  onError?: (error: Response | any) => Observable<any>;
 }
 
 export class AuthConfigConsts {
@@ -140,15 +142,16 @@ export class AuthHttp {
 
     let response = this.http.request(req);
 
+    if (this.config.onError) {
+      response = response
+        .catch(this.config.onError);
+    }
+
     if (this.config.onRetrieve) {
-      response
+      response = response
         .map(this.config.onRetrieve);
     }
 
-    if (this.config.onError) {
-      response
-        .catch(this.config.onError);
-    }
 
     return response;
   }

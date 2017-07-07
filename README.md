@@ -136,6 +136,31 @@ The default scheme for the `Authorization` header is `Bearer`, but you may eithe
 
 You may set as many global headers as you like by passing an array of header-shaped objects to `globalHeaders`.
 
+#### On Retrieve
+
+If you want apply the same function to all request, like res.json(), you can configure `onRetrieve` param.
+
+```ts
+onRetrieve: (res) => res.json()
+```
+
+ This function receive one param `Response` and return `any`.
+
+> To resolve problems with types you can cast the returns.
+
+```ts
+this.authHttp.get(`${this._baseUrl2}/games`).do(console.log) as any as Observable<Model[]>
+```
+
+#### On Error
+
+If you want apply the same function to all error request, you can configure `onError` param.
+
+```ts
+onError: (err) => Observable.throw(err)
+```
+This function receive one param `Error` and return `Observable`.
+
 ### Advanced Configuration
 
 You may customize any of the above options using a factory which returns an `AuthHttp` instance with the options you would like to change.
