@@ -1,8 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "declaration": true,
-        "emitDecoratorMetadata": false
+        "declaration": true
     },
     "angularCompilerOptions": {
         "annotateForClosureCompiler": true,
