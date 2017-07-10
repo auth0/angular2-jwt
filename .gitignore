@@ -1,6 +1,8 @@
 node_modules
 npm-debug.log
 typings
+es2015
+*.tgz
 
 Thumbs.db
 .DS_Store

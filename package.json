@@ -9,8 +9,9 @@
   "scripts": {
     "dev": "tsc --watch",
     "test": "karma start",
-    "prepublish": "tsc",
-    "ngc":"ngc"
+    "prepublish": "npm run es2015 && npm run ngc",
+    "ngc": "ngc -p ./tsconfig.aot.json",
+    "es2015": "tsc -p ./tsconfig.es2015.json"
   },
   "keywords": [
     "angular",
@@ -24,8 +25,11 @@
     "url": "https://github.com/auth0/angular2-jwt/issues"
   },
   "main": "angular2-jwt.js",
+  "module": "./es2015/angular2-jwt.js",
+  "es2015": "./es2015/angular2-jwt.js",
   "typings": "./angular2-jwt.d.ts",
   "types": "./angular2-jwt.d.ts",
+  "readmeFilename": "README.md",
   "homepage": "https://github.com/auth0/angular2-jwt#readme",
   "devDependencies": {
     "@angular/common": "^2.4.2||^4.0.0",
