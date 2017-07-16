@@ -4,10 +4,12 @@
 
 **angular2-jwt** is a helper library for working with [JWTs](http://jwt.io/introduction) in your Angular 2 applications.
 
+### For the version 1.0 pre-release with `HttpInterceptor` support, see the [v1.0 branch](https://github.com/auth0/angular2-jwt/tree/v1.0).
+
 For examples of integrating **angular2-jwt** with SystemJS, see [auth0-angular2](https://github.com/auth0-samples/auth0-angularjs2-systemjs-sample).
 
 
-##Contents
+## Contents
  - [What is this Library for?](#what-is-this-library-for)
  - [Key Features](#key-features)
  - [Installation](#installation)
