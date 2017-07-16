@@ -8,10 +8,10 @@ This library provides an `HttpInterceptor` which automatically attaches a [JSON 
 
 ```bash
 # installation with npm
-npm install @auth0/angular-jwt@beta
+npm install angular2-jwt@beta
 
 # installation with yarn
-yarn add @auth0/angular-jwt@beta
+yarn add angular2-jwt@beta
 ```
 
 ## Usage
