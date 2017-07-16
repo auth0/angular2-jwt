@@ -1,28 +1,36 @@
 {
-    "compilerOptions": {
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "ES5",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "sourceMap": true,
-        "inlineSources": true,
-        "declaration": true,
-        "lib": [
-            "dom",
-            "es2015.collection",
-            "es2015.promise",
-            "es5",
-            "es2015.iterable"
-        ],
-        "moduleResolution":"node"
-    },
-    "files": [
-        "angular2-jwt.ts",
-        "angular2-jwt.spec.ts",
-        "custom.d.ts"
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "es2015",
+    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "types": [
+      "hammerjs",
+      "jasmine",
+      "node"
     ],
-    "exclude": [
-        "node_modules"
-    ]
+    "lib": ["es2015", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@angular/*": [
+        "node_modules/@angular/*"
+      ]
+    }
+  },
+  "files": [
+    "index.ts",
+    "./src/jwt.interceptor.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "bundles"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true
+  }
 }

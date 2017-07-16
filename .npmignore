@@ -1,18 +1,42 @@
-# Node generated files
-node_modules
+#################
+## Misc
+#################
+**/.DS_Store
+nbproject
+manifest.mf
+build.xml
+node_modules/*
 npm-debug.log
-# OS generated files
-Thumbs.db
-.DS_Store
-
-# TypeScript source files, apart generated type definitions
 *.ts
 !*.d.ts
+tests
+examples
+.github
+coverage
+!*.metadata.json
+!bundles/*.js
+tsconfig.json
 
-# Other generated files
-*.spec.*
+#################
+## JetBrains
+#################
+.idea
+.project
+.settings
 
-# Other build-related files
-.travis.yml
-karma.*
-tsconfig.*
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+############
+## Mac
+############
+
+# Mac crap
+.DS_Store
