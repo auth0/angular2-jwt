@@ -1,5 +1,5 @@
 {
-  "name": "angular2-jwt",
+  "name": "@auth0/angular-jwt",
   "version": "1.0.0-beta.0",
   "description": "JSON Web Token helper library for Angular",
   "scripts": {
