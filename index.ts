@@ -7,9 +7,10 @@ export * from './src/jwt.interceptor';
 
 export interface JwtModuleOptions {
   config: {
-    tokenGetter: any,
-    headerName?: string,
-    tokenName?: string
+    tokenGetter: any;
+    headerName?: string;
+    tokenName?: string;
+    whitelistedDomains: Array<string>;
   }
 }
 
