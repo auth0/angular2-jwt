@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, Inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -6,8 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
-export const JWT_OPTIONS = new InjectionToken('JWT_OPTIONS');
+import { JWT_OPTIONS } from './jwtoptions.token';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
