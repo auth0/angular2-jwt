@@ -16,7 +16,9 @@ yarn add @auth0/angular-jwt@beta
 
 ## Usage
 
-Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. Be sure to import the `HttpClientModule` as well.
+Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also whitelist any domains that you want to make requests to.
+
+Be sure to import the `HttpClientModule` as well.
 
 ```ts
 import { JwtModule } from '@auth0/angular-jwt';
@@ -31,7 +33,8 @@ import { HttpClientModule } from '@angular/common/http';
       config: {
         tokenGetter: () => {
           return localStorage.getItem('access_token');
-        }
+        },
+        whitelistedDomains: ['localhost:3001']
       }
     })
   ]
