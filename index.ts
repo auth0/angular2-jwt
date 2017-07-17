@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { NgModule, ModuleWithProviders, Optional, SkipSelf } from '@angular/core';
 import { JwtInterceptor } from './src/jwt.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JWT_OPTIONS } from './src/jwt.interceptor';
@@ -7,7 +7,7 @@ export * from './src/jwt.interceptor';
 
 export interface JwtModuleOptions {
   config: {
-    tokenGetter: any;
+    tokenGetter: () => string;
     headerName?: string;
     tokenName?: string;
     whitelistedDomains: Array<string>;
@@ -16,6 +16,12 @@ export interface JwtModuleOptions {
 
 @NgModule()
 export class JwtModule {
+
+  constructor(@Optional() @SkipSelf() parentModule: JwtModule) {
+    if (parentModule) {
+      throw new Error('JwtModule is already loaded. It should only be imported in your application\'s main module.');
+    }
+  }
   static forRoot(options: JwtModuleOptions): ModuleWithProviders {
     return {
       ngModule: JwtModule,

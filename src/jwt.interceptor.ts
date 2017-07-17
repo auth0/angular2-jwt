@@ -11,7 +11,7 @@ export const JWT_OPTIONS = new InjectionToken('JWT_OPTIONS');
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  tokenGetter: any;
+  tokenGetter: () => string;
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string>;
@@ -23,8 +23,8 @@ export class JwtInterceptor implements HttpInterceptor {
     this.whitelistedDomains = config.whitelistedDomains || [];
   }
 
-  isWhitelistedDomain(request: any): boolean {
-    const requestUrl = new URL(request.url);
+  isWhitelistedDomain(request: HttpRequest<any>): boolean {
+    const requestUrl: URL = new URL(request.url);
     return this.whitelistedDomains.indexOf(requestUrl.host) > -1;
   }
 
@@ -32,10 +32,12 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (this.isWhitelistedDomain(request)) {
+    const token = this.tokenGetter();
+
+    if (token && this.isWhitelistedDomain(request)) {
       request = request.clone({
         setHeaders: {
-          [this.headerName]: `${this.authScheme}${this.tokenGetter()}`
+          [this.headerName]: `${this.authScheme}${token}`
         }
       });
     }
