@@ -76,7 +76,7 @@ export class JwtHelperService {
     );
   }
 
-  public decodeToken(token: string): any {
+  public decodeToken(token: string = this.tokenGetter()): any {
     let parts = token.split('.');
 
     if (parts.length !== 3) {
@@ -91,7 +91,7 @@ export class JwtHelperService {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token: string): Date {
+  public getTokenExpirationDate(token: string = this.tokenGetter()): Date {
     let decoded: any;
     decoded = this.decodeToken(token);
 

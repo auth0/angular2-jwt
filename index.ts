@@ -13,6 +13,7 @@ export interface JwtModuleOptions {
     headerName?: string;
     tokenName?: string;
     whitelistedDomains: Array<string>;
+    skipWhenExpired?: boolean;
   }
 }
 
@@ -25,6 +26,7 @@ export class JwtModule {
     }
   }
   static forRoot(options: JwtModuleOptions): ModuleWithProviders {
+    console.log(options)
     return {
       ngModule: JwtModule,
       providers: [

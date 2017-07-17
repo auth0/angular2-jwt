@@ -6,6 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
 
 @Injectable()
@@ -14,12 +15,14 @@ export class JwtInterceptor implements HttpInterceptor {
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string>;
+  skipWhenExpired: boolean;
 
-  constructor(@Inject(JWT_OPTIONS) config: any) {
+  constructor(@Inject(JWT_OPTIONS) config: any, public jwtHelper: JwtHelperService) {
     this.tokenGetter = config.tokenGetter;
     this.headerName = config.headerName || 'Authorization';
     this.authScheme = config.authScheme || 'Bearer ';
     this.whitelistedDomains = config.whitelistedDomains || [];
+    this.skipWhenExpired = config.skipWhenExpired;
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
@@ -32,15 +35,18 @@ export class JwtInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const token = this.tokenGetter();
+    const tokenIsExpired = this.jwtHelper.isTokenExpired();
 
-    if (token && this.isWhitelistedDomain(request)) {
+    if (tokenIsExpired && this.skipWhenExpired) {
+      request = request.clone();
+    } else if (token && this.isWhitelistedDomain(request)) {
       request = request.clone({
         setHeaders: {
           [this.headerName]: `${this.authScheme}${token}`
         }
       });
-    }
 
+    }
     return next.handle(request);
   }
 }
