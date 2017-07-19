@@ -16,7 +16,7 @@ yarn add @auth0/angular-jwt@beta
 
 ## Usage
 
-Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also whitelist any domains that you want to make requests to.
+Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also whitelist any domains that you want to make requests to by specifying a `whitelistedDomains` array.
 
 Be sure to import the `HttpClientModule` as well.
 
@@ -64,15 +64,77 @@ export class AppComponent {
 
 ## Configuration Options
 
-In addition to specifying a `tokenGetter` function, you can also provide custom values for `headerName` and `authScheme`. The default `headerName` is `Authorization` and the default `authScheme` is `Bearer `.
+### `tokenGetter: function`
+
+The `tokenGetter` is a function which returns the user's token. This function simply needs to make a retrieval call to wherever the token is stored. In many cases, the token will be stored in local storage or session storage.
 
 ```ts
 // ...
 JwtModule.forRoot({
   config: {
     // ...
-    headerName: 'Your Header Name',
+    tokenGetter: () => {
+      return localStorage.getItem('access_token');
+    }
+  }
+})
+```
+
+### `whitelistedDomains: array`
+
+Authenticated requests should only be sent to domains you know and trust. Many applications make requests to APIs from multiple domains, some of which are not controlled by the developer. Since there is no way to know what the API being called will do with the information contained in the request, it is best to not send the user's token to unintended APIs.
+
+List any domains you wish to allow authenticated requests to be sent to by specifying them in the the `whitelistedDomains` array.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    whitelistedDomains: ['localhost:3001', 'foo.com', 'bar.com']
+  }
+})
+```
+
+### `headerName: string`
+
+The default header name is `Authorization`. This can be changed by specifying a custom `headerName` which is to be a string value.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    headerName: 'Your Header Name'
+  }
+})
+```
+
+### `authScheme: string`
+
+The default authorization scheme is `Bearer` followed by a single space. This can be changed by specifying a custom `authScheme` which is to be a string.
+
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
     authScheme: 'Your Auth Scheme'
+  }
+})
+```
+
+### `skipWhenExpired: boolean`
+
+By default, the user's JWT will be sent in `HttpClient` requests even if it is expired. You may choose to not allow the token to be sent if it is expired by setting `skipWhenExpired` to true.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    skipWhenExpired: true
   }
 })
 ```
