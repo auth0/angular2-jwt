@@ -127,6 +127,20 @@ JwtModule.forRoot({
 })
 ```
 
+### `throwNoTokenError: boolean`
+
+Setting `throwNoTokenError` to `true` will result in an error being thrown if a token cannot be retrieved with the `tokenGetter` function. Defaults to `false`.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    throwNoTokenError: true
+  }
+})
+```
+
 ### `skipWhenExpired: boolean`
 
 By default, the user's JWT will be sent in `HttpClient` requests even if it is expired. You may choose to not allow the token to be sent if it is expired by setting `skipWhenExpired` to true.
