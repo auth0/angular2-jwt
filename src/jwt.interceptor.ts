@@ -15,13 +15,18 @@ export class JwtInterceptor implements HttpInterceptor {
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string>;
+  throwNoTokenError: boolean;
   skipWhenExpired: boolean;
 
-  constructor(@Inject(JWT_OPTIONS) config: any, public jwtHelper: JwtHelperService) {
+  constructor(
+    @Inject(JWT_OPTIONS) config: any,
+    public jwtHelper: JwtHelperService
+  ) {
     this.tokenGetter = config.tokenGetter;
     this.headerName = config.headerName || 'Authorization';
     this.authScheme = config.authScheme || 'Bearer ';
     this.whitelistedDomains = config.whitelistedDomains || [];
+    this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
   }
 
@@ -35,9 +40,21 @@ export class JwtInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const token = this.tokenGetter();
-    const tokenIsExpired = this.jwtHelper.isTokenExpired();
+    let tokenIsExpired;
 
-    if (tokenIsExpired && this.skipWhenExpired) {
+    if (!token && this.throwNoTokenError) {
+      throw new Error('Could not get token from tokenGetter function.');
+    }
+
+    if (this.skipWhenExpired) {
+      tokenIsExpired = token ? this.jwtHelper.isTokenExpired() : true;
+    }
+
+    if (
+      token &&
+      tokenIsExpired &&
+      this.skipWhenExpired
+    ) {
       request = request.clone();
     } else if (token && this.isWhitelistedDomain(request)) {
       request = request.clone({
@@ -45,7 +62,6 @@ export class JwtInterceptor implements HttpInterceptor {
           [this.headerName]: `${this.authScheme}${token}`
         }
       });
-
     }
     return next.handle(request);
   }
