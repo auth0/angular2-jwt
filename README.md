@@ -84,7 +84,7 @@ JwtModule.forRoot({
 
 ### `whitelistedDomains: array`
 
-Authenticated requests should only be sent to domains you know and trust. Many applications make requests to APIs from multiple domains, some of which are not controlled by the developer. Since there is no way to know what the API being called will do with the information contained in the request, it is best to not send the user's token to unintended APIs.
+Authenticated requests should only be sent to domains you know and trust. Many applications make requests to APIs from multiple domains, some of which are not controlled by the developer. Since there is no way to know what the API being called will do with the information contained in the request, it is best to not send the user's token any and all APIs in a blind fashion.
 
 List any domains you wish to allow authenticated requests to be sent to by specifying them in the the `whitelistedDomains` array.
 
@@ -96,6 +96,25 @@ JwtModule.forRoot({
     whitelistedDomains: ['localhost:3001', 'foo.com', 'bar.com']
   }
 })
+```
+
+**Note:** If requests are sent to the same domain that is serving your Angular application, you do not need to add that domain to the `whitelistedDomains` array. However, this is only the case if you don't specify the domain in the `Http` request.
+
+For example, the following request assumes that the domain is the same as the one serving your app. It doesn't need to be whitelisted in this case.
+
+```ts
+this.http.get('/api/things')
+  .subscribe(...)
+```
+
+However, if you are serving your API at the same domain as that which is serving your Angular app **and** you are specifying that domain in `Http` requests, then it **does** need to be whitelisted.
+
+```ts
+// Both the Angular app and the API are served at
+// localhost:4200 but because that domain is specified
+// in the request, it must be whitelisted
+this.http.get('http://localhost:4200/api/things')
+  .subscribe(...)
 ```
 
 ### `headerName: string`

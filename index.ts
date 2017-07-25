@@ -12,7 +12,7 @@ export interface JwtModuleOptions {
     tokenGetter: () => string;
     headerName?: string;
     tokenName?: string;
-    whitelistedDomains: Array<string>;
+    whitelistedDomains?: Array<string>;
     throwNoTokenError: boolean;
     skipWhenExpired?: boolean;
   }

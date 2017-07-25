@@ -31,8 +31,16 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl: URL = new URL(request.url);
-    return this.whitelistedDomains.indexOf(requestUrl.host) > -1;
+    let requestUrl: URL;
+    try {
+      requestUrl = new URL(request.url);
+      return this.whitelistedDomains.indexOf(requestUrl.host) > -1;
+    } catch (err) {
+      // if we're here, the request is made
+      // to the same domain as the Angular app
+      // so it's safe to proceed
+      return true;
+    }
   }
 
   intercept(
