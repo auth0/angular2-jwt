@@ -10,10 +10,10 @@ This library does not have any functionality for (or opinion about) implementing
 
 ```bash
 # installation with npm
-npm install @auth0/angular-jwt@beta
+npm install @auth0/angular-jwt
 
 # installation with yarn
-yarn add @auth0/angular-jwt@beta
+yarn add @auth0/angular-jwt
 ```
 
 ## Usage
