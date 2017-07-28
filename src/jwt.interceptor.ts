@@ -24,7 +24,7 @@ export class JwtInterceptor implements HttpInterceptor {
   ) {
     this.tokenGetter = config.tokenGetter;
     this.headerName = config.headerName || 'Authorization';
-    this.authScheme = config.authScheme || 'Bearer ';
+    this.authScheme = (config.authScheme || config.authScheme === '') ? config.authScheme : 'Bearer ';
     this.whitelistedDomains = config.whitelistedDomains || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
