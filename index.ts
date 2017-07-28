@@ -11,7 +11,7 @@ export interface JwtModuleOptions {
   config: {
     tokenGetter: () => string;
     headerName?: string;
-    tokenName?: string;
+    authScheme?: string;
     whitelistedDomains?: Array<string>;
     throwNoTokenError?: boolean;
     skipWhenExpired?: boolean;
