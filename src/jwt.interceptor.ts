@@ -14,7 +14,7 @@ export class JwtInterceptor implements HttpInterceptor {
   tokenGetter: () => string;
   headerName: string;
   authScheme: string;
-  whitelistedDomains: Array<string>;
+  whitelistedDomains: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
 
@@ -34,7 +34,10 @@ export class JwtInterceptor implements HttpInterceptor {
     let requestUrl: URL;
     try {
       requestUrl = new URL(request.url);
-      return this.whitelistedDomains.indexOf(requestUrl.host) > -1;
+      return this.whitelistedDomains.findIndex(domain =>
+          typeof domain === 'string' ? domain === requestUrl.host :
+          domain instanceof RegExp ? domain.test(requestUrl.host) : false
+        ) > -1;
     } catch (err) {
       // if we're here, the request is made
       // to the same domain as the Angular app
