@@ -6,6 +6,7 @@ import { JWT_OPTIONS } from './src/jwtoptions.token';
 
 export * from './src/jwt.interceptor';
 export * from './src/jwthelper.service';
+export * from './src/jwtoptions.token';
 
 export interface JwtModuleOptions {
   config: {
