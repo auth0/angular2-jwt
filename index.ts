@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders, Optional, SkipSelf } from '@angular/core';
+import { NgModule, ModuleWithProviders, Optional, SkipSelf, Provider } from '@angular/core';
 import { JwtInterceptor } from './src/jwt.interceptor';
 import { JwtHelperService } from './src/jwthelper.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -9,8 +9,9 @@ export * from './src/jwthelper.service';
 export * from './src/jwtoptions.token';
 
 export interface JwtModuleOptions {
+  jwtOptionsProvider?: Provider,
   config: {
-    tokenGetter: () => string;
+    tokenGetter?: () => string | Promise<string>;
     headerName?: string;
     authScheme?: string;
     whitelistedDomains?: Array<string | RegExp>;
@@ -36,6 +37,7 @@ export class JwtModule {
           useClass: JwtInterceptor,
           multi: true
         },
+        options.jwtOptionsProvider ||
         {
           provide: JWT_OPTIONS,
           useValue: options.config

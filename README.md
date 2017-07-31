@@ -174,6 +174,79 @@ JwtModule.forRoot({
 })
 ```
 
+## Using a Custom Options Factory Function
+
+In some cases, you may need to provide a custom factory function to properly handle your configuration options. This is the case if your `tokenGetter` function relies on a service or if you are using an asynchronous storage mechanism (like Ionic's `Storage`).
+
+Import the `JWT_OPTIONS` `InjectionToken` so that you can instruct it to use your custom factory function.
+
+Create a factory function and specify the options as you normally would if you were using `JwtModule.forRoot` directly. If you need to use a service in the function, list it as a parameter in the function and pass it in the `deps` array when you provide the function.
+
+
+```ts
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { TokenService } from './app.tokenservice';
+
+// ...
+
+export function jwtOptionsFactory(tokenService) {
+  return {
+    tokenGetter: () => {
+      return tokenService.getAsyncToken();
+    }
+  }
+}
+
+// ...
+
+@NgModule({
+  // ...
+  imports: [
+    JwtModule.forRoot({
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory,
+        deps: [TokenService]
+      }
+    })
+  ],
+  providers: [TokenService]
+})
+```
+
+## Configuration for Ionic 2+
+
+The custom factory function approach described above can be used to get a token asynchronously with Ionic's `Storage`.
+
+```ts
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { Storage } from '@ionic/storage';
+
+const storage = new Storage();
+
+export function jwtOptionsFactory() {
+  return {
+    tokenGetter: () => {
+      return storage.get('access_token');
+    }
+  }
+}
+
+// ...
+
+@NgModule({
+  // ...
+  imports: [
+    JwtModule.forRoot({
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory
+      }
+    })
+  ]
+})
+```
+
 ## What is Auth0?
 
 Auth0 helps you to:

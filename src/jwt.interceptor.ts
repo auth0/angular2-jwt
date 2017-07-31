@@ -5,13 +5,15 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
 import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  tokenGetter: () => string;
+  tokenGetter: () => string | Promise<string>;
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string | RegExp>;
@@ -24,7 +26,10 @@ export class JwtInterceptor implements HttpInterceptor {
   ) {
     this.tokenGetter = config.tokenGetter;
     this.headerName = config.headerName || 'Authorization';
-    this.authScheme = (config.authScheme || config.authScheme === '') ? config.authScheme : 'Bearer ';
+    this.authScheme =
+      config.authScheme || config.authScheme === ''
+        ? config.authScheme
+        : 'Bearer ';
     this.whitelistedDomains = config.whitelistedDomains || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
@@ -34,10 +39,14 @@ export class JwtInterceptor implements HttpInterceptor {
     let requestUrl: URL;
     try {
       requestUrl = new URL(request.url);
-      return this.whitelistedDomains.findIndex(domain =>
-          typeof domain === 'string' ? domain === requestUrl.host :
-          domain instanceof RegExp ? domain.test(requestUrl.host) : false
-        ) > -1;
+      return (
+        this.whitelistedDomains.findIndex(
+          domain =>
+            typeof domain === 'string'
+              ? domain === requestUrl.host
+              : domain instanceof RegExp ? domain.test(requestUrl.host) : false
+        ) > -1
+      );
     } catch (err) {
       // if we're here, the request is made
       // to the same domain as the Angular app
@@ -46,26 +55,22 @@ export class JwtInterceptor implements HttpInterceptor {
     }
   }
 
-  intercept(
+  handleInterception(
+    token: string,
     request: HttpRequest<any>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    const token = this.tokenGetter();
-    let tokenIsExpired;
+  ) {
+    let tokenIsExpired: boolean;
 
     if (!token && this.throwNoTokenError) {
       throw new Error('Could not get token from tokenGetter function.');
     }
 
     if (this.skipWhenExpired) {
-      tokenIsExpired = token ? this.jwtHelper.isTokenExpired() : true;
+      tokenIsExpired = token ? this.jwtHelper.isTokenExpired(token) : true;
     }
 
-    if (
-      token &&
-      tokenIsExpired &&
-      this.skipWhenExpired
-    ) {
+    if (token && tokenIsExpired && this.skipWhenExpired) {
       request = request.clone();
     } else if (token && this.isWhitelistedDomain(request)) {
       request = request.clone({
@@ -75,5 +80,20 @@ export class JwtInterceptor implements HttpInterceptor {
       });
     }
     return next.handle(request);
+  }
+
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    const token: any = this.tokenGetter();
+
+    if (token instanceof Promise) {
+      return Observable.fromPromise(token).mergeMap((asyncToken: string) => {
+        return this.handleInterception(asyncToken, request, next);
+      });
+    } else {
+      return this.handleInterception(token, request, next);
+    }
   }
 }
