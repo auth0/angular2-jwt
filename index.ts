@@ -10,7 +10,7 @@ export * from './src/jwtoptions.token';
 
 export interface JwtModuleOptions {
   jwtOptionsProvider?: Provider,
-  config: {
+  config?: {
     tokenGetter?: () => string | Promise<string>;
     headerName?: string;
     authScheme?: string;
