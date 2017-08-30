@@ -72,7 +72,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (token && tokenIsExpired && this.skipWhenExpired) {
       request = request.clone();
-    } else if (token && this.isWhitelistedDomain(request)) {
+    } else if (token && this.isWhitelistedDomain(request) && !request.headers.has(this.headerName)) {
       request = request.clone({
         setHeaders: {
           [this.headerName]: `${this.authScheme}${token}`
