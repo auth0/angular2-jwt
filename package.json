@@ -10,7 +10,7 @@
     "dev": "tsc --watch",
     "test": "karma start",
     "prepublish": "tsc",
-    "ngc":"ngc"
+    "ngc": "ngc"
   },
   "keywords": [
     "angular",

@@ -2,7 +2,8 @@ import "core-js";
 import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
 import {Observable} from "rxjs";
 import {encodeTestToken} from "./angular2-jwt-test-helpers";
-import {Request} from '@angular/http';
+import {Request, Response, ResponseOptions} from '@angular/http';
+import {Subscriber} from "rxjs/Subscriber";
 
 
 
@@ -34,9 +35,14 @@ describe('AuthConfig', ()=> {
         const token = "Token";
         localStorage.setItem(config.tokenName, token);
         expect(config.tokenGetter()).toBe(token);
+        expect(config.expiredTokenHandler).toBeDefined();
+        config.expiredTokenHandler().subscribe((val: Response) => {}, (error) => {
+            expect(error.message).toBe('No JWT present or has expired');
+        })
     });
 
-    it('should have default values', ()=> {
+    it('should have default and overridden values', ()=> {
+        const respExpected = new Response(new ResponseOptions);
         const configExpected = {
             headerName: "Foo",
             headerPrefix: "Bar",
@@ -44,7 +50,12 @@ describe('AuthConfig', ()=> {
             tokenGetter: ()=>"this is a token",
             noJwtError: true,
             globalHeaders: [{"header": "value"}, {"header2": "value2"}],
-            noTokenScheme: true
+            noTokenScheme: true,
+            expiredTokenHandler: () => {
+                return new Observable<Response>((obs: Subscriber<Response>) => {
+                    obs.next(respExpected);
+                });
+            }
         };
         const config = new AuthConfig(configExpected).getConfig();
         expect(config).toBeDefined();
@@ -56,6 +67,10 @@ describe('AuthConfig', ()=> {
         expect(config.globalHeaders).toEqual(configExpected.globalHeaders);
         expect(config.tokenGetter).toBeDefined();
         expect(config.tokenGetter()).toBe("this is a token");
+        expect(config.expiredTokenHandler).toBeDefined();
+        config.expiredTokenHandler().subscribe((resp) => {
+            expect(resp).toBe(respExpected);
+        });
     });
     
     it('should use custom token name in default tokenGetter', ()=> {
@@ -73,14 +88,14 @@ describe('AuthConfig', ()=> {
 describe('JwtHelper', ()=> {
     'use strict';
     let jwtHelper:JwtHelper;
-    beforeEach(()=>{
-        jwtHelper=new JwtHelper();
+    beforeEach(() => {
+        jwtHelper = new JwtHelper();
     });
     describe('urlBase64Decode',()=>{
         it('should successfully decode payloads with funny symbols (A Euro symbol in this case) simplified',()=>{
-            const expected="€";
-            const payload="4oKs"
-            const actual:any=jwtHelper.urlBase64Decode(payload);
+            const expected = "€";
+            const payload = "4oKs";
+            const actual: string = jwtHelper.urlBase64Decode(payload);
             expect(actual).toBe(expected);
         });
     });
