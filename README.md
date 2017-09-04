@@ -176,14 +176,14 @@ import { AuthHttp, AuthConfig } from 'angular2-jwt';
 import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 
-let storage = new Storage();
+let storage = new Storage({});
 
 export function getAuthHttp(http) {
   return new AuthHttp(new AuthConfig({
     headerPrefix: YOUR_HEADER_PREFIX,
     noJwtError: true,
     globalHeaders: [{'Accept': 'application/json'}],
-    tokenGetter: (() => storage.get('token')),
+    tokenGetter: (() => storage.get('token').then((token: string) => token)),
   }), http);
 }
 
