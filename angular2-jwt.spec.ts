@@ -2,7 +2,7 @@ import "core-js";
 import {AuthConfig, AuthHttp, tokenNotExpired, JwtHelper} from "./angular2-jwt";
 import {Observable} from "rxjs";
 import {encodeTestToken} from "./angular2-jwt-test-helpers";
-import {Request} from '@angular/http';
+import {Request, RequestMethod, Headers, RequestOptions, RequestOptionsArgs} from "@angular/http";
 
 
 
@@ -230,4 +230,201 @@ describe("AuthHttp", () => {
             expect(usedTokens).toEqual([firstToken, secondToken]);
         });
     });
+
+    describe("RequestOptions", () => {
+        const headerKey = 'test';
+        const headerValue = 'test';
+        const headerValue2 = 'test2';
+        const headerValue3 = 'test3';
+        const headers: {[name: string]: string} = {};
+        headers[headerKey] = headerValue;
+        const headers2: {[name: string]: string} = {};
+        headers2[headerKey] = headerValue2;
+
+        it("no merge required", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig(),
+                null
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+                expect(request.headers.values().length).toBe(0);
+                done();
+            });
+        });
+
+        it("use additional headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig(),
+                null
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null, {headers: new Headers(headers)}).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                expect(request.headers.values().length).toBe(1);
+                expect(request.headers.getAll(headerKey)).toEqual([headerValue]);
+                done();
+            });
+        });
+
+        it("use default headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig(),
+                null,
+                new RequestOptions({headers: new Headers(headers)})
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(1);
+                expect(requestHeaders.get(headerKey)).toEqual([headerValue]);
+                done();
+            });
+        });
+
+        it("use global headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig({globalHeaders: [headers]}),
+                null
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(1);
+                expect(requestHeaders.get(headerKey)).toEqual([headerValue]);
+                done();
+            });
+        });
+
+        it("overwrite default headers with request headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig(),
+                null,
+                new RequestOptions({headers: new Headers(headers)})
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null, <RequestOptionsArgs>{headers: new Headers(headers2)}).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(1);
+                expect(requestHeaders.get(headerKey)).toEqual([headerValue2]);
+                done();
+            });
+        });
+
+        it("overwrite default headers with global headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig({globalHeaders: [headers2]}),
+                null,
+                new RequestOptions({headers: new Headers(headers)})
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(1);
+                expect(request.headers.values().length).toBe(1);
+                expect(request.headers.getAll(headerKey)).toEqual([headerValue2]);
+                done();
+            });
+        });
+
+        it("overwrite default and global headers with request headers", (done: Function) => {
+            const headers3: {[name: string]: string} = {};
+            headers3[headerKey] = headerValue3;
+
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig({globalHeaders: [headers2]}),
+                null,
+                new RequestOptions({headers: new Headers(headers2)})
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null, <RequestOptionsArgs>{headers: new Headers(headers3)}).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(1);
+                expect(request.headers.values().length).toBe(1);
+                expect(request.headers.getAll(headerKey)).toEqual([headerValue3]);
+                done();
+            });
+        });
+
+        it("merge default, global and request headers", (done: Function) => {
+            let authHttp: AuthHttp = new AuthHttp(
+                new AuthConfig({globalHeaders: [{headerKey2: headerValue2}]}),
+                null,
+                new RequestOptions({headers: new Headers(headers)})
+            );
+
+            const spy = spyOn(authHttp, "request").and.returnValue(Observable.of(""));
+
+            authHttp.get(null, <RequestOptionsArgs>{headers: new Headers({headerKey3: headerValue3})}).subscribe(() => {
+                const request: Request = <Request>spy.calls.first().args[0];
+                expect(request.getBody()).toBe('');
+                expect(request.method).toBe(RequestMethod.Get);
+                expect(request.url).toBeNull();
+
+                const requestHeaders = convertHeadersToMap(request.headers);
+                expect(requestHeaders.size).toBe(3);
+                expect(request.headers.values().length).toBe(3);
+                expect(request.headers.getAll(headerKey)).toEqual([headerValue]);
+                expect(request.headers.getAll('headerKey2')).toEqual([headerValue2]);
+                expect(request.headers.getAll('headerKey3')).toEqual([headerValue3]);
+                done();
+            });
+        });
+    });
 });
+
+function convertHeadersToMap(headers: Headers) {
+    let result = new Map<string, string[]>();
+    headers.forEach((values: string[], name: string) => {
+        result.set(name, values);
+    });
+
+    return result;
+}
