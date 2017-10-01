@@ -13,7 +13,7 @@ import 'rxjs/add/operator/mergeMap';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  tokenGetter: () => string | Promise<string>;
+  tokenGetter: () => string | Promise<string> | Observable<string>;
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string | RegExp>;
@@ -90,6 +90,10 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (token instanceof Promise) {
       return Observable.fromPromise(token).mergeMap((asyncToken: string) => {
+        return this.handleInterception(asyncToken, request, next);
+      });
+    } else if (token instanceof Observable) {
+      return token.mergeMap((asyncToken: string) => {
         return this.handleInterception(asyncToken, request, next);
       });
     } else {
