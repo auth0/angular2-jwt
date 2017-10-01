@@ -1,14 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
-import { JWT_OPTIONS } from './jwtoptions.token';
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class JwtHelperService {
-  tokenGetter: () => string;
-
-  constructor(@Inject(JWT_OPTIONS) config:any) {
-    this.tokenGetter = config.tokenGetter;
-  }
-
   public urlBase64Decode(str: string): string {
     let output = str.replace(/-/g, '+').replace(/_/g, '/');
     switch (output.length % 4) {
@@ -76,7 +69,7 @@ export class JwtHelperService {
     );
   }
 
-  public decodeToken(token: string = this.tokenGetter()): any {
+  public decodeToken(token: string): any {
     let parts = token.split('.');
 
     if (parts.length !== 3) {
@@ -91,7 +84,7 @@ export class JwtHelperService {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token: string = this.tokenGetter()): Date {
+  public getTokenExpirationDate(token: string): Date {
     let decoded: any;
     decoded = this.decodeToken(token);
 
@@ -105,7 +98,7 @@ export class JwtHelperService {
     return date;
   }
 
-  public isTokenExpired(token: string = this.tokenGetter(), offsetSeconds?: number): boolean {
+  public isTokenExpired(token: string, offsetSeconds?: number): boolean {
     let date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
