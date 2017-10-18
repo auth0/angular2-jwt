@@ -24,7 +24,7 @@ export class JwtHelperService {
         break;
       }
       default: {
-        throw 'Illegal base64url string!';
+        throw new Error('Illegal base64url string!');
       }
     }
     return this.b64DecodeUnicode(output);
@@ -32,7 +32,7 @@ export class JwtHelperService {
 
   // credits for decoder goes to https://github.com/atk
   private b64decode(str: string): string {
-    let chars =
+    const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     let output: string = '';
 
@@ -77,7 +77,7 @@ export class JwtHelperService {
   }
 
   public decodeToken(token: string = this.tokenGetter()): any {
-    let parts = token.split('.');
+    const parts = token.split('.');
 
     if (parts.length !== 3) {
       throw new Error('The inspected token doesn\'t appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.');
@@ -92,8 +92,7 @@ export class JwtHelperService {
   }
 
   public getTokenExpirationDate(token: string = this.tokenGetter()): Date {
-    let decoded: any;
-    decoded = this.decodeToken(token);
+    const decoded: any = this.decodeToken(token);
 
     if (!decoded.hasOwnProperty('exp')) {
       return null;
@@ -106,7 +105,11 @@ export class JwtHelperService {
   }
 
   public isTokenExpired(token: string = this.tokenGetter(), offsetSeconds?: number): boolean {
-    let date = this.getTokenExpirationDate(token);
+    if (token === null || token === '') {
+      return true;
+    }
+    
+    const date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
     if (date === null) {
