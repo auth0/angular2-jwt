@@ -95,7 +95,7 @@ export class JwtHelperService {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(token: string = this.tokenGetter()): Date {
+  public getTokenExpirationDate(token: string = this.tokenGetter()): Date | null {
     let decoded: any;
     decoded = this.decodeToken(token);
 

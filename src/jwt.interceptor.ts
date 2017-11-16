@@ -13,7 +13,7 @@ import 'rxjs/add/operator/mergeMap';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  tokenGetter: () => string | Promise<string>;
+  tokenGetter: () => string | null | Promise<string | null>;
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string | RegExp>;
@@ -63,13 +63,12 @@ export class JwtInterceptor implements HttpInterceptor {
       );
   }
 
-
-    handleInterception(
-    token: string,
+  handleInterception(
+    token: string | null,
     request: HttpRequest<any>,
     next: HttpHandler
   ) {
-    let tokenIsExpired: boolean;
+    let tokenIsExpired: boolean = false;
 
     if (!token && this.throwNoTokenError) {
       throw new Error('Could not get token from tokenGetter function.');
@@ -95,10 +94,10 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token: any = this.tokenGetter();
+    const token = this.tokenGetter();
 
     if (token instanceof Promise) {
-      return Observable.fromPromise(token).mergeMap((asyncToken: string) => {
+      return Observable.fromPromise(token).mergeMap((asyncToken: string | null) => {
         return this.handleInterception(asyncToken, request, next);
       });
     } else {
