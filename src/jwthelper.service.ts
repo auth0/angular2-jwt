@@ -77,6 +77,10 @@ export class JwtHelperService {
   }
 
   public decodeToken(token: string = this.tokenGetter()): any {
+    if (!token) {
+      throw new Error('Token is null');
+    }
+    
     let parts = token.split('.');
 
     if (parts.length !== 3) {
@@ -92,6 +96,8 @@ export class JwtHelperService {
   }
 
   public getTokenExpirationDate(token: string = this.tokenGetter()): Date {
+    if (!token) { return null; }
+    
     let decoded: any;
     decoded = this.decodeToken(token);
 
@@ -106,6 +112,8 @@ export class JwtHelperService {
   }
 
   public isTokenExpired(token: string = this.tokenGetter(), offsetSeconds?: number): boolean {
+    if (!token) { return true; }
+    
     let date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
