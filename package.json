@@ -1,6 +1,6 @@
 {
   "name": "rostalevicek/angular-jwt",
-  "version": "1.0.0-beta.9",
+  "version": "0.0.1",
   "description": "JSON Web Token helper library for Angular",
   "scripts": {
     "prepublish": "ngc && npm run build",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/auth0/angular2-jwt"
+    "url": "git+https://github.com/rostalevicek/angular-jwt"
   },
   "keywords": [
     "angular",
