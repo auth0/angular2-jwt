@@ -247,6 +247,45 @@ export function jwtOptionsFactory() {
 })
 ```
 
+## Configuration Options
+
+### `JwtHelper: service`
+
+This service contains helper functions:
+ 
+## isTokenExpired (old tokenNotExpired function)
+```
+import { JwtHelper } from '@auth0/angular-jwt';
+// ...
+constructor(public jwtHelper: JwtHelper) {}
+
+ngOnInit() {
+console.log(this.jwtHelper.isTokenExpired()); // true or false
+}
+```
+ 
+## getTokenExpirationDate
+```
+import { JwtHelper } from '@auth0/angular-jwt';
+// ...
+constructor(public jwtHelper: JwtHelper) {}
+
+ngOnInit() {
+console.log(this.jwtHelper.getTokenExpirationDate()); // date
+}
+```
+
+## decodeToken
+```
+import { JwtHelper } from '@auth0/angular-jwt';
+// ...
+constructor(public jwtHelper: JwtHelper) {}
+
+ngOnInit() {
+console.log(this.jwtHelper.decodeToken(token)); // token
+}
+```
+
 ## What is Auth0?
 
 Auth0 helps you to:
