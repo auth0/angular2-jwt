@@ -49,7 +49,7 @@ const AuthConfigDefaults: IAuthConfig = {
     tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
     noJwtError: false,
     noClientCheck: false,
-    globalHeaders: [],
+    globalHeaders: undefined,
     noTokenScheme: false
 };
 
