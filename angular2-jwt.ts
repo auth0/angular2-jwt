@@ -13,6 +13,7 @@ import {Observable} from "rxjs/Observable";
 import "rxjs/add/observable/fromPromise";
 import "rxjs/add/observable/defer";
 import "rxjs/add/operator/mergeMap";
+import {Subscriber} from "rxjs/Subscriber";
 
 export interface IAuthConfig {
   globalHeaders: Array<Object>;
@@ -23,34 +24,41 @@ export interface IAuthConfig {
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
   tokenName: string;
+  expiredTokenHandler: () => Observable<Response>;
 }
 
 export interface IAuthConfigOptional {
-    headerName?: string;
-    headerPrefix?: string;
-    tokenName?: string;
-    tokenGetter?: () => string | Promise<string>;
-    noJwtError?: boolean;
-    noClientCheck?: boolean;
-    globalHeaders?: Array<Object>;
-    noTokenScheme?: boolean;
+  headerName?: string;
+  headerPrefix?: string;
+  tokenName?: string;
+  tokenGetter?: () => string | Promise<string>;
+  noJwtError?: boolean;
+  noClientCheck?: boolean;
+  globalHeaders?: Array<Object>;
+  noTokenScheme?: boolean;
+  expiredTokenHandler?: () => Observable<Response>;
 }
 
 export class AuthConfigConsts {
-    public static DEFAULT_TOKEN_NAME = 'token';
-    public static DEFAULT_HEADER_NAME = 'Authorization';
-    public static HEADER_PREFIX_BEARER = 'Bearer ';
+  public static DEFAULT_TOKEN_NAME = 'token';
+  public static DEFAULT_HEADER_NAME = 'Authorization';
+  public static HEADER_PREFIX_BEARER = 'Bearer ';
 }
 
 const AuthConfigDefaults: IAuthConfig = {
-    headerName: AuthConfigConsts.DEFAULT_HEADER_NAME,
-    headerPrefix: null,
-    tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
-    tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
-    noJwtError: false,
-    noClientCheck: false,
-    globalHeaders: [],
-    noTokenScheme: false
+  headerName: AuthConfigConsts.DEFAULT_HEADER_NAME,
+  headerPrefix: null,
+  tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
+  tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
+  noJwtError: false,
+  noClientCheck: false,
+  globalHeaders: [],
+  noTokenScheme: false,
+  expiredTokenHandler: () => {
+      return new Observable<Response>((obs: Subscriber<Response>) => {
+          obs.error(new AuthHttpError('No JWT present or has expired'));
+      });
+  }
 };
 
 /**
@@ -126,9 +134,7 @@ export class AuthHttp {
   public requestWithToken(req: Request, token: string): Observable<Response> {
     if (!this.config.noClientCheck && !tokenNotExpired(undefined, token)) {
       if (!this.config.noJwtError) {
-        return new Observable<Response>((obs: any) => {
-          obs.error(new AuthHttpError('No JWT present or has expired'));
-        });
+        return this.config.expiredTokenHandler();
       }
     } else {
       req.headers.set(this.config.headerName, this.config.headerPrefix + token);
