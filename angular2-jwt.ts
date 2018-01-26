@@ -143,8 +143,13 @@ export class AuthHttp {
     }
     headers.forEach((header: Object) => {
       let key: string = Object.keys(header)[0];
-      let headerValue: string = (header as any)[key];
-      (request.headers as Headers).set(key, headerValue);
+      let headerValue = (header as any)[key];
+      if (typeof headerValue  === 'function') {
+        headerValue = headerValue();
+      }
+      if (headerValue) {
+        (request.headers as Headers).set(key, headerValue as string);
+      }
     });
   }
 
