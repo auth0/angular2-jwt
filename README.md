@@ -224,9 +224,7 @@ The custom factory function approach described above can be used to get a token 
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { Storage } from '@ionic/storage';
 
-const storage = new Storage();
-
-export function jwtOptionsFactory() {
+export function jwtOptionsFactory(storage) {
   return {
     tokenGetter: () => {
       return storage.get('access_token');
@@ -242,7 +240,8 @@ export function jwtOptionsFactory() {
     JwtModule.forRoot({
       jwtOptionsProvider: {
         provide: JWT_OPTIONS,
-        useFactory: jwtOptionsFactory
+        useFactory: jwtOptionsFactory,
+        deps: [Storage]
       }
     })
   ]
