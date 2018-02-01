@@ -18,7 +18,24 @@ npm install @auth0/angular-jwt
 yarn add @auth0/angular-jwt
 ```
 
-## Usage
+## Usage: Standalone
+
+If you are only interested in the JWT Decoder, and are not interested in extended
+injectable features, you can simply create an instance of the utility and use it
+directly:
+
+```ts
+import { JwtHelperService } from '@auth0/angular-jwt';
+
+const helper = new JwtHelperService();
+
+const decodedToken = helper.decodeToken(myRawToken);
+const expirationDate = helper.getTokenExpirationDate(myRawToken);
+const isExpired = helper.isTokenExpired(myRawToken);
+```
+
+
+## Usage: Injection
 
 Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also whitelist any domains that you want to make requests to by specifying a `whitelistedDomains` array.
 
