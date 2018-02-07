@@ -257,9 +257,9 @@ This service contains helper functions:
  
 ## isTokenExpired (old tokenNotExpired function)
 ```
-import { JwtHelper } from '@auth0/angular-jwt';
+import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
-constructor(public jwtHelper: JwtHelper) {}
+constructor(public jwtHelper: JwtHelperService) {}
 
 ngOnInit() {
 console.log(this.jwtHelper.isTokenExpired()); // true or false
@@ -268,9 +268,9 @@ console.log(this.jwtHelper.isTokenExpired()); // true or false
  
 ## getTokenExpirationDate
 ```
-import { JwtHelper } from '@auth0/angular-jwt';
+import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
-constructor(public jwtHelper: JwtHelper) {}
+constructor(public jwtHelper: JwtHelperService) {}
 
 ngOnInit() {
 console.log(this.jwtHelper.getTokenExpirationDate()); // date
@@ -279,9 +279,9 @@ console.log(this.jwtHelper.getTokenExpirationDate()); // date
 
 ## decodeToken
 ```
-import { JwtHelper } from '@auth0/angular-jwt';
+import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
-constructor(public jwtHelper: JwtHelper) {}
+constructor(public jwtHelper: JwtHelperService) {}
 
 ngOnInit() {
 console.log(this.jwtHelper.decodeToken(token)); // token
