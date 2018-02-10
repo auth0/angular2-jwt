@@ -1,21 +1,21 @@
 {
     "compilerOptions": {
-        "noImplicitAny": true,
+        "target": "es5",
         "module": "commonjs",
-        "target": "ES5",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
+        "moduleResolution": "node",
         "sourceMap": true,
         "inlineSources": true,
-        "declaration": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "lib": [
-            "dom",
-            "es2015.collection",
-            "es2015.promise",
-            "es5",
-            "es2015.iterable"
+            "es6",
+            "dom"
         ],
-        "moduleResolution":"node"
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "alwaysStrict": true
     },
     "files": [
         "angular2-jwt.ts",

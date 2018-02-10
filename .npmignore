@@ -16,3 +16,8 @@ Thumbs.db
 .travis.yml
 karma.*
 tsconfig.*
+*.tgz
+
+# Idea files
+.idea/
+*.iml
