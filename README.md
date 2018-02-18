@@ -28,6 +28,10 @@ Be sure to import the `HttpClientModule` as well.
 import { JwtModule } from '@auth0/angular-jwt';
 import { HttpClientModule } from '@angular/common/http';
 
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
+
 @NgModule({
   bootstrap: [AppComponent],
   imports: [
@@ -35,9 +39,7 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {
-          return localStorage.getItem('access_token');
-        },
+        tokenGetter: tokenGetter,
         whitelistedDomains: ['localhost:3001']
       }
     })
