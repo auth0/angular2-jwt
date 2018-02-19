@@ -39,6 +39,7 @@ import { HttpClientModule } from '@angular/common/http';
           return localStorage.getItem('access_token');
         },
         whitelistedDomains: ['localhost:3001']
+        blacklistedRoutes: ['localhost:3001/auth/']
       }
     })
   ]
@@ -96,6 +97,22 @@ JwtModule.forRoot({
   config: {
     // ...
     whitelistedDomains: ['localhost:3001', 'foo.com', 'bar.com']
+  }
+})
+```
+
+### `blacklistedRoutes: array`
+
+If you do not want to replace the authorization headers for specific routes, list them here. This can be useful if your
+initial auth route(s) are on a whitelisted domain and take basic auth headers.
+
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    blacklistedRoutes: ['localhost:3001/auth/', 'foo.com/bar/']
   }
 })
 ```

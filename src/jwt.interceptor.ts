@@ -17,6 +17,7 @@ export class JwtInterceptor implements HttpInterceptor {
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string | RegExp>;
+  blacklistedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
 
@@ -48,7 +49,21 @@ export class JwtInterceptor implements HttpInterceptor {
     );
   }
 
-  handleInterception(
+  isBlacklistedRoute(request: HttpRequest<any>): boolean {
+      const url = request.url;
+
+      return (
+          this.blacklistedRoutes.findIndex(
+              route =>
+                  typeof route === 'string'
+                      ? route === url
+                      : route instanceof RegExp ? route.test(url) : false
+          ) > -1
+      );
+  }
+
+
+    handleInterception(
     token: string,
     request: HttpRequest<any>,
     next: HttpHandler
@@ -65,7 +80,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (token && tokenIsExpired && this.skipWhenExpired) {
       request = request.clone();
-    } else if (token && this.isWhitelistedDomain(request)) {
+    } else if (token && this.isWhitelistedDomain(request) && !this.isBlacklistedRoute(request)) {
       request = request.clone({
         setHeaders: {
           [this.headerName]: `${this.authScheme}${token}`
