@@ -32,6 +32,7 @@ export class JwtInterceptor implements HttpInterceptor {
         ? config.authScheme
         : 'Bearer ';
     this.whitelistedDomains = config.whitelistedDomains || [];
+    this.blacklistedRoutes = config.blacklistedRoutes || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
   }
