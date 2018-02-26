@@ -31,6 +31,7 @@ describe('AuthConfig', ()=> {
         expect(config.noTokenScheme).toBe(false);
         expect(config.globalHeaders).toEqual([]);
         expect(config.tokenGetter).toBeDefined();
+        expect(config.offsetGetter).toBeDefined();
         const token = "Token";
         localStorage.setItem(config.tokenName, token);
         expect(config.tokenGetter()).toBe(token);
@@ -42,6 +43,7 @@ describe('AuthConfig', ()=> {
             headerPrefix: "Bar",
             tokenName: "token",
             tokenGetter: ()=>"this is a token",
+            offsetGetter: () => 0,
             noJwtError: true,
             globalHeaders: [{"header": "value"}, {"header2": "value2"}],
             noTokenScheme: true
@@ -56,6 +58,8 @@ describe('AuthConfig', ()=> {
         expect(config.globalHeaders).toEqual(configExpected.globalHeaders);
         expect(config.tokenGetter).toBeDefined();
         expect(config.tokenGetter()).toBe("this is a token");
+        expect(config.offsetGetter).toBeDefined();
+        expect(config.offsetGetter()).toBe(0);
     });
     
     it('should use custom token name in default tokenGetter', ()=> {

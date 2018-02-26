@@ -22,6 +22,7 @@ export interface IAuthConfig {
   noClientCheck: boolean;
   noTokenScheme?: boolean;
   tokenGetter: () => string | Promise<string>;
+  offsetGetter: () => number;
   tokenName: string;
 }
 
@@ -30,6 +31,7 @@ export interface IAuthConfigOptional {
     headerPrefix?: string;
     tokenName?: string;
     tokenGetter?: () => string | Promise<string>;
+    offsetGetter?: () => number;
     noJwtError?: boolean;
     noClientCheck?: boolean;
     globalHeaders?: Array<Object>;
@@ -47,6 +49,7 @@ const AuthConfigDefaults: IAuthConfig = {
     headerPrefix: null,
     tokenName: AuthConfigConsts.DEFAULT_TOKEN_NAME,
     tokenGetter: () => localStorage.getItem(AuthConfigDefaults.tokenName) as string,
+    offsetGetter: () => 0,
     noJwtError: false,
     noClientCheck: false,
     globalHeaders: [],
@@ -124,7 +127,7 @@ export class AuthHttp {
   }
 
   public requestWithToken(req: Request, token: string): Observable<Response> {
-    if (!this.config.noClientCheck && !tokenNotExpired(undefined, token)) {
+    if (!this.config.noClientCheck && !tokenNotExpired(undefined, token, this.config.offsetGetter())) {
       if (!this.config.noJwtError) {
         return new Observable<Response>((obs: any) => {
           obs.error(new AuthHttpError('No JWT present or has expired'));
@@ -300,13 +303,13 @@ export class JwtHelper {
  * Checks for presence of token and that token hasn't expired.
  * For use with the @CanActivate router decorator and NgIf
  */
-export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?:string): boolean {
+export function tokenNotExpired(tokenName = AuthConfigConsts.DEFAULT_TOKEN_NAME, jwt?:string, offsetSeconds?:number): boolean {
 
   const token: string = jwt || localStorage.getItem(tokenName);
 
   const jwtHelper = new JwtHelper();
 
-  return token != null && !jwtHelper.isTokenExpired(token);
+  return token != null && !jwtHelper.isTokenExpired(token, offsetSeconds);
 }
 
 export const AUTH_PROVIDERS: Provider[] = [

@@ -121,10 +121,11 @@ class App {
 * Header Prefix: `Bearer`
 * Token Name: `token`
 * Token Getter Function: `(() => localStorage.getItem(tokenName))`
+* Offset Seconds Getter Function: `(() => 50)`
 * Supress error and continue with regular HTTP request if no JWT is saved: `false`
 * Global Headers: none
 
-If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter` function, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can using `provideAuth` or the factory pattern (see below).
+If you wish to configure the `headerName`, `headerPrefix`, `tokenName`, `tokenGetter`, `offsetGetter` functions, `noTokenScheme`, `globalHeaders`, or `noJwtError` boolean, you can using `provideAuth` or the factory pattern (see below).
 
 #### Errors
 
