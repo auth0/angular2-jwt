@@ -114,7 +114,7 @@ export class JwtHelperService {
     offsetSeconds = offsetSeconds || 0;
 
     if (date === null) {
-      return false;
+      return true;
     }
 
     return !(date.valueOf() > new Date().valueOf() + offsetSeconds * 1000);
