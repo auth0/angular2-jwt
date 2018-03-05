@@ -78,7 +78,7 @@ export class JwtHelperService {
 
   public decodeToken(token: string = this.tokenGetter()): any {
     if(token===null) {
-      throw new Error('The token doesn\'t appear to exist.');
+      return null;
     }
 
     let parts = token.split('.');
