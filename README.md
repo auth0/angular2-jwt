@@ -216,6 +216,8 @@ export function jwtOptionsFactory(tokenService) {
 })
 ```
 
+NOTE: If a `jwtOptionsFactory` is defined, then `config` is ignored. *Both configuration alternatives can't be defined at the same time*.
+
 ## Configuration for Ionic 2+
 
 The custom factory function approach described above can be used to get a token asynchronously with Ionic's `Storage`.
