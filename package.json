@@ -1,6 +1,6 @@
 {
   "name": "@auth0/angular-jwt",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "JSON Web Token helper library for Angular",
   "scripts": {
     "prepublish": "ngc && npm run build",
@@ -10,12 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/auth0/angular2-jwt"
   },
-  "keywords": [
-    "angular",
-    "angular 2",
-    "authentication",
-    "jwt"
-  ],
+  "keywords": ["angular", "angular 2", "authentication", "jwt"],
   "author": "Ryan Chenkie",
   "license": "MIT",
   "bugs": {
