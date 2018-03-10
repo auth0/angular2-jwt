@@ -8,27 +8,15 @@
     "declaration": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,
-    "types": [
-      "hammerjs",
-      "jasmine",
-      "node"
-    ],
+    "types": ["hammerjs", "jasmine", "node"],
     "lib": ["es2015", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@angular/*": [
-        "node_modules/@angular/*"
-      ]
+      "@angular/*": ["node_modules/@angular/*"]
     }
   },
-  "files": [
-    "index.ts",
-    "./src/jwt.interceptor.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "bundles"
-  ],
+  "files": ["index.ts", "./src/jwt.interceptor.ts"],
+  "exclude": ["node_modules", "bundles"],
   "angularCompilerOptions": {
     "strictMetadataEmit": true,
     "skipTemplateCodegen": true

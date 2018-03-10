@@ -10,7 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/auth0/angular2-jwt"
   },
-  "keywords": ["angular", "angular 2", "authentication", "jwt"],
+  "keywords": [
+    "angular",
+    "angular 2",
+    "authentication",
+    "jwt"
+  ],
   "author": "Ryan Chenkie",
   "license": "MIT",
   "bugs": {
