@@ -1,5 +1,7 @@
 # @auth0/angular-jwt
 
+### **NOTE:** This library is now at version 1.0 and is published on npm as `@auth0/angular-jwt`. If you're looking for the pre-v1.0 version of this library, it can be found in the `pre-v1.0` branch and on npm as `angular2-jwt`.
+
 This library provides an `HttpInterceptor` which automatically attaches a [JSON Web Token](https://jwt.io) to `HttpClient` requests.
 
 This library does not have any functionality for (or opinion about) implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
@@ -33,7 +35,6 @@ const decodedToken = helper.decodeToken(myRawToken);
 const expirationDate = helper.getTokenExpirationDate(myRawToken);
 const isExpired = helper.isTokenExpired(myRawToken);
 ```
-
 
 ## Usage: Injection
 
@@ -72,17 +73,13 @@ Any requests sent using Angular's `HttpClient` will automatically have a token a
 import { HttpClient } from '@angular/common/http';
 
 export class AppComponent {
-
   constructor(public http: HttpClient) {}
 
   ping() {
-    this.http.get('http://example.com/api/things')
-      .subscribe(
-        data => console.log(data),
-        err => console.log(err)
-      );
+    this.http
+      .get('http://example.com/api/things')
+      .subscribe(data => console.log(data), err => console.log(err));
   }
-
 }
 ```
 
@@ -101,7 +98,7 @@ JwtModule.forRoot({
       return localStorage.getItem('access_token');
     }
   }
-})
+});
 ```
 
 ### `whitelistedDomains: array`
@@ -117,14 +114,13 @@ JwtModule.forRoot({
     // ...
     whitelistedDomains: ['localhost:3001', 'foo.com', 'bar.com']
   }
-})
+});
 ```
 
 ### `blacklistedRoutes: array`
 
 If you do not want to replace the authorization headers for specific routes, list them here. This can be useful if your
 initial auth route(s) are on a whitelisted domain and take basic auth headers.
-
 
 ```ts
 // ...
@@ -133,7 +129,7 @@ JwtModule.forRoot({
     // ...
     blacklistedRoutes: ['localhost:3001/auth/', 'foo.com/bar/']
   }
-})
+});
 ```
 
 **Note:** If requests are sent to the same domain that is serving your Angular application, you do not need to add that domain to the `whitelistedDomains` array. However, this is only the case if you don't specify the domain in the `Http` request.
@@ -166,13 +162,12 @@ JwtModule.forRoot({
     // ...
     headerName: 'Your Header Name'
   }
-})
+});
 ```
 
 ### `authScheme: string`
 
 The default authorization scheme is `Bearer` followed by a single space. This can be changed by specifying a custom `authScheme` which is to be a string.
-
 
 ```ts
 // ...
@@ -181,7 +176,7 @@ JwtModule.forRoot({
     // ...
     authScheme: 'Your Auth Scheme'
   }
-})
+});
 ```
 
 ### `throwNoTokenError: boolean`
@@ -195,7 +190,7 @@ JwtModule.forRoot({
     // ...
     throwNoTokenError: true
   }
-})
+});
 ```
 
 ### `skipWhenExpired: boolean`
@@ -209,7 +204,7 @@ JwtModule.forRoot({
     // ...
     skipWhenExpired: true
   }
-})
+});
 ```
 
 ## Using a Custom Options Factory Function
@@ -219,7 +214,6 @@ In some cases, you may need to provide a custom factory function to properly han
 Import the `JWT_OPTIONS` `InjectionToken` so that you can instruct it to use your custom factory function.
 
 Create a factory function and specify the options as you normally would if you were using `JwtModule.forRoot` directly. If you need to use a service in the function, list it as a parameter in the function and pass it in the `deps` array when you provide the function.
-
 
 ```ts
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
@@ -252,7 +246,7 @@ export function jwtOptionsFactory(tokenService) {
 })
 ```
 
-NOTE: If a `jwtOptionsFactory` is defined, then `config` is ignored. *Both configuration alternatives can't be defined at the same time*.
+NOTE: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
 
 ## Configuration for Ionic 2+
 
@@ -291,8 +285,9 @@ export function jwtOptionsFactory(storage) {
 ### `JwtHelperService: service`
 
 This service contains helper functions:
- 
+
 ## isTokenExpired (old tokenNotExpired function)
+
 ```
 import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
@@ -302,8 +297,9 @@ ngOnInit() {
 console.log(this.jwtHelper.isTokenExpired()); // true or false
 }
 ```
- 
+
 ## getTokenExpirationDate
+
 ```
 import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
@@ -315,6 +311,7 @@ console.log(this.jwtHelper.getTokenExpirationDate()); // date
 ```
 
 ## decodeToken
+
 ```
 import { JwtHelperService } from '@auth0/angular-jwt';
 // ...
@@ -338,8 +335,8 @@ Auth0 helps you to:
 
 ## Create a free Auth0 account
 
-1. Go to [Auth0](https://auth0.com/signup) and click Sign Up.
-2. Use Google, GitHub or Microsoft Account to login.
+1.  Go to [Auth0](https://auth0.com/signup) and click Sign Up.
+2.  Use Google, GitHub or Microsoft Account to login.
 
 ## Issue Reporting
 
