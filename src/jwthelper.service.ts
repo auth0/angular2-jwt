@@ -77,6 +77,10 @@ export class JwtHelperService {
   }
 
   public decodeToken(token: string = this.tokenGetter()): any {
+    if(token===null) {
+      return null;
+    }
+
     let parts = token.split('.');
 
     if (parts.length !== 3) {
@@ -110,7 +114,7 @@ export class JwtHelperService {
     offsetSeconds = offsetSeconds || 0;
 
     if (date === null) {
-      return false;
+      return true;
     }
 
     return !(date.valueOf() > new Date().valueOf() + offsetSeconds * 1000);
