@@ -5,8 +5,8 @@ import { JWT_OPTIONS } from './jwtoptions.token';
 export class JwtHelperService {
   tokenGetter: () => string;
 
-  constructor(@Inject(JWT_OPTIONS) config:any) {
-    this.tokenGetter = config.tokenGetter;
+  constructor(@Inject(JWT_OPTIONS) config:any = null) {
+    this.tokenGetter = config && config.tokenGetter || function() {};
   }
 
   public urlBase64Decode(str: string): string {
