@@ -90,16 +90,18 @@ export class AppComponent {
 
 ### `tokenGetter: function`
 
-The `tokenGetter` is a function which returns the user's token. This function simply needs to make a retrieval call to wherever the token is stored. In many cases, the token will be stored in local storage or session storage.
+The `tokenGetter` is a function which returns the user's token. This function simply needs to make a retrieval call to wherever the token is stored. In many cases, the token will be stored in local storage or session storage. We need to put this code into a function, otherwise the code will not compile with AoT.
 
 ```ts
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
+
 // ...
 JwtModule.forRoot({
   config: {
     // ...
-    tokenGetter: () => {
-      return localStorage.getItem('access_token');
-    }
+    tokenGetter: tokenGetter,
   }
 })
 ```
