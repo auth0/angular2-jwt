@@ -38,7 +38,7 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl = new URL(request.url);
+    const requestUrl = new URL(request.url,'http://127.0.0.1:8080');
 
     return (
       this.whitelistedDomains.findIndex(
