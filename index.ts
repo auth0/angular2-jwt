@@ -9,7 +9,7 @@ export * from './src/jwthelper.service';
 export * from './src/jwtoptions.token';
 
 export interface JwtModuleOptions {
-  jwtOptionsProvider?: Provider,
+  jwtOptionsProvider?: Provider;
   config?: {
     tokenGetter?: () => string | null | Promise<string | null>;
     headerName?: string;
@@ -18,7 +18,7 @@ export interface JwtModuleOptions {
     blacklistedRoutes?: Array<string | RegExp>;
     throwNoTokenError?: boolean;
     skipWhenExpired?: boolean;
-  }
+  };
 }
 
 @NgModule()

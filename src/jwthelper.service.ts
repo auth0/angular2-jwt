@@ -1,3 +1,5 @@
+// tslint:disable:no-bitwise
+
 import { Injectable, Inject } from '@angular/core';
 import { JWT_OPTIONS } from './jwtoptions.token';
 
@@ -110,7 +112,10 @@ export class JwtHelperService {
   }
 
   public isTokenExpired(token: string = this.tokenGetter(), offsetSeconds?: number): boolean {
-    if(token === null || token === '') return true;
+    if (token === null || token === '') {
+      return true;
+    }
+    
     let date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
