@@ -54,7 +54,7 @@ export class JwtInterceptor implements HttpInterceptor {
   isBlacklistedRoute(request: HttpRequest<any>): boolean {
       const url = request.url;
 
-      return (
+      return (requestUrl.host===null)||(
           this.blacklistedRoutes.findIndex(
               route =>
                   typeof route === 'string'
