@@ -10,7 +10,7 @@ import { JWT_OPTIONS } from './jwtoptions.token';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/mergeMap';
-const URL = require('url');
+import { parse } from 'url';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -39,7 +39,7 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl = URL.parse(request.url, false, true);
+    const requestUrl = parse(request.url, false, true);
 
     return (
       this.whitelistedDomains.findIndex(
