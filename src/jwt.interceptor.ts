@@ -7,9 +7,9 @@ import {
 } from '@angular/common/http';
 import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap';
+import { Observable } from 'rxjs';
+import { from } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 const URL = require('url');
 
 @Injectable()
@@ -99,9 +99,9 @@ export class JwtInterceptor implements HttpInterceptor {
     const token: any = this.tokenGetter();
 
     if (token instanceof Promise) {
-      return Observable.fromPromise(token).mergeMap((asyncToken: string) => {
+      return from(token).pipe(mergeMap((asyncToken: string) => {
         return this.handleInterception(asyncToken, request, next);
-      });
+      }));
     } else {
       return this.handleInterception(token, request, next);
     }
