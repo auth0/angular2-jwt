@@ -17,8 +17,8 @@ export class JwtInterceptor implements HttpInterceptor {
   tokenGetter: () => string | Promise<string>;
   headerName: string;
   authScheme: string;
-  whitelistedDomains: Array<string | RegExp>;
-  blacklistedRoutes: Array<string | RegExp>;
+  whitelistedDomains: Array<string | RegExp | (() => string | RegExp)>;
+  blacklistedRoutes: Array<string | RegExp | (() => string | RegExp)>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
 
@@ -43,10 +43,14 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return (
       this.whitelistedDomains.findIndex(
-        domain =>
-          typeof domain === 'string'
+        domain => {
+          if (typeof domain === 'function') {
+            domain = domain();
+          }
+          return typeof domain === 'string'
             ? domain === requestUrl.host
-            : domain instanceof RegExp ? domain.test(requestUrl.host) : false
+            : domain instanceof RegExp ? domain.test(requestUrl.host) : false;
+          }
       ) > -1
     );
   }
@@ -56,10 +60,14 @@ export class JwtInterceptor implements HttpInterceptor {
 
       return (
           this.blacklistedRoutes.findIndex(
-              route =>
-                  typeof route === 'string'
-                      ? route === url
-                      : route instanceof RegExp ? route.test(url) : false
+              route => {
+                if (typeof route === 'function') {
+                  route = route();
+                }
+                return typeof route === 'string'
+                    ? route === url
+                    : route instanceof RegExp ? route.test(url) : false;
+              }
           ) > -1
       );
   }
