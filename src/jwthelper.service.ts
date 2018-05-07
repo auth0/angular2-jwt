@@ -113,9 +113,8 @@ export class JwtHelperService {
 
   public isTokenExpired(token: string = this.tokenGetter(), offsetSeconds?: number): boolean {
     if (token === null || token === '') {
-      return true;
+        return true;
     }
-    
     let date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
