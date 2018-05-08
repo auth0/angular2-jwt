@@ -9,7 +9,7 @@ import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
 import { Observable } from "rxjs/internal/Observable";
 import { from } from "rxjs/internal/observable/from";
-import { mergeMap } from "rxjs/operators";
+import { mergeMap } from 'rxjs/operators';
 import { parse } from 'url';
 
 @Injectable()
