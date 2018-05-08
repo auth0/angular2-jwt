@@ -36,9 +36,7 @@
       "check-whitespace"
     ],
     "radix": true,
-    "semicolon": [
-      "always"
-    ],
+    "semicolon": true,
     "triple-equals": [
       true,
       "allow-null-check"
@@ -54,9 +52,6 @@
       }
     ],
     "variable-name": false,
-    "use-input-property-decorator": true,
-    "use-output-property-decorator": true,
-    "use-host-property-decorator": false,
-    "use-pipe-transform-interface": true
+    "use-host-property-decorator": false
   }
 }

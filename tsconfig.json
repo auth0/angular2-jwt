@@ -13,7 +13,8 @@
     "baseUrl": ".",
     "paths": {
       "@angular/*": ["node_modules/@angular/*"]
-    }
+    },
+    "strictNullChecks": true
   },
   "files": ["index.ts", "./src/jwt.interceptor.ts"],
   "exclude": ["node_modules", "bundles"],
