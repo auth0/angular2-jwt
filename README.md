@@ -127,7 +127,7 @@ initial auth route(s) are on a whitelisted domain and take basic auth headers.
 JwtModule.forRoot({
   config: {
     // ...
-    blacklistedRoutes: ['localhost:3001/auth/', 'foo.com/bar/']
+    blacklistedRoutes: ['localhost:3001/auth/', 'foo.com/bar/', /localhost:3001\/foo\/far.*/] // strings and regular expressions
   }
 });
 ```
