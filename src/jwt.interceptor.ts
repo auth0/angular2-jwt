@@ -42,7 +42,7 @@ export class JwtInterceptor implements HttpInterceptor {
     const requestUrl = URL.parse(request.url, false, true);
 
     return (
-      this.whitelistedDomains.findIndex(
+      requestUrl.host === null || this.whitelistedDomains.findIndex(
         domain =>
           typeof domain === 'string'
             ? domain === requestUrl.host
