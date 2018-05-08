@@ -39,29 +39,34 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl = parse(request.url, false, true);
+    const requestUrl: any = parse(request.url, false, true);
 
     return (
-      requestUrl.host === null || this.whitelistedDomains.findIndex(
+      requestUrl.host === null ||
+      this.whitelistedDomains.findIndex(
         domain =>
           typeof domain === 'string'
             ? domain === requestUrl.host
-            : domain instanceof RegExp ? domain.test(requestUrl.host) : false
+            : domain instanceof RegExp
+              ? domain.test(requestUrl.host)
+              : false
       ) > -1
     );
   }
 
   isBlacklistedRoute(request: HttpRequest<any>): boolean {
-      const url = request.url;
+    const url = request.url;
 
-      return (
-          this.blacklistedRoutes.findIndex(
-              route =>
-                  typeof route === 'string'
-                      ? route === url
-                      : route instanceof RegExp ? route.test(url) : false
-          ) > -1
-      );
+    return (
+      this.blacklistedRoutes.findIndex(
+        route =>
+          typeof route === 'string'
+            ? route === url
+            : route instanceof RegExp
+              ? route.test(url)
+              : false
+      ) > -1
+    );
   }
 
   handleInterception(
@@ -81,7 +86,11 @@ export class JwtInterceptor implements HttpInterceptor {
 
     if (token && tokenIsExpired && this.skipWhenExpired) {
       request = request.clone();
-    } else if (token && this.isWhitelistedDomain(request) && !this.isBlacklistedRoute(request)) {
+    } else if (
+      token &&
+      this.isWhitelistedDomain(request) &&
+      !this.isBlacklistedRoute(request)
+    ) {
       request = request.clone({
         setHeaders: {
           [this.headerName]: `${this.authScheme}${token}`
@@ -98,9 +107,11 @@ export class JwtInterceptor implements HttpInterceptor {
     const token = this.tokenGetter();
 
     if (token instanceof Promise) {
-      return Observable.fromPromise(token).mergeMap((asyncToken: string | null) => {
-        return this.handleInterception(asyncToken, request, next);
-      });
+      return Observable.fromPromise(token).mergeMap(
+        (asyncToken: string | null) => {
+          return this.handleInterception(asyncToken, request, next);
+        }
+      );
     } else {
       return this.handleInterception(token, request, next);
     }
