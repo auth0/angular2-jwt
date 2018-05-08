@@ -76,6 +76,7 @@ export class JwtHelperService {
     );
   }
 
+  declare function escape(s:string): string;
   public decodeToken(token: string = this.tokenGetter()): any {
     if(token===null) {
       return null;
@@ -87,7 +88,7 @@ export class JwtHelperService {
       throw new Error('The inspected token doesn\'t appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.');
     }
 
-    let decoded = this.urlBase64Decode(parts[1]);
+     const decoded = decodeURIComponent(escape(atob(parts[1])));
     if (!decoded) {
       throw new Error('Cannot decode the token.');
     }
