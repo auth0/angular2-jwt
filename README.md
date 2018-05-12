@@ -10,8 +10,6 @@ This library does not have any functionality for (or opinion about) implementing
 
 > **Note:** This library can only be used with Angular 4.3 and higher because it relies on an `HttpInterceptor` from Angular's `HttpClient`. This feature is not available on lower versions.
 
-> **Note:** Internet Explorer 11 support requires a [URL polyfill](https://github.com/github/url-polyfill)
-
 ## Installation
 
 ```bash
