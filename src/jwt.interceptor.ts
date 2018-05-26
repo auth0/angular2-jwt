@@ -7,8 +7,7 @@ import {
 } from '@angular/common/http';
 import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
-import { Observable } from "rxjs/internal/Observable";
-import { from } from "rxjs/internal/observable/from";
+import { Observable, from } from "rxjs";
 import { mergeMap } from 'rxjs/operators';
 import { parse } from 'url';
 
