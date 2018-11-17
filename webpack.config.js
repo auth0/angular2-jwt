@@ -27,7 +27,8 @@ module.exports = {
     publicPath: '/',
     filename: 'core.umd.js',
     library: 'angular-jwt',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    globalObject: 'typeof self !== \'undefined\' ? self : this'
   },
 
   // require those dependencies but don't bundle them
