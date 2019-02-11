@@ -11,12 +11,14 @@ Description of the bug or feature request and why it's a problem. Consider inclu
 
 ### Prerequisites
 
-- [ ] I have checked the documentation for this library [Add a link].
+- [ ] I have checked the [README documentation](https://github.com/auth0/angular2-jwt/blob/master/README.md).
 - [ ] I have checked the [Auth0 Community](https://community.auth0.com/) for related posts.
-- [ ] I have checked for related or duplicate [Issues](https://github.com/auth0/REPO-NAME/issues) and [PRs](https://github.com/auth0/REPO-NAME/pulls).
+- [ ] I have checked for related or duplicate [Issues](https://github.com/auth0/angular2-jwt
+/issues) and [PRs](https://github.com/auth0/angular2-jwt
+/pulls).
 - [ ] I have read the [Auth0 general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md).
 - [ ] I have read the [Auth0 Code of Conduct](https://github.com/auth0/open-source-template/blob/master/CODE-OF-CONDUCT.md).
-- [ ] I am reporting this to the correct repository [Add links to other related].
+- [ ] I am reporting this to the correct repository.
 
 ### Environment
 
