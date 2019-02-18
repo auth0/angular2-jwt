@@ -24,7 +24,7 @@ Description of the bug or feature request and why it's a problem. Consider inclu
 
 Please provide the following:
 
-- Version of the library being used
+- Version of angular2-jwt being used
 - Version of the platform or framework used, if applicable
 - Relevant environmental versions (language version, server software, OS version)
 - Browser version, if applicable
