@@ -17,14 +17,6 @@ Please include relevant links supporting this change such as a:
 - StackOverflow post
 - support forum thread
 
-### Testing
-
-Please describe how this can be tested by reviewers. Be specific about anything not tested and reasons why. If this library has unit and/or integration testing, tests should be added for new functionality and existing tests should complete without errors. 
-
-- [ ] This change adds unit test coverage
-- [ ] This change adds integration test coverage
-- [ ] This change has been tested on the latest version of the platform/language or why not
-
 ### Checklist
 
 - [ ] I have read the [Auth0 general contribution guidelines](https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md)
