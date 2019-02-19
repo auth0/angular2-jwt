@@ -9,14 +9,6 @@ Please read [Auth0's contribution guidelines](https://github.com/auth0/open-sour
 	- 100% documentation coverage for PRs
 	- Include links to relevant Auth0 doc pages
 
-## Assets compilation
-
-Information about compiling CSS, JS, SVG, etc.
-
-## Environment setup
-
-Link to [README installation](README.md#installation) steps and include anything additional needed to contribute to the project.
-
 ## Code quality tools
 
 Running `npm run-script build` will perform necessary linting via tsLint and the project-adopted rules contained in `tslint.json`
