@@ -40,15 +40,15 @@ export class JwtInterceptor implements HttpInterceptor {
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
     const requestUrl: any = parse(request.url, false, true);
-
+    const requestHost: string = requestUrl.host || (typeof location === 'object' && location.host)
     return (
-      requestUrl.host === null ||
+      requestHost === undefined ||
       this.whitelistedDomains.findIndex(
         domain =>
           typeof domain === 'string'
-            ? domain === requestUrl.host
+            ? domain === requestHost
             : domain instanceof RegExp
-              ? domain.test(requestUrl.host)
+              ? domain.test(requestHost)
               : false
       ) > -1
     );
