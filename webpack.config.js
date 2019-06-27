@@ -9,9 +9,6 @@ const helpers = require('./config/helpers'),
 /**
  * Webpack Plugins
  */
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
-const DefinePlugin = require('webpack/lib/DefinePlugin');
-const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -26,13 +23,14 @@ module.exports = {
     path: helpers.root('bundles'),
     publicPath: '/',
     filename: 'core.umd.js',
-    library: 'angular-jwt',
+    library: '@auth0/angular-jwt',
     libraryTarget: 'umd',
-    globalObject: 'typeof self !== \'undefined\' ? self : this'
+    umdNamedDefine: true,
+    globalObject: 'typeof self !== \'undefined\' ? self : this',
   },
 
   // require those dependencies but don't bundle them
-  externals: [/^\@angular\//, /^rxjs\//],
+  externals: [/^\@angular\//, /^rxjs\/?/],
 
   module: {
     rules: [
