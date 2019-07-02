@@ -1,5 +1,7 @@
 # @auth0/angular-jwt
 
+[![npm version](https://badge.fury.io/js/%40auth0%2Fangular-jwt.svg)](https://badge.fury.io/js/%40auth0%2Fangular-jwt)
+
 ### **NOTE:** This library is now at version 2 and is published on npm as `@auth0/angular-jwt`. If you're looking for the pre-v1.0 version of this library, it can be found in the `pre-v1.0` branch and on npm as `angular2-jwt`.
 
 **@auth0/angular-jwt v2 is to be used with Angular v6+ and RxJS v6+. For Angular v4.3 to v5+, use @auth0/angular-jwt v1**
@@ -27,7 +29,7 @@ injectable features, you can simply create an instance of the utility and use it
 directly:
 
 ```ts
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { JwtHelperService } from "@auth0/angular-jwt";
 
 const helper = new JwtHelperService();
 
@@ -43,11 +45,11 @@ Import the `JwtModule` module and add it to your imports list. Call the `forRoot
 Be sure to import the `HttpClientModule` as well.
 
 ```ts
-import { JwtModule } from '@auth0/angular-jwt';
-import { HttpClientModule } from '@angular/common/http';
+import { JwtModule } from "@auth0/angular-jwt";
+import { HttpClientModule } from "@angular/common/http";
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  return localStorage.getItem("access_token");
 }
 
 @NgModule({
@@ -58,8 +60,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: ['example.com'],
-        blacklistedRoutes: ['example.com/examplebadroute/']
+        whitelistedDomains: ["example.com"],
+        blacklistedRoutes: ["example.com/examplebadroute/"]
       }
     })
   ]
@@ -70,14 +72,14 @@ export class AppModule {}
 Any requests sent using Angular's `HttpClient` will automatically have a token attached as an `Authorization` header.
 
 ```ts
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from "@angular/common/http";
 
 export class AppComponent {
   constructor(public http: HttpClient) {}
 
   ping() {
     this.http
-      .get('http://example.com/api/things')
+      .get("http://example.com/api/things")
       .subscribe(data => console.log(data), err => console.log(err));
   }
 }
@@ -95,7 +97,7 @@ JwtModule.forRoot({
   config: {
     // ...
     tokenGetter: () => {
-      return localStorage.getItem('access_token');
+      return localStorage.getItem("access_token");
     }
   }
 });
@@ -112,7 +114,7 @@ List any domains you wish to allow authenticated requests to be sent to by speci
 JwtModule.forRoot({
   config: {
     // ...
-    whitelistedDomains: ['localhost:3001', 'foo.com', 'bar.com']
+    whitelistedDomains: ["localhost:3001", "foo.com", "bar.com"]
   }
 });
 ```
@@ -128,8 +130,8 @@ JwtModule.forRoot({
   config: {
     // ...
     blacklistedRoutes: [
-      'localhost:3001/auth/',
-      'foo.com/bar/',
+      "localhost:3001/auth/",
+      "foo.com/bar/",
       /localhost:3001\/foo\/far.*/
     ] // strings and regular expressions
   }
@@ -164,7 +166,7 @@ The default header name is `Authorization`. This can be changed by specifying a 
 JwtModule.forRoot({
   config: {
     // ...
-    headerName: 'Your Header Name'
+    headerName: "Your Header Name"
   }
 });
 ```
@@ -178,7 +180,7 @@ The default authorization scheme is `Bearer` followed by a single space. This ca
 JwtModule.forRoot({
   config: {
     // ...
-    authScheme: 'Your Auth Scheme'
+    authScheme: "Your Auth Scheme"
   }
 });
 ```
@@ -330,12 +332,12 @@ console.log(this.jwtHelper.decodeToken(token)); // token
 
 Auth0 helps you to:
 
-* Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders), either social like **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce, amont others**, or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS or any SAML Identity Provider**.
-* Add authentication through more traditional **[username/password databases](https://auth0.com/docs/connections/database/custom-db)**.
-* Add support for **[linking different user accounts](https://auth0.com/docs/link-accounts)** with the same user.
-* Support for generating signed [Json Web Tokens](https://auth0.com/docs/jwt) to call your APIs and **flow the user identity** securely.
-* Analytics of how, when and where users are logging in.
-* Pull data from other sources and add it to the user profile, through [JavaScript rules](https://auth0.com/docs/rules/current).
+- Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders), either social like **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce, amont others**, or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS or any SAML Identity Provider**.
+- Add authentication through more traditional **[username/password databases](https://auth0.com/docs/connections/database/custom-db)**.
+- Add support for **[linking different user accounts](https://auth0.com/docs/link-accounts)** with the same user.
+- Support for generating signed [Json Web Tokens](https://auth0.com/docs/jwt) to call your APIs and **flow the user identity** securely.
+- Analytics of how, when and where users are logging in.
+- Pull data from other sources and add it to the user profile, through [JavaScript rules](https://auth0.com/docs/rules/current).
 
 ## Create a free Auth0 account
 
