@@ -332,7 +332,7 @@ console.log(this.jwtHelper.decodeToken(token)); // token
 
 Auth0 helps you to:
 
-- Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders), either social like **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce, amont others**, or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS or any SAML Identity Provider**.
+- Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders), either social like **Google, Facebook, Microsoft Account, LinkedIn, GitHub, Twitter, Box, Salesforce, among others**, or enterprise identity systems like **Windows Azure AD, Google Apps, Active Directory, ADFS or any SAML Identity Provider**.
 - Add authentication through more traditional **[username/password databases](https://auth0.com/docs/connections/database/custom-db)**.
 - Add support for **[linking different user accounts](https://auth0.com/docs/link-accounts)** with the same user.
 - Support for generating signed [Json Web Tokens](https://auth0.com/docs/jwt) to call your APIs and **flow the user identity** securely.
