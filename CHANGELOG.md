@@ -1,5 +1,11 @@
 # Change log
 
+## Version [2.1.2](https://github.com/auth0/angular2-jwt) (2019-07-15)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/2.1.1..2.1.2)
+
+- Gracefully handle null/empty tokens [#586](https://github.com/auth0/angular2-jwt/pull/586)
+
 ## Version [2.1.1](https://github.com/auth0/angular2-jwt) (2019-07-01)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/2.1.0...2.1.1)
