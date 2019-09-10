@@ -3,9 +3,19 @@
   "version": "3.0.0",
   "description": "JSON Web Token helper library for Angular",
   "scripts": {
-    "prepare": "ngc && npm run build",
-    "build": "webpack --mode production"
+    "ng": "ng",
+    "build": "ng build",
+    "build:prod": "npm run build && npm run copy-files",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "watch": "npm run build -- --watch",
+    "copy-lic": "cp LICENSE dist/angular-jwt/LICENSE",
+    "copy-readme": "cp README.md dist/angular-jwt/README.md",
+    "copy-files": "npm run copy-lic && npm run copy-readme",
+    "publish": "cd dist/angular-jwt && npm publish --access=public"
   },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/auth0/angular2-jwt"
@@ -21,47 +31,40 @@
   "bugs": {
     "url": "https://github.com/auth0/angular2-jwt/issues"
   },
-  "main": "bundles/core.umd.js",
-  "module": "index.js",
-  "typings": "index.d.ts",
   "homepage": "https://github.com/auth0/angular2-jwt",
-  "peerDependencies": {
-    "@angular/common": ">=6.0.0"
+  "dependencies": {
+    "@angular/common": "~8.2.4",
+    "@angular/compiler": "~8.2.4",
+    "@angular/core": "~8.2.4",
+    "@angular/platform-browser": "~8.2.4",
+    "@angular/platform-browser-dynamic": "~8.2.4",
+    "rxjs": "~6.4.0",
+    "tslib": "^1.10.0",
+    "zone.js": "~0.9.1",
+    "url": "~0.11.0"
   },
   "devDependencies": {
-    "@angular/animations": "^6.0.0",
-    "@angular/common": "^6.0.0",
-    "@angular/compiler": "^6.0.0",
-    "@angular/compiler-cli": "^6.0.0",
-    "@angular/core": "^6.0.0",
-    "@angular/http": "^6.0.0",
-    "@angular/platform-browser": "^6.0.0",
-    "@angular/platform-browser-dynamic": "^6.0.0",
-    "@angular/platform-server": "^6.0.0",
-    "@angular/router": "^6.0.0",
-    "@types/hammerjs": "^2.0.35",
-    "@types/jasmine": "^2.8.7",
-    "@types/node": "^10.0.6",
-    "awesome-typescript-loader": "^5.0.0",
-    "clean-webpack-plugin": "^0.1.19",
-    "core-js": "^2.5.6",
-    "istanbul-instrumenter-loader": "^3.0.1",
-    "jasmine-core": "^3.1.0",
-    "loader-utils": "^1.1.0",
-    "reflect-metadata": "^0.1.12",
-    "rimraf": "^2.6.2",
-    "rxjs": "^6.1.0",
-    "semantic-release": "^15.4.0",
-    "source-map-loader": "^0.2.3",
-    "ts-helpers": "^1.1.2",
-    "tslint": "^5.10.0",
-    "tslint-loader": "^3.6.0",
-    "typescript": ">=2.7.0 <2.8.0",
-    "webpack": "^4.8.1",
-    "webpack-cli": "^2.1.3",
-    "zone.js": "^0.8.26"
-  },
-  "dependencies": {
-    "url": "^0.11.0"
+    "@angular-devkit/build-angular": "~0.803.3",
+    "@angular-devkit/build-ng-packagr": "~0.803.3",
+    "@angular/cli": "~8.3.3",
+    "@angular/compiler-cli": "~8.2.4",
+    "@angular/language-service": "~8.2.4",
+    "@types/node": "~8.9.4",
+    "@types/jasmine": "~3.3.8",
+    "@types/jasminewd2": "~2.0.3",
+    "codelyzer": "^5.0.0",
+    "jasmine-core": "~3.4.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.1.0",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.0",
+    "ng-packagr": "^5.4.0",
+    "protractor": "~5.4.0",
+    "ts-node": "~7.0.0",
+    "tsickle": "^0.37.0",
+    "tslint": "~5.15.0",
+    "typescript": "~3.5.3"
   }
 }

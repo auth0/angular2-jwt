@@ -1,15 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { JwtHelperService } from './jwthelper.service';
-import { JWT_OPTIONS } from './jwtoptions.token';
-import { Observable, from } from "rxjs";
-import { mergeMap } from 'rxjs/operators';
-import { parse } from 'url';
+import {Inject, Injectable} from '@angular/core';
+import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {from, Observable} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
+import {parse} from 'url';
+import {JwtHelperService} from './jwt-helper.service';
+import {JWT_OPTIONS} from './jwt-options.token';
+
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -99,7 +95,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if(
+    if (
       !this.isWhitelistedDomain(request) ||
       this.isBlacklistedRoute(request)
     ) {

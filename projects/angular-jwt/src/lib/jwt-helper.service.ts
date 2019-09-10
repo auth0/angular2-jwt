@@ -1,7 +1,7 @@
 // tslint:disable:no-bitwise
 
 import { Injectable, Inject } from '@angular/core';
-import { JWT_OPTIONS } from './jwtoptions.token';
+import { JWT_OPTIONS } from './jwt-options.token';
 
 @Injectable()
 export class JwtHelperService {
