@@ -1,0 +1,28 @@
+{
+  "name": "@auth0/angular-jwt",
+  "version": "4.0.0",
+  "description": "JSON Web Token helper library for Angular",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auth0/angular2-jwt"
+  },
+  "author": "Ryan Chenkie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/auth0/angular2-jwt/issues"
+  },
+  "keywords": [
+    "angular",
+    "angular 2",
+    "authentication",
+    "jwt"
+  ],
+  "homepage": "https://github.com/auth0/angular2-jwt",
+  "peerDependencies": {
+    "@angular/common": ">=7.1.0"
+  },
+  "dependencies": {
+    "url": "^0.11.0"
+  }
+}
