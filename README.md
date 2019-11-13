@@ -61,7 +61,7 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: ["example.com"],
-        blacklistedRoutes: ["example.com/examplebadroute/"]
+        blacklistedRoutes: ["http://example.com/examplebadroute/"]
       }
     })
   ]
