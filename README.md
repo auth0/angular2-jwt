@@ -107,7 +107,7 @@ JwtModule.forRoot({
 
 Authenticated requests should only be sent to domains you know and trust. Many applications make requests to APIs from multiple domains, some of which are not controlled by the developer. Since there is no way to know what the API being called will do with the information contained in the request, it is best to not send the user's token to all APIs in a blind fashion.
 
-List any domains you wish to allow authenticated requests to be sent to by specifying them in the the `whitelistedDomains` array. **Note that standard http port 80 and https port 443 requests don't require a port to be specified. A port is only required in the whitelisted host name if you are authenticating against a non-standard port e.g. localhost:3001**
+List any domains you wish to allow authenticated requests to be sent to by specifying them in the `whitelistedDomains` array. **Note that standard http port 80 and https port 443 requests don't require a port to be specified. A port is only required in the whitelisted host name if you are authenticating against a non-standard port e.g. localhost:3001**
 
 ```ts
 // ...
