@@ -1,5 +1,14 @@
 # Change log
 
+## Version [4.0.0](https://github.com/auth0/angular2-jwt/tags/v4.0.0) (2020-02-07)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/3.0.1..4.0.0)
+
+From [\#622](https://github.com/auth0/angular2-jwt/pull/622) [avatsaev](https://github.com/avatsaev):
+
+- Angular 9 compatibility
+- Angular Ivy compatibility
+
 ## Version [3.0.1](https://github.com/auth0/angular2-jwt/tags/v3.0.1) (2019-10-28)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/3.0.0..3.0.1)
