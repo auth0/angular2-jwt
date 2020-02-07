@@ -7,7 +7,7 @@ import { JWT_OPTIONS } from './jwtoptions.token';
 export class JwtHelperService {
   tokenGetter: () => string;
 
-  constructor(@Inject(JWT_OPTIONS) config:any = null) {
+  constructor(@Inject(JWT_OPTIONS) config = null) {
     this.tokenGetter = config && config.tokenGetter || function() {};
   }
 
@@ -26,7 +26,7 @@ export class JwtHelperService {
         break;
       }
       default: {
-        throw 'Illegal base64url string!';
+        throw new Error('Illegal base64url string!');
       }
     }
     return this.b64DecodeUnicode(output);
@@ -34,21 +34,21 @@ export class JwtHelperService {
 
   // credits for decoder goes to https://github.com/atk
   private b64decode(str: string): string {
-    let chars =
+    const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-    let output: string = '';
+    let output = '';
 
     str = String(str).replace(/=+$/, '');
 
     if (str.length % 4 === 1) {
       throw new Error(
-        "'atob' failed: The string to be decoded is not correctly encoded."
+        '\'atob\' failed: The string to be decoded is not correctly encoded.'
       );
     }
 
     for (
       // initialize result and counters
-      let bc: number = 0, bs: any, buffer: any, idx: number = 0;
+      let bc = 0, bs: any, buffer: any, idx = 0;
       // get next character
       (buffer = str.charAt(idx++));
       // character found in table? initialize bit storage and add its ascii value;
@@ -83,13 +83,15 @@ export class JwtHelperService {
       return null;
     }
 
-    let parts = token.split('.');
+    const parts = token.split('.');
 
     if (parts.length !== 3) {
-      throw new Error('The inspected token doesn\'t appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.');
+      throw new Error(
+        'The inspected token doesn\'t appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.'
+      );
     }
 
-    let decoded = this.urlBase64Decode(parts[1]);
+    const decoded = this.urlBase64Decode(parts[1]);
     if (!decoded) {
       throw new Error('Cannot decode the token.');
     }
@@ -115,7 +117,7 @@ export class JwtHelperService {
     if (!token || token === '') {
         return true;
     }
-    let date = this.getTokenExpirationDate(token);
+    const date = this.getTokenExpirationDate(token);
     offsetSeconds = offsetSeconds || 0;
 
     if (date === null) {

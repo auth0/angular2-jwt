@@ -1,25 +1,31 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "noImplicitAny": true,
-    "module": "es2015",
-    "target": "es5",
+    "baseUrl": "./",
+    "downlevelIteration": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "esnext",
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "declaration": true,
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "types": ["hammerjs", "jasmine", "node"],
-    "lib": ["es2015", "dom"],
-    "baseUrl": ".",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
     "paths": {
-      "@angular/*": ["node_modules/@angular/*"]
-    },
-    "strictNullChecks": true
-  },
-  "files": ["index.ts", "./src/jwt.interceptor.ts"],
-  "exclude": ["node_modules", "bundles"],
-  "angularCompilerOptions": {
-    "strictMetadataEmit": true,
-    "skipTemplateCodegen": true
+      "angular-jwt": [
+        "projects/angular-jwt/src/index"
+      ],
+      "angular-jwt/*": [
+        "projects/angular-jwt/src/*"
+      ]
+    }
   }
 }

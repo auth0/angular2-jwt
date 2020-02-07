@@ -7,9 +7,10 @@ import {
 } from '@angular/common/http';
 import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
-import { Observable, from } from "rxjs";
+
 import { mergeMap } from 'rxjs/operators';
 import { parse } from 'url';
+import {from, Observable} from 'rxjs';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -73,7 +74,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ) {
-    let tokenIsExpired: boolean = false;
+    let tokenIsExpired = false;
 
     if (!token && this.throwNoTokenError) {
       throw new Error('Could not get token from tokenGetter function.');
@@ -99,7 +100,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if(
+    if (
       !this.isWhitelistedDomain(request) ||
       this.isBlacklistedRoute(request)
     ) {

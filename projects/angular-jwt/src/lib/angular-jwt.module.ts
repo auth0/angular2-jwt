@@ -1,12 +1,9 @@
 import { NgModule, ModuleWithProviders, Optional, SkipSelf, Provider } from '@angular/core';
-import { JwtInterceptor } from './src/jwt.interceptor';
-import { JwtHelperService } from './src/jwthelper.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { JWT_OPTIONS } from './src/jwtoptions.token';
+import {JwtInterceptor} from './jwt.interceptor';
+import {JWT_OPTIONS} from './jwtoptions.token';
+import {JwtHelperService} from './jwthelper.service';
 
-export * from './src/jwt.interceptor';
-export * from './src/jwthelper.service';
-export * from './src/jwtoptions.token';
 
 export interface JwtModuleOptions {
   jwtOptionsProvider?: Provider;
@@ -29,7 +26,7 @@ export class JwtModule {
       throw new Error('JwtModule is already loaded. It should only be imported in your application\'s main module.');
     }
   }
-  static forRoot(options: JwtModuleOptions): ModuleWithProviders {
+  static forRoot(options: JwtModuleOptions): ModuleWithProviders<JwtModule> {
     return {
       ngModule: JwtModule,
       providers: [
