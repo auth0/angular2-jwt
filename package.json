@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build angular-jwt",
+    "build": "ng build angular-jwt --prod",
     "postbuild": "cp ./README.md ./CHANGELOG.md ./LICENSE ./dist/angular-jwt/",
     "test": "ng test",
     "lint": "ng lint",
