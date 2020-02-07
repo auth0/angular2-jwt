@@ -2,9 +2,9 @@
 
 [![npm version](https://badge.fury.io/js/%40auth0%2Fangular-jwt.svg)](https://badge.fury.io/js/%40auth0%2Fangular-jwt)
 
-### **NOTE:** This library is now at version 3 and is published on npm as `@auth0/angular-jwt`. If you're looking for the pre-v1.0 version of this library, it can be found in the `pre-v1.0` branch and on npm as `angular2-jwt`.
+### **NOTE:** This library is now at version 4 and is published on npm as `@auth0/angular-jwt`. If you're looking for the pre-v1.0 version of this library, it can be found in the `pre-v1.0` branch and on npm as `angular2-jwt`.
 
-**@auth0/angular-jwt v3 is to be used with Angular v6+ and RxJS v6+. For Angular v4.3 to v5+, use @auth0/angular-jwt v1**
+**@auth0/angular-jwt v4 is to be used with Angular v6+ and RxJS v6+. For Angular v4.3 to v5+, use @auth0/angular-jwt v1**
 
 This library provides an `HttpInterceptor` which automatically attaches a [JSON Web Token](https://jwt.io) to `HttpClient` requests.
 
@@ -78,9 +78,10 @@ export class AppComponent {
   constructor(public http: HttpClient) {}
 
   ping() {
-    this.http
-      .get("http://example.com/api/things")
-      .subscribe(data => console.log(data), err => console.log(err));
+    this.http.get("http://example.com/api/things").subscribe(
+      data => console.log(data),
+      err => console.log(err)
+    );
   }
 }
 ```
