@@ -1,18 +1,15 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { AppComponent } from './app.component';
-import {JwtModule} from 'angular-jwt';
-import {HttpClientModule} from '@angular/common/http';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { AppComponent } from "./app.component";
+import { JwtModule } from "angular-jwt";
+import { HttpClientModule } from "@angular/common/http";
 
 export function tokenGetter() {
-  return 'SOME_TOKEN';
+  return "SOME_TOKEN";
 }
 
-
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -25,4 +22,4 @@ export function tokenGetter() {
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,5 +1,5 @@
 {
-  "name": "angular2-jwt",
+  "name": "@auth0/angular-jwt",
   "version": "4.0.0",
   "scripts": {
     "ng": "ng",
