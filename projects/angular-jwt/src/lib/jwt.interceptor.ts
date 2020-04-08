@@ -40,14 +40,14 @@ export class JwtInterceptor implements HttpInterceptor {
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
     const requestUrl: any = parse(request.url, false, true);
-
+    console.log(requestUrl);
     return (
       requestUrl.host === null ||
       this.whitelistedDomains.findIndex((domain) =>
         typeof domain === "string"
-          ? domain === requestUrl.host
+          ? domain === requestUrl.hostname
           : domain instanceof RegExp
-          ? domain.test(requestUrl.host)
+          ? domain.test(requestUrl.hostname)
           : false
       ) > -1
     );
@@ -61,7 +61,7 @@ export class JwtInterceptor implements HttpInterceptor {
         if (typeof route === "string") {
           const parsedRoute = parse(route, false, true);
           return (
-            parsedRoute.host === requestedUrl.host &&
+            parsedRoute.hostname === requestedUrl.hostname &&
             parsedRoute.path === requestedUrl.path
           );
         }

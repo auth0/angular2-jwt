@@ -18,11 +18,14 @@ describe("ExampleHttpService", () => {
     `/assets/example-resource.json`,
     `http://whitelisted.com/api/`,
     `http://whitelisted.com/api/test`,
+    `http://whitelisted.com:443/api/test`,
     `http://whitelisted-regex.com/api/`,
+    `https://whitelisted-regex.com/api/`,
   ];
   const invalidRoutes = [
     `http://whitelisted.com/api/blacklisted`,
     `http://whitelisted.com/api/blacklisted-protocol`,
+    `http://whitelisted.com:80/api/blacklisted-protocol`,
     `http://whitelisted.com/api/blacklisted-regex`,
     `http://whitelisted-regex.com/api/blacklisted-regex`,
     `http://foo.com/bar`,
