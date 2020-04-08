@@ -1,16 +1,16 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject } from "@angular/core";
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
-} from '@angular/common/http';
-import { JwtHelperService } from './jwthelper.service';
-import { JWT_OPTIONS } from './jwtoptions.token';
+  HttpInterceptor,
+} from "@angular/common/http";
+import { JwtHelperService } from "./jwthelper.service";
+import { JWT_OPTIONS } from "./jwtoptions.token";
 
-import { mergeMap } from 'rxjs/operators';
-import { parse } from 'url';
-import {from, Observable} from 'rxjs';
+import { mergeMap } from "rxjs/operators";
+import { parse } from "url";
+import { from, Observable } from "rxjs";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -27,11 +27,11 @@ export class JwtInterceptor implements HttpInterceptor {
     public jwtHelper: JwtHelperService
   ) {
     this.tokenGetter = config.tokenGetter;
-    this.headerName = config.headerName || 'Authorization';
+    this.headerName = config.headerName || "Authorization";
     this.authScheme =
-      config.authScheme || config.authScheme === ''
+      config.authScheme || config.authScheme === ""
         ? config.authScheme
-        : 'Bearer ';
+        : "Bearer ";
     this.whitelistedDomains = config.whitelistedDomains || [];
     this.blacklistedRoutes = config.blacklistedRoutes || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
@@ -43,29 +43,35 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return (
       requestUrl.host === null ||
-      this.whitelistedDomains.findIndex(
-        domain =>
-          typeof domain === 'string'
-            ? domain === requestUrl.host
-            : domain instanceof RegExp
-              ? domain.test(requestUrl.host)
-              : false
+      this.whitelistedDomains.findIndex((domain) =>
+        typeof domain === "string"
+          ? domain === requestUrl.host
+          : domain instanceof RegExp
+          ? domain.test(requestUrl.host)
+          : false
       ) > -1
     );
   }
 
   isBlacklistedRoute(request: HttpRequest<any>): boolean {
-    const url = request.url;
+    const requestedUrl = parse(request.url, false, true);
 
     return (
-      this.blacklistedRoutes.findIndex(
-        route =>
-          typeof route === 'string'
-            ? route === url
-            : route instanceof RegExp
-              ? route.test(url)
-              : false
-      ) > -1
+      this.blacklistedRoutes.findIndex((route: string | RegExp) => {
+        if (typeof route === "string") {
+          const parsedRoute = parse(route, false, true);
+          return (
+            parsedRoute.host === requestedUrl.host &&
+            parsedRoute.path === requestedUrl.path
+          );
+        }
+
+        if (route instanceof RegExp) {
+          return route.test(request.url);
+        }
+
+        return false;
+      }) > -1
     );
   }
 
@@ -77,7 +83,7 @@ export class JwtInterceptor implements HttpInterceptor {
     let tokenIsExpired = false;
 
     if (!token && this.throwNoTokenError) {
-      throw new Error('Could not get token from tokenGetter function.');
+      throw new Error("Could not get token from tokenGetter function.");
     }
 
     if (this.skipWhenExpired) {
@@ -89,8 +95,8 @@ export class JwtInterceptor implements HttpInterceptor {
     } else if (token) {
       request = request.clone({
         setHeaders: {
-          [this.headerName]: `${this.authScheme}${token}`
-        }
+          [this.headerName]: `${this.authScheme}${token}`,
+        },
       });
     }
     return next.handle(request);
@@ -109,11 +115,11 @@ export class JwtInterceptor implements HttpInterceptor {
     const token = this.tokenGetter();
 
     if (token instanceof Promise) {
-      return from(token).pipe(mergeMap(
-        (asyncToken: string | null) => {
+      return from(token).pipe(
+        mergeMap((asyncToken: string | null) => {
           return this.handleInterception(asyncToken, request, next);
-        }
-      ));
+        })
+      );
     } else {
       return this.handleInterception(token, request, next);
     }
