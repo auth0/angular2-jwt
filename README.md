@@ -61,10 +61,10 @@ export function tokenGetter() {
       config: {
         tokenGetter: tokenGetter,
         whitelistedDomains: ["example.com"],
-        blacklistedRoutes: ["example.com/examplebadroute/"]
-      }
-    })
-  ]
+        blacklistedRoutes: ["example.com/examplebadroute/"],
+      },
+    }),
+  ],
 })
 export class AppModule {}
 ```
@@ -79,8 +79,8 @@ export class AppComponent {
 
   ping() {
     this.http.get("http://example.com/api/things").subscribe(
-      data => console.log(data),
-      err => console.log(err)
+      (data) => console.log(data),
+      (err) => console.log(err)
     );
   }
 }
@@ -99,8 +99,8 @@ JwtModule.forRoot({
     // ...
     tokenGetter: () => {
       return localStorage.getItem("access_token");
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -115,8 +115,8 @@ List any domains you wish to allow authenticated requests to be sent to by speci
 JwtModule.forRoot({
   config: {
     // ...
-    whitelistedDomains: ["localhost:3001", "foo.com", "bar.com"]
-  }
+    whitelistedDomains: ["localhost:3001", "foo.com", "bar.com"],
+  },
 });
 ```
 
@@ -133,9 +133,9 @@ JwtModule.forRoot({
     blacklistedRoutes: [
       "localhost:3001/auth/",
       "foo.com/bar/",
-      /localhost:3001\/foo\/far.*/
-    ] // strings and regular expressions
-  }
+      /localhost:3001\/foo\/far.*/,
+    ], // strings and regular expressions
+  },
 });
 ```
 
@@ -167,8 +167,8 @@ The default header name is `Authorization`. This can be changed by specifying a 
 JwtModule.forRoot({
   config: {
     // ...
-    headerName: "Your Header Name"
-  }
+    headerName: "Your Header Name",
+  },
 });
 ```
 
@@ -181,8 +181,8 @@ The default authorization scheme is `Bearer` followed by a single space. This ca
 JwtModule.forRoot({
   config: {
     // ...
-    authScheme: "Your Auth Scheme"
-  }
+    authScheme: "Your Auth Scheme",
+  },
 });
 ```
 
@@ -195,8 +195,8 @@ Setting `throwNoTokenError` to `true` will result in an error being thrown if a 
 JwtModule.forRoot({
   config: {
     // ...
-    throwNoTokenError: true
-  }
+    throwNoTokenError: true,
+  },
 });
 ```
 
@@ -209,8 +209,8 @@ By default, the user's JWT will be sent in `HttpClient` requests even if it is e
 JwtModule.forRoot({
   config: {
     // ...
-    skipWhenExpired: true
-  }
+    skipWhenExpired: true,
+  },
 });
 ```
 
@@ -232,7 +232,8 @@ export function jwtOptionsFactory(tokenService) {
   return {
     tokenGetter: () => {
       return tokenService.getAsyncToken();
-    }
+    },
+    whitelistedDomains: ["example.com"]
   }
 }
 
@@ -253,7 +254,7 @@ export function jwtOptionsFactory(tokenService) {
 })
 ```
 
-NOTE: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
+**Note:**: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
 
 ## Configuration for Ionic 2+
 
@@ -267,7 +268,8 @@ export function jwtOptionsFactory(storage) {
   return {
     tokenGetter: () => {
       return storage.get('access_token');
-    }
+    },
+    whitelistedDomains: ["example.com"]
   }
 }
 
@@ -286,6 +288,8 @@ export function jwtOptionsFactory(storage) {
   ]
 })
 ```
+
+**Note:**: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
 
 ## Configuration Options
 
