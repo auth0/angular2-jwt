@@ -232,7 +232,8 @@ export function jwtOptionsFactory(tokenService) {
   return {
     tokenGetter: () => {
       return tokenService.getAsyncToken();
-    }
+    },
+    whitelistedDomains: ["example.com"]
   }
 }
 
@@ -253,7 +254,7 @@ export function jwtOptionsFactory(tokenService) {
 })
 ```
 
-NOTE: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
+**Note:**: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
 
 ## Configuration for Ionic 2+
 
@@ -267,7 +268,8 @@ export function jwtOptionsFactory(storage) {
   return {
     tokenGetter: () => {
       return storage.get('access_token');
-    }
+    },
+    whitelistedDomains: ["example.com"]
   }
 }
 
@@ -286,6 +288,8 @@ export function jwtOptionsFactory(storage) {
   ]
 })
 ```
+
+**Note:**: If a `jwtOptionsFactory` is defined, then `config` is ignored. _Both configuration alternatives can't be defined at the same time_.
 
 ## Configuration Options
 
