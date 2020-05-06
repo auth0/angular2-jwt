@@ -88,7 +88,7 @@ export class AppComponent {
 
 ## Configuration Options
 
-### `tokenGetter: function`
+### `tokenGetter: function(?HttpRequest)`
 
 The `tokenGetter` is a function which returns the user's token. This function simply needs to make a retrieval call to wherever the token is stored. In many cases, the token will be stored in local storage or session storage.
 
@@ -98,6 +98,24 @@ JwtModule.forRoot({
   config: {
     // ...
     tokenGetter: () => {
+      return localStorage.getItem("access_token");
+    },
+  },
+});
+```
+
+If you have multiple tokens for multiple domains, you can use the `HttpRequest` passed to the `tokenGetter` function to get the correct token for each intercepted request.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    tokenGetter: (request) => {
+      if (request.url.includes("foo")) {
+        return localStorage.getItem("access_token_foo");
+      }
+
       return localStorage.getItem("access_token");
     },
   },
