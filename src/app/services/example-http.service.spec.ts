@@ -33,6 +33,7 @@ describe("Example HttpService: with simple tokken getter", () => {
     `http://whitelisted.com:443/api/test`,
     `http://whitelisted-regex.com/api/`,
     `https://whitelisted-regex.com/api/`,
+    `http://localhost:3000`,
   ];
   const invalidRoutes = [
     `http://whitelisted.com/api/blacklisted`,
@@ -41,6 +42,7 @@ describe("Example HttpService: with simple tokken getter", () => {
     `http://whitelisted.com/api/blacklisted-regex`,
     `http://whitelisted-regex.com/api/blacklisted-regex`,
     `http://foo.com/bar`,
+    "http://localhost:4000",
   ];
 
   beforeEach(() => {
@@ -50,7 +52,11 @@ describe("Example HttpService: with simple tokken getter", () => {
         JwtModule.forRoot({
           config: {
             tokenGetter: tokenGetter,
-            whitelistedDomains: ["whitelisted.com", /whitelisted-regex*/],
+            whitelistedDomains: [
+              "whitelisted.com",
+              /whitelisted-regex*/,
+              "localhost:3000",
+            ],
             blacklistedRoutes: [
               "http://whitelisted.com/api/blacklisted-protocol",
               "//whitelisted.com/api/blacklisted",

@@ -23,6 +23,7 @@ export class JwtInterceptor implements HttpInterceptor {
   blacklistedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
+  standardPorts: string[] = ["80", "443"];
 
   constructor(
     @Inject(JWT_OPTIONS) config: any,
@@ -42,14 +43,22 @@ export class JwtInterceptor implements HttpInterceptor {
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
     const requestUrl: any = parse(request.url, false, true);
+    const hostName =
+      requestUrl.hostname !== null
+        ? `${requestUrl.hostname}${
+            requestUrl.port && !this.standardPorts.includes(requestUrl.port)
+              ? ":" + requestUrl.port
+              : ""
+          }`
+        : requestUrl.hostname;
 
     return (
-      requestUrl.hostname === null ||
+      hostName === null ||
       this.whitelistedDomains.findIndex((domain) =>
         typeof domain === "string"
-          ? domain === requestUrl.hostname
+          ? domain === hostName
           : domain instanceof RegExp
-          ? domain.test(requestUrl.hostname)
+          ? domain.test(hostName)
           : false
       ) > -1
     );
