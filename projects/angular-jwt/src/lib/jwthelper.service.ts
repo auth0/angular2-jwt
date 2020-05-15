@@ -6,9 +6,20 @@ import { JWT_OPTIONS } from './jwtoptions.token';
 @Injectable()
 export class JwtHelperService {
   tokenGetter: () => string;
+  private config: any;
 
   constructor(@Inject(JWT_OPTIONS) config = null) {
+    this.config = config;
     this.tokenGetter = config && config.tokenGetter || function() {};
+  }
+
+  public addWhitelistDomain(domain: string): void {
+    if (!this.config.whitelistedDomains) {
+      this.config.whitelistedDomains = [];
+    }
+
+    const domains = [...this.config.whitelistedDomains, domain];
+    this.config.whitelistedDomains = [...new Set(domains)];
   }
 
   public urlBase64Decode(str: string): string {

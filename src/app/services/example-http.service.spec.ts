@@ -4,7 +4,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from "@angular/common/http/testing";
-import { JwtModule } from "angular-jwt";
+import { JwtHelperService, JwtModule } from 'angular-jwt';
 
 export function tokenGetter() {
   return "TEST_TOKEN";
@@ -25,6 +25,7 @@ export function tokenGetterWithRequest(request) {
 describe("Example HttpService: with simple tokken getter", () => {
   let service: ExampleHttpService;
   let httpMock: HttpTestingController;
+  let jwtMock: JwtHelperService;
 
   const validRoutes = [
     `/assets/example-resource.json`,
@@ -62,6 +63,7 @@ describe("Example HttpService: with simple tokken getter", () => {
     });
     service = TestBed.get(ExampleHttpService);
     httpMock = TestBed.get(HttpTestingController);
+    jwtMock = TestBed.get(JwtHelperService);
   });
 
   it("should add Authorisation header", () => {
@@ -93,6 +95,22 @@ describe("Example HttpService: with simple tokken getter", () => {
       expect(httpRequest.request.headers.has("Authorization")).toEqual(false);
     })
   );
+
+  it(`should add dynamically a whitelisted domain `, () => {
+    const url = 'http://add-whitelisted-domain.com';
+    jwtMock.addWhitelistDomain('add-whitelisted-domain.com');
+    service.testRequest(url).subscribe((response) => {
+      expect(response).toBeTruthy();
+    });
+
+    const httpRequest = httpMock.expectOne(url);
+
+    expect(httpRequest.request.headers.has("Authorization")).toEqual(true);
+    expect(httpRequest.request.headers.get("Authorization")).toEqual(
+      `Bearer ${tokenGetter()}`
+    );
+  });
+
 });
 
 describe("Example HttpService: with request based tokken getter", () => {
