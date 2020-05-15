@@ -1,5 +1,12 @@
 # Change log
 
+## Version [4.1.0](https://github.com/auth0/angular2-jwt/tags/v4.1.0) (2020-05-15)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/4.0.0..4.1.0)
+
+- Use blacklist domains regardless of their protocol [#644](https://github.com/auth0/angular2-jwt/pull/644)
+- Pass the HttpRequest to the tokenGetter [#649](https://github.com/auth0/angular2-jwt/pull/649)
+
 ## Version [4.0.0](https://github.com/auth0/angular2-jwt/tags/v4.0.0) (2020-02-07)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/3.0.1..4.0.0)
