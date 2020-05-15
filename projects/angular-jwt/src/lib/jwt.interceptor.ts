@@ -14,7 +14,9 @@ import { from, Observable } from "rxjs";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  tokenGetter: () => string | null | Promise<string | null>;
+  tokenGetter: (
+    request?: HttpRequest<any>
+  ) => string | null | Promise<string | null>;
   headerName: string;
   authScheme: string;
   whitelistedDomains: Array<string | RegExp>;
@@ -112,7 +114,7 @@ export class JwtInterceptor implements HttpInterceptor {
     ) {
       return next.handle(request);
     }
-    const token = this.tokenGetter();
+    const token = this.tokenGetter(request);
 
     if (token instanceof Promise) {
       return from(token).pipe(

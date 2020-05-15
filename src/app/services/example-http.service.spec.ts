@@ -7,10 +7,22 @@ import {
 import { JwtModule } from "angular-jwt";
 
 export function tokenGetter() {
-  return "SOME_TEST_TOKEN";
+  return "TEST_TOKEN";
 }
 
-describe("ExampleHttpService", () => {
+export function tokenGetterWithRequest(request) {
+  if (request.url.includes("1")) {
+    return "TEST_TOKEN_1";
+  }
+
+  if (request.url.includes("2")) {
+    return "TEST_TOKEN_2";
+  }
+
+  return "TEST_TOKEN";
+}
+
+describe("Example HttpService: with simple tokken getter", () => {
   let service: ExampleHttpService;
   let httpMock: HttpTestingController;
 
@@ -79,6 +91,55 @@ describe("ExampleHttpService", () => {
 
       const httpRequest = httpMock.expectOne(route);
       expect(httpRequest.request.headers.has("Authorization")).toEqual(false);
+    })
+  );
+});
+
+describe("Example HttpService: with request based tokken getter", () => {
+  let service: ExampleHttpService;
+  let httpMock: HttpTestingController;
+
+  const routes = [
+    `http://example-1.com/api/`,
+    `http://example-2.com/api/`,
+    `http://example-3.com/api/`,
+  ];
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+        JwtModule.forRoot({
+          config: {
+            tokenGetter: tokenGetterWithRequest,
+            whitelistedDomains: [
+              "example-1.com",
+              "example-2.com",
+              "example-3.com",
+            ],
+          },
+        }),
+      ],
+    });
+    service = TestBed.get(ExampleHttpService);
+    httpMock = TestBed.get(HttpTestingController);
+  });
+
+  it("should add Authorisation header", () => {
+    expect(service).toBeTruthy();
+  });
+
+  routes.forEach((route) =>
+    it(`should set the correct auth token for a domain: ${route}`, () => {
+      service.testRequest(route).subscribe((response) => {
+        expect(response).toBeTruthy();
+      });
+
+      const httpRequest = httpMock.expectOne(route);
+      expect(httpRequest.request.headers.has("Authorization")).toEqual(true);
+      expect(httpRequest.request.headers.get("Authorization")).toEqual(
+        `Bearer ${tokenGetterWithRequest({ url: route })}`
+      );
     })
   );
 });
