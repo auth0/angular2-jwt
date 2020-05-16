@@ -1,6 +1,6 @@
 # Change log
 
-## Version [4.1.0](https://github.com/auth0/angular2-jwt/tags/v4.1.2) (2020-05-16)
+## Version [4.1.2](https://github.com/auth0/angular2-jwt/tags/v4.1.2) (2020-05-16)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v4.1.1..v4.1.2)
 
