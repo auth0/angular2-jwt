@@ -1,8 +1,21 @@
 # Change log
 
+## Version [4.1.0](https://github.com/auth0/angular2-jwt/tags/v4.1.2) (2020-05-16)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v4.1.1..v4.1.2)
+
+- Support domains with a port other than the default HTTP ports (HTTP: 80, HTTPS: 443)
+  [#656](https://github.com/auth0/angular2-jwt/pull/656)
+
+## Version [4.1.1](https://github.com/auth0/angular2-jwt/tags/v4.1.1) (2020-05-15)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v4.1.0..v4.1.1)
+
+- Something went wrong pulishing `v4.1.0`, this version fixes that.
+
 ## Version [4.1.0](https://github.com/auth0/angular2-jwt/tags/v4.1.0) (2020-05-15)
 
-[Full Changelog](https://github.com/auth0/angular2-jwt/compare/4.0.0..4.1.0)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/4.0.0..v4.1.0)
 
 - Use blacklist domains regardless of their protocol [#644](https://github.com/auth0/angular2-jwt/pull/644)
 - Pass the HttpRequest to the tokenGetter [#649](https://github.com/auth0/angular2-jwt/pull/649)
