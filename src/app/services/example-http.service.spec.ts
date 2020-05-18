@@ -152,8 +152,8 @@ describe("Example HttpService: with request based tokken getter", () => {
 
 const authSchemes = [
   [undefined, "Bearer "],
-  ["basic ", "basic "],
-  [() => "basic ", "basic "],
+  ["Basic ", "Basic "],
+  [() => "Basic ", "Basic "],
 ];
 
 authSchemes.forEach((scheme) => {

@@ -88,7 +88,7 @@ export class AppComponent {
 
 ## Configuration Options
 
-### `tokenGetter: function(?HttpRequest)`
+### `tokenGetter: function(HttpRequest): string`
 
 The `tokenGetter` is a function which returns the user's token. This function simply needs to make a retrieval call to wherever the token is stored. In many cases, the token will be stored in local storage or session storage.
 
@@ -191,16 +191,34 @@ JwtModule.forRoot({
 });
 ```
 
-### `authScheme: string`
+### `authScheme: string | function(HttpRequest): string`
 
-The default authorization scheme is `Bearer` followed by a single space. This can be changed by specifying a custom `authScheme` which is to be a string.
+The default authorization scheme is `Bearer` followed by a single space. This can be changed by specifying a custom `authScheme`. You can pass a string which will prefix the token for each request.
 
 ```ts
 // ...
 JwtModule.forRoot({
   config: {
     // ...
-    authScheme: "Your Auth Scheme",
+    authScheme: "Basic ",
+  },
+});
+```
+
+If you want to change the auth scheme dynamically, or based on the request, you can configure a getter function which returns a string.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    authScheme: (request) => {
+       if (request.url.includes("foo")) {
+        return 'Basic ;
+      }
+
+      return 'Bearer ";
+    },
   },
 });
 ```
