@@ -17,7 +17,7 @@ export interface JwtModuleOptions {
       request?: HttpRequest<any>
     ) => string | null | Promise<string | null>;
     headerName?: string;
-    authScheme?: string;
+    authScheme?: string | ((request?: HttpRequest<any>) => string);
     whitelistedDomains?: Array<string | RegExp>;
     blacklistedRoutes?: Array<string | RegExp>;
     throwNoTokenError?: boolean;
