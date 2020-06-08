@@ -10,19 +10,21 @@ import { JwtInterceptor } from "./jwt.interceptor";
 import { JWT_OPTIONS } from "./jwtoptions.token";
 import { JwtHelperService } from "./jwthelper.service";
 
+export interface JwtConfig {
+  tokenGetter?: (
+    request?: HttpRequest<any>
+  ) => string | null | Promise<string | null>;
+  headerName?: string;
+  authScheme?: string | ((request?: HttpRequest<any>) => string);
+  whitelistedDomains?: Array<string | RegExp>;
+  blacklistedRoutes?: Array<string | RegExp>;
+  throwNoTokenError?: boolean;
+  skipWhenExpired?: boolean;
+};
+
 export interface JwtModuleOptions {
   jwtOptionsProvider?: Provider;
-  config?: {
-    tokenGetter?: (
-      request?: HttpRequest<any>
-    ) => string | null | Promise<string | null>;
-    headerName?: string;
-    authScheme?: string | ((request?: HttpRequest<any>) => string);
-    whitelistedDomains?: Array<string | RegExp>;
-    blacklistedRoutes?: Array<string | RegExp>;
-    throwNoTokenError?: boolean;
-    skipWhenExpired?: boolean;
-  };
+  config?: JwtConfig;
 }
 
 @NgModule()
