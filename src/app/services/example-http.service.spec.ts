@@ -160,7 +160,11 @@ authSchemes.forEach((scheme) => {
   let service: ExampleHttpService;
   let httpMock: HttpTestingController;
 
-  describe("Example HttpService: with simple tokken getter", () => {
+  describe(`Example HttpService: with ${
+    typeof scheme[0] === "function"
+      ? "an authscheme getter function"
+      : "a simple authscheme getter"
+  }`, () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [
