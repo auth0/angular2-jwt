@@ -34,6 +34,7 @@ describe("Example HttpService: with simple tokken getter", () => {
     `http://whitelisted-regex.com/api/`,
     `https://whitelisted-regex.com/api/`,
     `http://localhost:3000`,
+    `http://localhost:3000/api`,
   ];
   const invalidRoutes = [
     `http://whitelisted.com/api/blacklisted`,
@@ -42,7 +43,8 @@ describe("Example HttpService: with simple tokken getter", () => {
     `http://whitelisted.com/api/blacklisted-regex`,
     `http://whitelisted-regex.com/api/blacklisted-regex`,
     `http://foo.com/bar`,
-    "http://localhost:4000",
+    "http://localhost/api",
+    "http://localhost:4000/api",
   ];
 
   beforeEach(() => {
