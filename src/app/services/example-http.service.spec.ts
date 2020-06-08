@@ -149,3 +149,49 @@ describe("Example HttpService: with request based tokken getter", () => {
     })
   );
 });
+
+const authSchemes = [
+  [undefined, "Bearer "],
+  ["Basic ", "Basic "],
+  [() => "Basic ", "Basic "],
+];
+
+authSchemes.forEach((scheme) => {
+  let service: ExampleHttpService;
+  let httpMock: HttpTestingController;
+
+  describe(`Example HttpService: with ${
+    typeof scheme[0] === "function"
+      ? "an authscheme getter function"
+      : "a simple authscheme getter"
+  }`, () => {
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [
+          HttpClientTestingModule,
+          JwtModule.forRoot({
+            config: {
+              tokenGetter: tokenGetter,
+              authScheme: scheme[0],
+              whitelistedDomains: ["whitelisted.com"],
+            },
+          }),
+        ],
+      });
+      service = TestBed.get(ExampleHttpService);
+      httpMock = TestBed.get(HttpTestingController);
+    });
+
+    it(`should set the correct auth scheme a request (${scheme[1]})`, () => {
+      service.testRequest("http://whitelisted.com").subscribe((response) => {
+        expect(response).toBeTruthy();
+      });
+
+      const httpRequest = httpMock.expectOne("http://whitelisted.com");
+      expect(httpRequest.request.headers.has("Authorization")).toEqual(true);
+      expect(httpRequest.request.headers.get("Authorization")).toEqual(
+        `${scheme[1]}${tokenGetter()}`
+      );
+    });
+  });
+});

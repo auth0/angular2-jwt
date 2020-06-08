@@ -18,7 +18,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request?: HttpRequest<any>
   ) => string | null | Promise<string | null>;
   headerName: string;
-  authScheme: string;
+  authScheme: string | ((request?: HttpRequest<any>) => string);
   whitelistedDomains: Array<string | RegExp>;
   blacklistedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
@@ -91,6 +91,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ) {
+    const authScheme = this.jwtHelper.getAuthScheme(this.authScheme, request);
     let tokenIsExpired = false;
 
     if (!token && this.throwNoTokenError) {
@@ -106,7 +107,7 @@ export class JwtInterceptor implements HttpInterceptor {
     } else if (token) {
       request = request.clone({
         setHeaders: {
-          [this.headerName]: `${this.authScheme}${token}`,
+          [this.headerName]: `${authScheme}${token}`,
         },
       });
     }
