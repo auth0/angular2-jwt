@@ -214,10 +214,10 @@ JwtModule.forRoot({
     // ...
     authScheme: (request) => {
        if (request.url.includes("foo")) {
-        return 'Basic ;
+        return "Basic ";
       }
 
-      return 'Bearer ";
+      return "Bearer ";
     },
   },
 });
