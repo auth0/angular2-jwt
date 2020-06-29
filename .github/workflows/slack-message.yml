@@ -21,7 +21,7 @@ jobs:
         uses: archive/github-actions-slack@master
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
-          slack-channel: C03QH28Q8
+          slack-channel: ${{ secrets.SLACK_BOT_CHANNEL }}
           slack-text: A new <https://github.com/"${{ github.repository }}"|"${{ github.event_name }}"> was made in *"${{ github.repository }}*".
           slack-optional-icon_emoji: ":robot_face:"
       - name: Result from "Send Message"
