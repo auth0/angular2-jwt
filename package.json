@@ -9,7 +9,9 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "release": "np"
+        "release": "np",
+        "release:preview": "np --preview ",
+        "release:dry": "np --no-publish"
     },
     "private": false,
     "dependencies": {
