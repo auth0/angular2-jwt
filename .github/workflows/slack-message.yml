@@ -24,10 +24,8 @@ jobs:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           slack-channel: ${{ secrets.SLACK_BOT_CHANNEL }}
           slack-text: A new <https://github.com/${{ github.repository }}|Pull Request> was made in *${{ github.repository }}*.
-          slack-optional-blocks: fromJSON([{"type": "section","text": {"type": "mrkdwn","text": "A new ${{ github.event_name }} was made in *${{ github.repository }}*"},"accessory": {"type": "button","text": {"type": "plain_text","text": "View on GitHub"},"url": "https://github.com/${{ github.repository }}"}}])
+          slack-optional-blocks: '[{"type": "section","text": {"type": "mrkdwn","text": "A new ${{ github.event_name }} was made in *${{ github.repository }}*"},"accessory": {"type": "button","text": {"type": "plain_text","text": "View on GitHub"},"url": "https://github.com/${{ github.repository }}"}}]'
       - name: Debug event
           run echo ${{toJSON(github.event)}}
       - name: Result from "Send Message"
         run: echo "The result was ${{ steps.notify.outputs.slack-result }}"
-
-
