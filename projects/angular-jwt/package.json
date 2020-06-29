@@ -21,8 +21,5 @@
     "homepage": "https://github.com/auth0/angular2-jwt",
     "peerDependencies": {
         "@angular/common": ">=7.1.0"
-    },
-    "dependencies": {
-        "url": "^0.11.0"
     }
 }

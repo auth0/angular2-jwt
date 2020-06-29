@@ -9,7 +9,6 @@ import { JwtHelperService } from "./jwthelper.service";
 import { JWT_OPTIONS } from "./jwtoptions.token";
 
 import { mergeMap } from "rxjs/operators";
-import { parse } from "url";
 import { from, Observable } from "rxjs";
 
 @Injectable()
@@ -42,18 +41,22 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isWhitelistedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl: any = parse(request.url, false, true);
-    const hostName =
-      requestUrl.hostname !== null
-        ? `${requestUrl.hostname}${
-            requestUrl.port && !this.standardPorts.includes(requestUrl.port)
-              ? ":" + requestUrl.port
-              : ""
-          }`
-        : requestUrl.hostname;
+    const requestUrl: URL = new URL(request.url, window.location.origin);
+
+    // If the host equals the current window origin,
+    // the domain is whitelisted by default
+    if (requestUrl.host === window.location.host) {
+      return true;
+    }
+
+    // If not the current domain, check the whitelist
+    const hostName = `${requestUrl.hostname}${
+      requestUrl.port && !this.standardPorts.includes(requestUrl.port)
+        ? ":" + requestUrl.port
+        : ""
+    }`;
 
     return (
-      hostName === null ||
       this.whitelistedDomains.findIndex((domain) =>
         typeof domain === "string"
           ? domain === hostName
@@ -65,15 +68,15 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isBlacklistedRoute(request: HttpRequest<any>): boolean {
-    const requestedUrl = parse(request.url, false, true);
+    const requestedUrl: URL = new URL(request.url, window.location.origin);
 
     return (
       this.blacklistedRoutes.findIndex((route: string | RegExp) => {
         if (typeof route === "string") {
-          const parsedRoute = parse(route, false, true);
+          const parsedRoute: URL = new URL(route, window.location.origin);
           return (
             parsedRoute.hostname === requestedUrl.hostname &&
-            parsedRoute.path === requestedUrl.path
+            parsedRoute.pathname === requestedUrl.pathname
           );
         }
 
