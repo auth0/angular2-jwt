@@ -19,8 +19,8 @@ export class JwtInterceptor implements HttpInterceptor {
   ) => string | null | Promise<string | null>;
   headerName: string;
   authScheme: string | ((request?: HttpRequest<any>) => string);
-  whitelistedDomains: Array<string | RegExp>;
-  blacklistedRoutes: Array<string | RegExp>;
+  allowedDomains: Array<string | RegExp>;
+  disallowedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
   standardPorts: string[] = ["80", "443"];
@@ -35,13 +35,13 @@ export class JwtInterceptor implements HttpInterceptor {
       config.authScheme || config.authScheme === ""
         ? config.authScheme
         : "Bearer ";
-    this.whitelistedDomains = config.whitelistedDomains || [];
-    this.blacklistedRoutes = config.blacklistedRoutes || [];
+    this.allowedDomains = config.allowedDomains || [];
+    this.disallowedRoutes = config.disallowedRoutes || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
   }
 
-  isWhitelistedDomain(request: HttpRequest<any>): boolean {
+  isAllowedDomain(request: HttpRequest<any>): boolean {
     const requestUrl: any = parse(request.url, false, true);
     const hostName =
       requestUrl.hostname !== null
@@ -54,7 +54,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return (
       hostName === null ||
-      this.whitelistedDomains.findIndex((domain) =>
+      this.allowedDomains.findIndex((domain) =>
         typeof domain === "string"
           ? domain === hostName
           : domain instanceof RegExp
@@ -64,11 +64,11 @@ export class JwtInterceptor implements HttpInterceptor {
     );
   }
 
-  isBlacklistedRoute(request: HttpRequest<any>): boolean {
+  isDisallowedRoute(request: HttpRequest<any>): boolean {
     const requestedUrl = parse(request.url, false, true);
 
     return (
-      this.blacklistedRoutes.findIndex((route: string | RegExp) => {
+      this.disallowedRoutes.findIndex((route: string | RegExp) => {
         if (typeof route === "string") {
           const parsedRoute = parse(route, false, true);
           return (
@@ -118,10 +118,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (
-      !this.isWhitelistedDomain(request) ||
-      this.isBlacklistedRoute(request)
-    ) {
+    if (!this.isAllowedDomain(request) || this.isDisallowedRoute(request)) {
       return next.handle(request);
     }
     const token = this.tokenGetter(request);

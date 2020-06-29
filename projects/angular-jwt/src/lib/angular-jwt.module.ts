@@ -16,11 +16,11 @@ export interface JwtConfig {
   ) => string | null | Promise<string | null>;
   headerName?: string;
   authScheme?: string | ((request?: HttpRequest<any>) => string);
-  whitelistedDomains?: Array<string | RegExp>;
-  blacklistedRoutes?: Array<string | RegExp>;
+  allowedDomains?: Array<string | RegExp>;
+  disallowedRoutes?: Array<string | RegExp>;
   throwNoTokenError?: boolean;
   skipWhenExpired?: boolean;
-};
+}
 
 export interface JwtModuleOptions {
   jwtOptionsProvider?: Provider;
