@@ -28,20 +28,20 @@ describe("Example HttpService: with simple tokken getter", () => {
 
   const validRoutes = [
     `/assets/example-resource.json`,
-    `http://whitelisted.com/api/`,
-    `http://whitelisted.com/api/test`,
-    `http://whitelisted.com:443/api/test`,
-    `http://whitelisted-regex.com/api/`,
-    `https://whitelisted-regex.com/api/`,
+    `http://allowed.com/api/`,
+    `http://allowed.com/api/test`,
+    `http://allowed.com:443/api/test`,
+    `http://allowed-regex.com/api/`,
+    `https://allowed-regex.com/api/`,
     `http://localhost:3000`,
     `http://localhost:3000/api`,
   ];
   const invalidRoutes = [
-    `http://whitelisted.com/api/blacklisted`,
-    `http://whitelisted.com/api/blacklisted-protocol`,
-    `http://whitelisted.com:80/api/blacklisted-protocol`,
-    `http://whitelisted.com/api/blacklisted-regex`,
-    `http://whitelisted-regex.com/api/blacklisted-regex`,
+    `http://allowed.com/api/disallowed`,
+    `http://allowed.com/api/disallowed-protocol`,
+    `http://allowed.com:80/api/disallowed-protocol`,
+    `http://allowed.com/api/disallowed-regex`,
+    `http://allowed-regex.com/api/disallowed-regex`,
     `http://foo.com/bar`,
     "http://localhost/api",
     "http://localhost:4000/api",
@@ -54,15 +54,11 @@ describe("Example HttpService: with simple tokken getter", () => {
         JwtModule.forRoot({
           config: {
             tokenGetter: tokenGetter,
-            whitelistedDomains: [
-              "whitelisted.com",
-              /whitelisted-regex*/,
-              "localhost:3000",
-            ],
-            blacklistedRoutes: [
-              "http://whitelisted.com/api/blacklisted-protocol",
-              "//whitelisted.com/api/blacklisted",
-              /blacklisted-regex*/,
+            allowedDomains: ["allowed.com", /allowed-regex*/, "localhost:3000"],
+            disallowedRoutes: [
+              "http://allowed.com/api/disallowed-protocol",
+              "//allowed.com/api/disallowed",
+              /disallowed-regex*/,
             ],
           },
         }),
@@ -77,7 +73,7 @@ describe("Example HttpService: with simple tokken getter", () => {
   });
 
   validRoutes.forEach((route) =>
-    it(`should set the correct auth token for a whitelisted domain: ${route}`, () => {
+    it(`should set the correct auth token for a allowed domain: ${route}`, () => {
       service.testRequest(route).subscribe((response) => {
         expect(response).toBeTruthy();
       });
@@ -92,7 +88,7 @@ describe("Example HttpService: with simple tokken getter", () => {
   );
 
   invalidRoutes.forEach((route) =>
-    it(`should not set the auth token for a blacklisted route: ${route}`, () => {
+    it(`should not set the auth token for a disallowed route: ${route}`, () => {
       service.testRequest(route).subscribe((response) => {
         expect(response).toBeTruthy();
       });
@@ -120,11 +116,7 @@ describe("Example HttpService: with request based tokken getter", () => {
         JwtModule.forRoot({
           config: {
             tokenGetter: tokenGetterWithRequest,
-            whitelistedDomains: [
-              "example-1.com",
-              "example-2.com",
-              "example-3.com",
-            ],
+            allowedDomains: ["example-1.com", "example-2.com", "example-3.com"],
           },
         }),
       ],
@@ -175,7 +167,7 @@ authSchemes.forEach((scheme) => {
             config: {
               tokenGetter: tokenGetter,
               authScheme: scheme[0],
-              whitelistedDomains: ["whitelisted.com"],
+              allowedDomains: ["allowed.com"],
             },
           }),
         ],
@@ -185,11 +177,11 @@ authSchemes.forEach((scheme) => {
     });
 
     it(`should set the correct auth scheme a request (${scheme[1]})`, () => {
-      service.testRequest("http://whitelisted.com").subscribe((response) => {
+      service.testRequest("http://allowed.com").subscribe((response) => {
         expect(response).toBeTruthy();
       });
 
-      const httpRequest = httpMock.expectOne("http://whitelisted.com");
+      const httpRequest = httpMock.expectOne("http://allowed.com");
       expect(httpRequest.request.headers.has("Authorization")).toEqual(true);
       expect(httpRequest.request.headers.get("Authorization")).toEqual(
         `${scheme[1]}${tokenGetter()}`

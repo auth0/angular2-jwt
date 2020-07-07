@@ -40,7 +40,7 @@ const isExpired = helper.isTokenExpired(myRawToken);
 
 ## Usage: Injection
 
-Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also whitelist any domains that you want to make requests to by specifying a `whitelistedDomains` array.
+Import the `JwtModule` module and add it to your imports list. Call the `forRoot` method and provide a `tokenGetter` function. You must also add any domains to the `allowedDomains`, that you want to make requests to by specifying an `allowedDomains` array.
 
 Be sure to import the `HttpClientModule` as well.
 
@@ -60,8 +60,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: ["example.com"],
-        blacklistedRoutes: ["http://example.com/examplebadroute/"],
+        allowedDomains: ["example.com"],
+        disallowedRoutes: ["http://example.com/examplebadroute/"],
       },
     }),
   ],
@@ -122,33 +122,33 @@ JwtModule.forRoot({
 });
 ```
 
-### `whitelistedDomains: array`
+### `allowedDomains: array`
 
 Authenticated requests should only be sent to domains you know and trust. Many applications make requests to APIs from multiple domains, some of which are not controlled by the developer. Since there is no way to know what the API being called will do with the information contained in the request, it is best to not send the user's token to all APIs in a blind fashion.
 
-List any domains you wish to allow authenticated requests to be sent to by specifying them in the `whitelistedDomains` array. **Note that standard http port 80 and https port 443 requests don't require a port to be specified. A port is only required in the whitelisted host name if you are authenticating against a non-standard port e.g. localhost:3001**
+List any domains you wish to allow authenticated requests to be sent to by specifying them in the `allowedDomains` array. **Note that standard http port 80 and https port 443 requests don't require a port to be specified. A port is only required in the allowed domains host name if you are authenticating against a non-standard port e.g. localhost:3001**
 
 ```ts
 // ...
 JwtModule.forRoot({
   config: {
     // ...
-    whitelistedDomains: ["localhost:3001", "foo.com", "bar.com"],
+    allowedDomains: ["localhost:3001", "foo.com", "bar.com"],
   },
 });
 ```
 
-### `blacklistedRoutes: array`
+### `disallowedRoutes: array`
 
 If you do not want to replace the authorization headers for specific routes, list them here. This can be useful if your
-initial auth route(s) are on a whitelisted domain and take basic auth headers. These routes need to be prefixed with the correct protocol (`http://`, `https://`). If you want to blacklist the route regardless of the protocol, you can prefix it with `//`.
+initial auth route(s) are on an allowed domain and take basic auth headers. These routes need to be prefixed with the correct protocol (`http://`, `https://`). If you want to add a route to the list of disallowed routes regardless of the protocol, you can prefix it with `//`.
 
 ```ts
 // ...
 JwtModule.forRoot({
   config: {
     // ...
-    blacklistedRoutes: [
+    disallowedRoutes: [
       "http://localhost:3001/auth/",
       "https://foo.com/bar/",
       "//foo.com/bar/baz",
@@ -158,21 +158,21 @@ JwtModule.forRoot({
 });
 ```
 
-**Note:** If requests are sent to the same domain that is serving your Angular application, you do not need to add that domain to the `whitelistedDomains` array. However, this is only the case if you don't specify the domain in the `Http` request.
+**Note:** If requests are sent to the same domain that is serving your Angular application, you do not need to add that domain to the `allowedDomains` array. However, this is only the case if you don't specify the domain in the `Http` request.
 
-For example, the following request assumes that the domain is the same as the one serving your app. It doesn't need to be whitelisted in this case.
+For example, the following request assumes that the domain is the same as the one serving your app. It doesn't need to be allowed in this case.
 
 ```ts
 this.http.get('/api/things')
   .subscribe(...)
 ```
 
-However, if you are serving your API at the same domain as that which is serving your Angular app **and** you are specifying that domain in `Http` requests, then it **does** need to be whitelisted.
+However, if you are serving your API at the same domain as that which is serving your Angular app **and** you are specifying that domain in `Http` requests, then it **does** need to be explicitely allowed.
 
 ```ts
 // Both the Angular app and the API are served at
 // localhost:4200 but because that domain is specified
-// in the request, it must be whitelisted
+// in the request, it must be allowed
 this.http.get('http://localhost:4200/api/things')
   .subscribe(...)
 ```
@@ -213,7 +213,7 @@ JwtModule.forRoot({
   config: {
     // ...
     authScheme: (request) => {
-       if (request.url.includes("foo")) {
+      if (request.url.includes("foo")) {
         return "Basic ";
       }
 
@@ -270,7 +270,7 @@ export function jwtOptionsFactory(tokenService) {
     tokenGetter: () => {
       return tokenService.getAsyncToken();
     },
-    whitelistedDomains: ["example.com"]
+    allowedDomains: ["example.com"]
   }
 }
 
@@ -306,7 +306,7 @@ export function jwtOptionsFactory(storage) {
     tokenGetter: () => {
       return storage.get('access_token');
     },
-    whitelistedDomains: ["example.com"]
+    allowedDomains: ["example.com"]
   }
 }
 
