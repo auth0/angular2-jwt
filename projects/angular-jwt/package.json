@@ -1,6 +1,6 @@
 {
     "name": "@auth0/angular-jwt",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "description": "JSON Web Token helper library for Angular",
     "private": false,
     "repository": {

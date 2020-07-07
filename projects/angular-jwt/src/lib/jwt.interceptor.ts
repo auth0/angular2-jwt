@@ -5,6 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor,
 } from "@angular/common/http";
+import { DOCUMENT } from "@angular/common";
 import { JwtHelperService } from "./jwthelper.service";
 import { JWT_OPTIONS } from "./jwtoptions.token";
 
@@ -26,7 +27,8 @@ export class JwtInterceptor implements HttpInterceptor {
 
   constructor(
     @Inject(JWT_OPTIONS) config: any,
-    public jwtHelper: JwtHelperService
+    public jwtHelper: JwtHelperService,
+    @Inject(DOCUMENT) private document: Document
   ) {
     this.tokenGetter = config.tokenGetter;
     this.headerName = config.headerName || "Authorization";
@@ -41,11 +43,11 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isAllowedDomain(request: HttpRequest<any>): boolean {
-    const requestUrl: URL = new URL(request.url, window.location.origin);
+    const requestUrl: URL = new URL(request.url, this.document.location.origin);
 
     // If the host equals the current window origin,
     // the domain is allowed by default
-    if (requestUrl.host === window.location.host) {
+    if (requestUrl.host === this.document.location.host) {
       return true;
     }
 
@@ -68,12 +70,18 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   isDisallowedRoute(request: HttpRequest<any>): boolean {
-    const requestedUrl: URL = new URL(request.url, window.location.origin);
+    const requestedUrl: URL = new URL(
+      request.url,
+      this.document.location.origin
+    );
 
     return (
       this.disallowedRoutes.findIndex((route: string | RegExp) => {
         if (typeof route === "string") {
-          const parsedRoute: URL = new URL(route, window.location.origin);
+          const parsedRoute: URL = new URL(
+            route,
+            this.document.location.origin
+          );
           return (
             parsedRoute.hostname === requestedUrl.hostname &&
             parsedRoute.pathname === requestedUrl.pathname
