@@ -1,5 +1,11 @@
 # Change log
 
+## Version [5.0.1](https://github.com/auth0/angular2-jwt/tags/v5.0.1)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.0..v5.0.1)
+
+- Remove dependency on the window object for SSR support
+
 ## Version [5.0.0](https://github.com/auth0/angular2-jwt/tags/v5.0.0)
 
 **Warning: this version has some breaking changes concerning the allowed domains and dissalowed routes!**
