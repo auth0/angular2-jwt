@@ -9,9 +9,9 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "release": "np --contents ./dist/angular-jwt/ --any-branch",
-        "release:preview": "np --preview --contents ./dist/angular-jwt/ --any-branch",
-        "release:dry": "np --no-publish --contents ./dist/angular-jwt/ --any-branch"
+        "release": "np --contents ./dist/angular-jwt/ --any-branch --no-tests",
+        "release:preview": "np --preview --contents ./dist/angular-jwt/ --any-branch --no-tests",
+        "release:dry": "np --no-publish --contents ./dist/angular-jwt/ --any-branch --no-tests"
     },
     "private": false,
     "dependencies": {
