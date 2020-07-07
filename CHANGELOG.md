@@ -4,8 +4,8 @@
 
 **Warning: this version has some breaking changes concerning the allowed domains and dissalowed routes!**
 
-- Replace whitelistedDomains to allowedDomain[#668](https://github.com/auth0/angular2-jwt/pull/668)
-- Replace blacklistedRoutes to disallowedRoutes[#668](https://github.com/auth0/angular2-jwt/pull/668)
+- Replace `whitelistedDomains` to `allowedDomains` [#668](https://github.com/auth0/angular2-jwt/pull/668)
+- Replace `blacklistedRoutes` to `disallowedRoutes` [#668](https://github.com/auth0/angular2-jwt/pull/668)
 - Removed the url dependency, as this is a Node module in the CommonJS format, and the Angular 10 CLI throws warnings when using dependencies in the CommonJS format. We're using the default URL interface, https://developer.mozilla.org/en-US/docs/Web/API/URL [#666](https://github.com/auth0/angular2-jwt/pull/666)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v4.2.0..v5.0.0)
