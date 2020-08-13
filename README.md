@@ -24,6 +24,12 @@ npm install @auth0/angular-jwt
 yarn add @auth0/angular-jwt
 ```
 
+**This library relies on the URL interface which is not supported in IE11.**
+To solve the IE11 compatibility, you can add a polyfill.
+
+- run `npm i --save url-polyfill`
+- add `import 'url-polyfill';` to `polyfills.ts` in your project
+
 ## Usage: Standalone
 
 If you are only interested in the JWT Decoder, and are not interested in extended
