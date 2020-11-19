@@ -14,6 +14,12 @@ This library does not have any functionality for (or opinion about) implementing
 
 > **Note:** This library can only be used with Angular 4.3 and higher because it relies on an `HttpInterceptor` from Angular's `HttpClient`. This feature is not available on lower versions.
 
+## Sponsor
+
+|||
+|-|-|
+|![auth0 logo](https://user-images.githubusercontent.com/83319/31722733-de95bbde-b3ea-11e7-96bf-4f4e8f915588.png)|If you want to quickly add secure token-based authentication to your Angular projects, feel free to check Auth0's Angular SDK and free plan at [auth0.com/developers](https://auth0.com/developers?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=angular2-jwt&utm_content=auth)|
+
 ## Installation
 
 ```bash
