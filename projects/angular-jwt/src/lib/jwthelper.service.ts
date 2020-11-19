@@ -77,7 +77,7 @@ export class JwtHelperService {
     );
   }
 
-  public decodeToken(token: string = this.tokenGetter()): any {
+  public decodeToken<T = any>(token: string = this.tokenGetter()): T {
     if (!token || token === "") {
       return null;
     }
