@@ -1,17 +1,15 @@
-import { Injectable, Inject } from "@angular/core";
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from "@angular/common/http";
 import { DOCUMENT } from "@angular/common";
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from "@angular/common/http";
+import { Inject, Injectable } from "@angular/core";
+import { from, Observable } from "rxjs";
+import { mergeMap } from "rxjs/operators";
 import { JwtHelperService } from "./jwthelper.service";
 import { JWT_OPTIONS } from "./jwtoptions.token";
-
-import { mergeMap } from "rxjs/operators";
-import { from, Observable } from "rxjs";
-
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   tokenGetter: (
@@ -98,31 +96,38 @@ export class JwtInterceptor implements HttpInterceptor {
   }
 
   handleInterception(
-    token: string | null,
+    token: string | Promise<string> | null,
     request: HttpRequest<any>,
     next: HttpHandler
-  ) {
+  ): Observable<HttpEvent<any>> {
     const authScheme = this.jwtHelper.getAuthScheme(this.authScheme, request);
-    let tokenIsExpired = false;
 
     if (!token && this.throwNoTokenError) {
       throw new Error("Could not get token from tokenGetter function.");
     }
 
-    if (this.skipWhenExpired) {
-      tokenIsExpired = token ? this.jwtHelper.isTokenExpired(token) : true;
-    }
+    return from(Promise.resolve(token)).pipe(
+      mergeMap<string, Observable<HttpEvent<any>>>((tokenValue: string) => {
+        let tokenIsExpired = false;
 
-    if (token && tokenIsExpired && this.skipWhenExpired) {
-      request = request.clone();
-    } else if (token) {
-      request = request.clone({
-        setHeaders: {
-          [this.headerName]: `${authScheme}${token}`,
-        },
-      });
-    }
-    return next.handle(request);
+        if (this.skipWhenExpired) {
+          tokenIsExpired = token
+            ? (this.jwtHelper.isTokenExpired(tokenValue) as boolean)
+            : true;
+        }
+
+        if (tokenValue && tokenIsExpired && this.skipWhenExpired) {
+          request = request.clone();
+        } else if (tokenValue) {
+          request = request.clone({
+            setHeaders: {
+              [this.headerName]: `${authScheme}${tokenValue}`,
+            },
+          });
+        }
+        return next.handle(request);
+      })
+    );
   }
 
   intercept(

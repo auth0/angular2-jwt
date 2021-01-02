@@ -1,12 +1,11 @@
 import { HttpRequest } from "@angular/common/http";
 // tslint:disable:no-bitwise
-
-import { Injectable, Inject } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { JWT_OPTIONS } from "./jwtoptions.token";
 
 @Injectable()
 export class JwtHelperService {
-  tokenGetter: () => string;
+  tokenGetter: () => string | Promise<string>;
 
   constructor(@Inject(JWT_OPTIONS) config = null) {
     this.tokenGetter = (config && config.tokenGetter) || function () {};
@@ -77,12 +76,63 @@ export class JwtHelperService {
     );
   }
 
-  public decodeToken<T = any>(token: string = this.tokenGetter()): T {
+  public decodeToken(
+    token: string | Promise<string> = this.tokenGetter()
+  ): any | Promise<any> {
+    if (token instanceof Promise) {
+      return token.then((tokenValue: string) => this._decodeToken(tokenValue));
+    }
+
     if (!token || token === "") {
       return null;
     }
 
-    const parts = token.split(".");
+    return this._decodeToken(token);
+  }
+
+  public getTokenExpirationDate(
+    token: string | Promise<string> = this.tokenGetter()
+  ): Date | null | Promise<Date | null> {
+    let decoded: any | Promise<any> = this.decodeToken(token);
+    if (decoded instanceof Promise) {
+      return decoded.then((tokenValue) =>
+        this._getTokenExpirationDate(tokenValue)
+      );
+    }
+
+    return this._getTokenExpirationDate(decoded);
+  }
+
+  public isTokenExpired(
+    token: string | Promise<string> = this.tokenGetter(),
+    offsetSeconds?: number
+  ): boolean | Promise<boolean> {
+    if (token instanceof Promise) {
+      return token.then((tokenValue: string) =>
+        this.isTokenExpired(tokenValue, offsetSeconds)
+      );
+    }
+
+    if (!token || token === "") {
+      return true;
+    }
+
+    return this._isTokenExpired(token, offsetSeconds);
+  }
+
+  public getAuthScheme(
+    authScheme: Function | string | undefined,
+    request: HttpRequest<any>
+  ): string {
+    if (typeof authScheme === "function") {
+      return authScheme(request);
+    }
+
+    return authScheme;
+  }
+
+  private _decodeToken(tokenValue: string) {
+    const parts = tokenValue.split(".");
 
     if (parts.length !== 3) {
       throw new Error(
@@ -98,12 +148,7 @@ export class JwtHelperService {
     return JSON.parse(decoded);
   }
 
-  public getTokenExpirationDate(
-    token: string = this.tokenGetter()
-  ): Date | null {
-    let decoded: any;
-    decoded = this.decodeToken(token);
-
+  private _getTokenExpirationDate(decoded: any): Date | null {
     if (!decoded || !decoded.hasOwnProperty("exp")) {
       return null;
     }
@@ -114,31 +159,13 @@ export class JwtHelperService {
     return date;
   }
 
-  public isTokenExpired(
-    token: string = this.tokenGetter(),
-    offsetSeconds?: number
-  ): boolean {
-    if (!token || token === "") {
-      return true;
-    }
+  private _isTokenExpired(token: string, offsetSeconds: number = 0): boolean {
     const date = this.getTokenExpirationDate(token);
-    offsetSeconds = offsetSeconds || 0;
 
     if (date === null) {
       return false;
     }
 
     return !(date.valueOf() > new Date().valueOf() + offsetSeconds * 1000);
-  }
-
-  public getAuthScheme(
-    authScheme: Function | string | undefined,
-    request: HttpRequest<any>
-  ): string {
-    if (typeof authScheme === "function") {
-      return authScheme(request);
-    }
-
-    return authScheme;
   }
 }
