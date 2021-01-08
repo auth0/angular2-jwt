@@ -83,10 +83,6 @@ export class JwtHelperService {
       return token.then((tokenValue: string) => this._decodeToken(tokenValue));
     }
 
-    if (!token || token === "") {
-      return null;
-    }
-
     return this._decodeToken(token);
   }
 
@@ -103,18 +99,16 @@ export class JwtHelperService {
     return this._getTokenExpirationDate(decoded);
   }
 
+  public isTokenExpired(token: string, offsetSeconds?: number): boolean
+  public isTokenExpired(token: Promise<string>, offsetSeconds?: number): Promise<boolean>
   public isTokenExpired(
     token: string | Promise<string> = this.tokenGetter(),
     offsetSeconds?: number
   ): boolean | Promise<boolean> {
     if (token instanceof Promise) {
       return token.then((tokenValue: string) =>
-        this.isTokenExpired(tokenValue, offsetSeconds)
+        this._isTokenExpired(tokenValue, offsetSeconds)
       );
-    }
-
-    if (!token || token === "") {
-      return true;
     }
 
     return this._isTokenExpired(token, offsetSeconds);
@@ -131,7 +125,11 @@ export class JwtHelperService {
     return authScheme;
   }
 
-  private _decodeToken(tokenValue: string) {
+  private _decodeToken(tokenValue: string): any | null {
+    if (!tokenValue || tokenValue === "") {
+      return null;
+    }
+
     const parts = tokenValue.split(".");
 
     if (parts.length !== 3) {
@@ -160,6 +158,10 @@ export class JwtHelperService {
   }
 
   private _isTokenExpired(token: string, offsetSeconds: number = 0): boolean {
+    if (!token || token === "") {
+      return true;
+    }
+
     const date = this.getTokenExpirationDate(token);
 
     if (date === null) {
