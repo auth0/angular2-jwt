@@ -76,9 +76,12 @@ export class JwtHelperService {
     );
   }
 
-  public decodeToken(
+  public decodeToken<T = any>(token: string): T;
+  public decodeToken<T = any>(token: Promise<string>): Promise<T>;
+  public decodeToken<T = any>(token: string | Promise<string>): T | Promise<T>;
+  public decodeToken<T = any>(
     token: string | Promise<string> = this.tokenGetter()
-  ): any | Promise<any> {
+  ): T | Promise<T> {
     if (token instanceof Promise) {
       return token.then((tokenValue: string) => this._decodeToken(tokenValue));
     }
@@ -99,8 +102,15 @@ export class JwtHelperService {
     return this._getTokenExpirationDate(decoded);
   }
 
-  public isTokenExpired(token: string, offsetSeconds?: number): boolean
-  public isTokenExpired(token: Promise<string>, offsetSeconds?: number): Promise<boolean>
+  public isTokenExpired(token: string, offsetSeconds?: number): boolean;
+  public isTokenExpired(
+    token: Promise<string>,
+    offsetSeconds?: number
+  ): Promise<boolean>;
+  public isTokenExpired(
+    token: string | Promise<string>,
+    offsetSeconds?: number
+  ): boolean | Promise<boolean>;
   public isTokenExpired(
     token: string | Promise<string> = this.tokenGetter(),
     offsetSeconds?: number
