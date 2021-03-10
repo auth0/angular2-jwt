@@ -152,6 +152,20 @@ JwtModule.forRoot({
 });
 ```
 
+### `alwaysAllowOriginDomain: boolean`
+
+By default, the origin domain (the domain of your Angular application) is always allowed, even when not explicitly included in `allowedDomains`.  If you want to to disable this, set `alwaysAllowOriginDomain` to false.
+
+```ts
+// ...
+JwtModule.forRoot({
+  config: {
+    // ...
+    alwaysAllowOriginDomain: false,
+  },
+});
+```
+
 ### `disallowedRoutes: array`
 
 If you do not want to replace the authorization headers for specific routes, list them here. This can be useful if your
