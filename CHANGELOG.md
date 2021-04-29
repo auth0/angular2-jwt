@@ -4,7 +4,7 @@
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.1..v5.0.2)
 
-- Update `decodeToken` helper type defenition to accept a generic.
+- Update `decodeToken` helper type definition to accept a generic.
 
 ## Version [5.0.1](https://github.com/auth0/angular2-jwt/tags/v5.0.1)
 
