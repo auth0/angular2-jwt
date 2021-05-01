@@ -20,6 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
   headerName: string;
   authScheme: string | ((request?: HttpRequest<any>) => string);
   allowedDomains: Array<string | RegExp>;
+  alwaysAllowOriginDomain: boolean;
   disallowedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
@@ -37,6 +38,7 @@ export class JwtInterceptor implements HttpInterceptor {
         ? config.authScheme
         : "Bearer ";
     this.allowedDomains = config.allowedDomains || [];
+    this.alwaysAllowOriginDomain = config.alwaysAllowOriginDomain || true;
     this.disallowedRoutes = config.disallowedRoutes || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
     this.skipWhenExpired = config.skipWhenExpired;
@@ -47,7 +49,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     // If the host equals the current window origin,
     // the domain is allowed by default
-    if (requestUrl.host === this.document.location.host) {
+    if (this.alwaysAllowOriginDomain && (requestUrl.host === this.document.location.host)) {
       return true;
     }
 
