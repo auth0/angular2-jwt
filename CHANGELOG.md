@@ -1,5 +1,8 @@
 # Change log
 
+## Version 6.0.0 -- PENDING
+Upgraded to Angular 14
+
 ## Version [5.0.2](https://github.com/auth0/angular2-jwt/tags/v5.0.2)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.1..v5.0.2)
