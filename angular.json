@@ -70,8 +70,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-          },
+          "options": {},
           "configurations": {
             "production": {
               "browserTarget": "angular2-jwt:build:production"
@@ -102,6 +101,15 @@
             "assets": [
               "src/favicon.ico",
               "src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
             ]
           }
         }
@@ -140,15 +148,15 @@
           "options": {
             "tsConfig": "projects/angular-jwt/tsconfig.lib.json",
             "project": "projects/angular-jwt/ng-package.json"
-          }
-        ,          "configurations": {
+          },
+          "configurations": {
             "production": {
               "tsConfig": "projects/angular-jwt/tsconfig.lib.prod.json"
             },
             "development": {}
           },
           "defaultConfiguration": "production"
-},
+        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -156,8 +164,22 @@
             "tsConfig": "projects/angular-jwt/tsconfig.spec.json",
             "karmaConfig": "projects/angular-jwt/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/angular-jwt/**/*.ts",
+              "projects/angular-jwt/**/*.html"
+            ]
+          }
         }
       }
     }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

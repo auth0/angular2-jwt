@@ -1,5 +1,5 @@
 import { HttpRequest } from "@angular/common/http";
-// tslint:disable:no-bitwise
+/* eslint-disable no-bitwise */
 
 import { Injectable, Inject } from "@angular/core";
 import { JWT_OPTIONS } from "./jwtoptions.token";
