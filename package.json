@@ -1,6 +1,6 @@
 {
   "name": "@auth0/angular-jwt",
-  "version": "6.0.0",
+  "version": "5.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -39,17 +39,17 @@
     "@typescript-eslint/eslint-plugin": "5.29.0",
     "@typescript-eslint/parser": "5.29.0",
     "eslint": "^8.18.0",
-    "jasmine-core": "~3.6.0",
+    "jasmine-core": "~3.8.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.3.20",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage-istanbul-reporter": "~3.0.2",
-    "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
-    "ng-packagr": "^14.0.0",
+    "karma-jasmine": "~3.0.0",
+    "karma-jasmine-html-reporter": "^1.7.0",
+    "ng-packagr": "^10.0.0",
     "protractor": "~7.0.0",
     "ts-node": "~8.4.1",
-    "typescript": "~4.6.4"
+    "typescript": "~4.7.4"
   },
   "np": {
     "contents": "dist/angular-jwt"
