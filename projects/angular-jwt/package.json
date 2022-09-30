@@ -20,7 +20,7 @@
     ],
     "homepage": "https://github.com/auth0/angular2-jwt",
     "peerDependencies": {
-        "@angular/common": ">=9.0.0"
+        "@angular/common": ">=12.0.0"
     },
     "dependencies": {
         "tslib": "^2.0.0"

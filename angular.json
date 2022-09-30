@@ -17,7 +17,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist/angular2-jwt",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -30,7 +29,13 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -43,9 +48,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -61,7 +64,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -146,7 +150,7 @@
       "prefix": "",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/angular-jwt/tsconfig.lib.json",
             "project": "projects/angular-jwt/ng-package.json"
