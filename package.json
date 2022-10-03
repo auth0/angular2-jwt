@@ -7,6 +7,7 @@
     "build": "ng build angular-jwt --configuration production",
     "postbuild": "cp ./README.md ./CHANGELOG.md ./LICENSE ./dist/angular-jwt/",
     "test": "ng test",
+    "test:ci": "ng test angular2-jwt --no-watch --no-progress --browsers=ChromeHeadlessCI --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "release": "npm publish dist/angular-jwt/"
