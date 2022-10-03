@@ -2,11 +2,12 @@
 
 [![npm version](https://badge.fury.io/js/%40auth0%2Fangular-jwt.svg)](https://badge.fury.io/js/%40auth0%2Fangular-jwt)
 
-**@auth0/angular-jwt v5.1.x is to be used with Angular v12+. For Angular v10 and v11, please use @auth0/angular-jwt v5.0.x. For any other Angular version (down untill v6) use @auth0/angular-jwt v4**
-
 This library provides an `HttpInterceptor` which automatically attaches a [JSON Web Token](https://jwt.io) to `HttpClient` requests.
 
 This library does not have any functionality for (or opinion about) implementing user authentication and retrieving JWTs to begin with. Those details will vary depending on your setup, but in most cases, you will use a regular HTTP request to authenticate your users and then save their JWTs in local storage or in a cookie if successful.
+
+## Supported Angular versions
+This project only supports the [actively supported versions of Angular as stated in the Angular documentation](https://angular.io/guide/releases#actively-supported-versions). Whilst other versions might be compatible they are not actively supported
 
 ## Sponsor
 
