@@ -1,0 +1,4 @@
+{
+    "packagePath": "projects/angular-jwt",
+    "postbump": "npm run build"
+}
