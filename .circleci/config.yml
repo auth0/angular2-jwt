@@ -1,0 +1,35 @@
+version: 2.1
+orbs:
+  ship: auth0/ship@0.7.0
+  codecov: codecov/codecov@3
+parameters:
+  docker_image:
+    type: string
+    default: circleci/node:16-browsers
+jobs:
+  build:
+    docker:
+      - image: << pipeline.parameters.docker_image >>
+    steps:
+      - checkout
+      - ship/node-install-packages
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run test:ci
+      - codecov/upload
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - ship/node-publish:
+          publish-command: npm run build && cp README.md ./dist/angular-jwt/ && npm publish ./dist/angular-jwt
+          app-directory: 'projects/angular-jwt'
+          requires:
+            - browserstack
+          context:
+            - publish-npm
+            - publish-gh
+          filters:
+            branches:
+              only:
+                - master
