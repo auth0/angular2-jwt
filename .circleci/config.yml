@@ -24,8 +24,6 @@ workflows:
       - ship/node-publish:
           publish-command: npm run build && cp README.md ./dist/angular-jwt/ && npm publish ./dist/angular-jwt
           app-directory: 'projects/angular-jwt'
-          requires:
-            - browserstack
           context:
             - publish-npm
             - publish-gh
