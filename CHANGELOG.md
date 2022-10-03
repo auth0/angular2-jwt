@@ -1,5 +1,13 @@
 # Change log
 
+## Version [5.1.0](https://github.com/auth0/angular2-jwt/tags/v5.1.0)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.2..v5.1.0)
+
+- Compile using Ivy partial mode [#735](https://github.com/auth0/angular2-jwt/pull/735) ([frederikprijck](https://github.com/frederikprijck))
+
+Note: This release drops support for Angular <12 as [those versions are no longer supported by Google themselves](https://angular.io/guide/releases#actively-supported-versions). [[Read more ...](https://github.com/auth0/angular2-jwt/issues/712#issuecomment-1265009015)]
+
 ## Version [5.0.2](https://github.com/auth0/angular2-jwt/tags/v5.0.2)
 
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.1..v5.0.2)
