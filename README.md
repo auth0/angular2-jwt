@@ -9,7 +9,7 @@
 
 ## Documentation
 
-- [Examples](./EXAMPLES.md) - code samples for common Angular authentication scenario's.
+- [Examples](./EXAMPLES.md) - code samples for common angular-jwt authentication scenario's.
 - [Docs site](https://www.auth0.com/docs) - explore our docs site and learn more about Auth0.
 
 This library provides an `HttpInterceptor` which automatically attaches a [JSON Web Token](https://jwt.io) to `HttpClient` requests.
@@ -79,6 +79,9 @@ export class AppComponent {
 ```
 
 ## API reference
+
+- [JwtModule configuration options](#jwtmodule-configuration-options)
+- [JwtHelperService](#jwthelperservice)
 
 ### `JwtModule` configuration options
 
@@ -245,7 +248,7 @@ JwtModule.forRoot({
 });
 ```
 
-### `JwtHelperService` service
+### `JwtHelperService`
 
 This service contains helper functions:
 
