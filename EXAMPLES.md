@@ -1,3 +1,4 @@
+# Examples using angular2-jwt
 
 - [Using a Custom Options Factory Function](#using-a-custom-options-factory-function)
 - [Configuration for Ionic 2+](#configuration-for-ionic-2)
