@@ -1,4 +1,4 @@
-![](./banner.png)
+![](https://cdn.auth0.com/website/sdks/banners/angular-jwt2-banner.png)
 
 ![Release](https://img.shields.io/github/v/release/auth0/angular2-jwt)
 [![codecov](https://codecov.io/gh/auth0/angular2-jwt/branch/main/graph/badge.svg?token=wnauXldcdE)](https://codecov.io/gh/auth0/angular2-jwt)
