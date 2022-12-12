@@ -6,24 +6,28 @@ import {
 } from '@angular/common/http/testing';
 import { JwtModule } from 'angular-jwt';
 
+const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+const TEST_TOKEN_1 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.cMErWtEf7DxCXJl8C9q0L7ttkm-Ex54UWHsOCMGbtUc';
+const TEST_TOKEN_2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ikphc29uIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.f2z_alWh9QWCkPHtAdVMRlZOb_2krfZ1wd78Bj2_YEg';
+
 export function tokenGetter() {
-  return 'TEST_TOKEN';
+  return TEST_TOKEN;
 }
 
 export function tokenGetterWithRequest(request) {
   if (request.url.includes('1')) {
-    return 'TEST_TOKEN_1';
+    return TEST_TOKEN_1;
   }
 
   if (request.url.includes('2')) {
-    return 'TEST_TOKEN_2';
+    return TEST_TOKEN_2;
   }
 
-  return 'TEST_TOKEN';
+  return TEST_TOKEN;
 }
 
 export function tokenGetterWithPromise() {
-  return Promise.resolve('TEST_TOKEN');
+  return Promise.resolve(TEST_TOKEN);
 }
 
 describe('Example HttpService: with promise based tokken getter', () => {
@@ -87,7 +91,7 @@ describe('Example HttpService: with promise based tokken getter', () => {
 
       expect(httpRequest.request.headers.has('Authorization')).toEqual(true);
       expect(httpRequest.request.headers.get('Authorization')).toEqual(
-        `Bearer TEST_TOKEN`
+        `Bearer ${TEST_TOKEN}`
       );
     }))
   );
