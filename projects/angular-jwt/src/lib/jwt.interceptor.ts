@@ -114,8 +114,14 @@ export class JwtInterceptor implements HttpInterceptor {
       throw new Error('Could not get token from tokenGetter function.');
     }
 
+    let tokenIsExpired = of(false);
+
+    if (this.skipWhenExpired) {
+      tokenIsExpired = token ? fromPromiseOrValue(this.jwtHelper.isTokenExpired(token)) : of(true);
+    }
+
     if (token) {
-      return fromPromiseOrValue(this.jwtHelper._isTokenExpired(token)).pipe(
+      return tokenIsExpired.pipe(
         map((isExpired) =>
           isExpired && this.skipWhenExpired
             ? request.clone()
