@@ -125,7 +125,7 @@ export class JwtInterceptor implements HttpInterceptor {
                 },
               })
         ),
-        mergeMap((request) => next.handle(request))
+        mergeMap((innerRequest) => next.handle(innerRequest))
       );
     }
 

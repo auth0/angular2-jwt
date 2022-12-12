@@ -6,7 +6,7 @@ import { JwtModule, JwtHelperService } from 'angular-jwt';
 
 describe('Example HttpService: with simple based tokken getter', () => {
   let service: JwtHelperService;
-  let tokenGetter = jasmine.createSpy('tokenGetter');
+  const tokenGetter = jasmine.createSpy('tokenGetter');
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -44,7 +44,7 @@ describe('Example HttpService: with simple based tokken getter', () => {
 
 describe('Example HttpService: with a promise based tokken getter', () => {
   let service: JwtHelperService;
-  let tokenGetter = jasmine.createSpy('tokenGetter');
+  const tokenGetter = jasmine.createSpy('tokenGetter');
 
   beforeEach(() => {
     TestBed.configureTestingModule({

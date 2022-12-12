@@ -78,7 +78,7 @@ export class JwtHelperService {
   }
 
   public decodeToken<T = any>(token: string = null): T | Promise<T> {
-    let _token = token || this.tokenGetter();
+    const _token = token || this.tokenGetter();
 
     if (_token instanceof Promise) {
       return _token.then(t => this._decodeToken(t));
@@ -121,7 +121,7 @@ export class JwtHelperService {
     return this._getTokenExpirationDate(_token);
   }
 
-  private _getTokenExpirationDate(token : string) {
+  private _getTokenExpirationDate(token: string) {
     let decoded: any;
     decoded = this.decodeToken(token);
 

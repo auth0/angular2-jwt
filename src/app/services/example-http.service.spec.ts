@@ -23,7 +23,7 @@ export function tokenGetterWithRequest(request) {
 }
 
 export function tokenGetterWithPromise() {
-  return Promise.resolve('TEST_TOKEN')
+  return Promise.resolve('TEST_TOKEN');
 }
 
 describe('Example HttpService: with promise based tokken getter', () => {
