@@ -1,16 +1,16 @@
-import { Injectable, Inject } from "@angular/core";
+import { Injectable, Inject } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-} from "@angular/common/http";
-import { DOCUMENT } from "@angular/common";
-import { JwtHelperService } from "./jwthelper.service";
-import { JWT_OPTIONS } from "./jwtoptions.token";
+} from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
+import { JwtHelperService } from './jwthelper.service';
+import { JWT_OPTIONS } from './jwtoptions.token';
 
-import { map, mergeMap } from "rxjs/operators";
-import { defer, from, Observable, of } from "rxjs";
+import { map, mergeMap } from 'rxjs/operators';
+import { defer, from, Observable, of } from 'rxjs';
 
 const fromPromiseOrValue = <T>(input: T | Promise<T>) => {
   if (input instanceof Promise) {
@@ -29,7 +29,7 @@ export class JwtInterceptor implements HttpInterceptor {
   disallowedRoutes: Array<string | RegExp>;
   throwNoTokenError: boolean;
   skipWhenExpired: boolean;
-  standardPorts: string[] = ["80", "443"];
+  standardPorts: string[] = ['80', '443'];
 
   constructor(
     @Inject(JWT_OPTIONS) config: any,
@@ -37,11 +37,11 @@ export class JwtInterceptor implements HttpInterceptor {
     @Inject(DOCUMENT) private document: Document
   ) {
     this.tokenGetter = config.tokenGetter;
-    this.headerName = config.headerName || "Authorization";
+    this.headerName = config.headerName || 'Authorization';
     this.authScheme =
-      config.authScheme || config.authScheme === ""
+      config.authScheme || config.authScheme === ''
         ? config.authScheme
-        : "Bearer ";
+        : 'Bearer ';
     this.allowedDomains = config.allowedDomains || [];
     this.disallowedRoutes = config.disallowedRoutes || [];
     this.throwNoTokenError = config.throwNoTokenError || false;
@@ -60,13 +60,13 @@ export class JwtInterceptor implements HttpInterceptor {
     // If not the current domain, check the allowed list
     const hostName = `${requestUrl.hostname}${
       requestUrl.port && !this.standardPorts.includes(requestUrl.port)
-        ? ":" + requestUrl.port
-        : ""
+        ? ':' + requestUrl.port
+        : ''
     }`;
 
     return (
       this.allowedDomains.findIndex((domain) =>
-        typeof domain === "string"
+        typeof domain === 'string'
           ? domain === hostName
           : domain instanceof RegExp
           ? domain.test(hostName)
@@ -83,7 +83,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return (
       this.disallowedRoutes.findIndex((route: string | RegExp) => {
-        if (typeof route === "string") {
+        if (typeof route === 'string') {
           const parsedRoute: URL = new URL(
             route,
             this.document.location.origin
@@ -111,7 +111,7 @@ export class JwtInterceptor implements HttpInterceptor {
     const authScheme = this.jwtHelper.getAuthScheme(this.authScheme, request);
 
     if (!token && this.throwNoTokenError) {
-      throw new Error("Could not get token from tokenGetter function.");
+      throw new Error('Could not get token from tokenGetter function.');
     }
 
     if (token) {
