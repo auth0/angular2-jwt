@@ -9,9 +9,15 @@ import { DOCUMENT } from '@angular/common';
 import { JwtHelperService } from './jwthelper.service';
 import { JWT_OPTIONS } from './jwtoptions.token';
 
-import { mergeMap } from 'rxjs/operators';
-import { from, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { defer, from, Observable, of } from 'rxjs';
 
+const fromPromiseOrValue = <T>(input: T | Promise<T>) => {
+  if (input instanceof Promise) {
+    return defer(() => input);
+  }
+  return of(input);
+};
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   tokenGetter: (
@@ -103,25 +109,32 @@ export class JwtInterceptor implements HttpInterceptor {
     next: HttpHandler
   ) {
     const authScheme = this.jwtHelper.getAuthScheme(this.authScheme, request);
-    let tokenIsExpired = false;
 
     if (!token && this.throwNoTokenError) {
       throw new Error('Could not get token from tokenGetter function.');
     }
 
+    let tokenIsExpired = of(false);
+
     if (this.skipWhenExpired) {
-      tokenIsExpired = token ? this.jwtHelper.isTokenExpired(token) : true;
+      tokenIsExpired = token ? fromPromiseOrValue(this.jwtHelper.isTokenExpired(token)) : of(true);
     }
 
-    if (token && tokenIsExpired && this.skipWhenExpired) {
-      request = request.clone();
-    } else if (token) {
-      request = request.clone({
-        setHeaders: {
-          [this.headerName]: `${authScheme}${token}`,
-        },
-      });
+    if (token) {
+      return tokenIsExpired.pipe(
+        map((isExpired) =>
+          isExpired && this.skipWhenExpired
+            ? request.clone()
+            : request.clone({
+                setHeaders: {
+                  [this.headerName]: `${authScheme}${token}`,
+                },
+              })
+        ),
+        mergeMap((innerRequest) => next.handle(innerRequest))
+      );
     }
+
     return next.handle(request);
   }
 
@@ -134,14 +147,10 @@ export class JwtInterceptor implements HttpInterceptor {
     }
     const token = this.tokenGetter(request);
 
-    if (token instanceof Promise) {
-      return from(token).pipe(
-        mergeMap((asyncToken: string | null) => {
-          return this.handleInterception(asyncToken, request, next);
-        })
-      );
-    } else {
-      return this.handleInterception(token, request, next);
-    }
+    return fromPromiseOrValue(token).pipe(
+      mergeMap((asyncToken: string | null) => {
+        return this.handleInterception(asyncToken, request, next);
+      })
+    );
   }
 }
