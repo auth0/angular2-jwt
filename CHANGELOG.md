@@ -1,4 +1,10 @@
-# Change log
+# Change Log
+
+## [v5.1.1](https://github.com/auth0/angular2-jwt/tree/v5.1.1) (2022-12-15)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.0...v5.1.1)
+
+**Fixed**
+- Support promise based tokenGetter in JwtHelperService [\#748](https://github.com/auth0/angular2-jwt/pull/748) ([frederikprijck](https://github.com/frederikprijck))
 
 ## Version [5.1.0](https://github.com/auth0/angular2-jwt/tags/v5.1.0)
 
