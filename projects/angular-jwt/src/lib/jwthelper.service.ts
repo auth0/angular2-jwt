@@ -121,7 +121,7 @@ export class JwtHelperService {
   public getTokenExpirationDate(): null | Date | Promise<Date | null>;
   public getTokenExpirationDate(
     token?: string | Promise<string>
-  ): Date | null | Promise<Date> {
+  ): Date | null | Promise<Date | null> {
 
     // When token is passed as an empty string, we should not involve the tokenGetter.
     // Instead we should return null, the same way it did pre 5.1.1
@@ -152,10 +152,9 @@ export class JwtHelperService {
     return date;
   }
 
-  public isTokenExpired(token: undefined | null, offsetSeconds?: number): boolean | Promise<boolean>;
+  public isTokenExpired(token?: undefined | null, offsetSeconds?: number): boolean | Promise<boolean>;
   public isTokenExpired(token: string, offsetSeconds?: number): boolean;
   public isTokenExpired(token: Promise<string>, offsetSeconds?: number): Promise<boolean>;
-  public isTokenExpired(): boolean | Promise<boolean>;
   public isTokenExpired(
     token?: string | Promise<string>,
     offsetSeconds?: number
