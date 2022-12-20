@@ -8,7 +8,7 @@ import { JWT_OPTIONS } from './jwtoptions.token';
 export class JwtHelperService {
   tokenGetter: () => string | Promise<string>;
 
-  constructor(@Inject(JWT_OPTIONS) config = null) {
+  constructor(@Inject(JWT_OPTIONS) config: any = null) {
     this.tokenGetter = (config && config.tokenGetter) || function () {};
   }
 
@@ -136,11 +136,11 @@ export class JwtHelperService {
     return date;
   }
 
-  public isTokenExpired(token?: undefined | null, offsetSeconds?: number): boolean | Promise<boolean>;
-  public isTokenExpired(token: string, offsetSeconds?: number): boolean;
+  public isTokenExpired(token?: undefined, offsetSeconds?: number): boolean | Promise<boolean>;
+  public isTokenExpired(token: string | null, offsetSeconds?: number): boolean;
   public isTokenExpired(token: Promise<string>, offsetSeconds?: number): Promise<boolean>;
   public isTokenExpired(
-    token: string | Promise<string> = this.tokenGetter(),
+    token: undefined | null | string | Promise<string> = this.tokenGetter(),
     offsetSeconds?: number
   ): boolean | Promise<boolean> {
     if (token instanceof Promise) {
@@ -151,7 +151,7 @@ export class JwtHelperService {
   }
 
   private _isTokenExpired(
-    token: string,
+    token: string | null,
     offsetSeconds?: number
   ): boolean {
     if (!token || token === '') {
@@ -170,7 +170,7 @@ export class JwtHelperService {
   public getAuthScheme(
     authScheme: Function | string | undefined,
     request: HttpRequest<any>
-  ): string {
+  ): string | undefined {
     if (typeof authScheme === 'function') {
       return authScheme(request);
     }

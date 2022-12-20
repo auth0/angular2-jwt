@@ -16,6 +16,7 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm run test:ci
+      - run: npm run test:types
       - codecov/upload
 workflows:
   build_and_test:
