@@ -6,7 +6,7 @@
 **Fixed**
 - Support promise based tokenGetter in JwtHelperService [\#748](https://github.com/auth0/angular2-jwt/pull/748) ([frederikprijck](https://github.com/frederikprijck))
 
-**Note**: this fixes incorrect behavior that currently exists in the SDK when using async token retrieval, but causes a breaking change in terms of the types, as `decodeToken` now returns `T | Promise<T>` instead of just `T`. Promises have always been supported, but the API never properly considered for that in the `decodeToken` method.
+**Note**: this fixes incorrect behavior that currently exists in the SDK when using async token retrieval, but causes a breaking change in terms of the types, as `decodeToken`, `getTokenExpirationDate` and `isTokenExpired` now returns `T | Promise<T>` instead of just `T`. Promises have always been supported, but the API never properly considered for that in the `JwtHelperService`.
 
 ## Version [5.1.0](https://github.com/auth0/angular2-jwt/tags/v5.1.0)
 
