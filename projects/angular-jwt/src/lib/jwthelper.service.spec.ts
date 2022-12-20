@@ -21,6 +21,8 @@ describe('Example HttpService: with simple based tokken getter', () => {
       ],
     });
     service = TestBed.inject(JwtHelperService);
+
+    tokenGetter.calls.reset();
   });
 
   it('should return null when tokenGetter returns null', () => {
@@ -39,6 +41,42 @@ describe('Example HttpService: with simple based tokken getter', () => {
     tokenGetter.and.returnValue('a.b.c.d');
 
     expect(() => service.decodeToken()).toThrow();
+  });
+
+  it('should call the tokenGetter when no token passed', () => {
+    tokenGetter.and.returnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = service.decodeToken();
+
+    expect(tokenGetter).toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should call the tokenGetter when undefined is passed', () => {
+    tokenGetter.and.returnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = service.decodeToken(undefined);
+
+    expect(tokenGetter).toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should not call the tokenGetter when token passed', () => {
+    tokenGetter.and.returnValue(null);
+
+    const result = service.decodeToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    expect(tokenGetter).not.toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should not call the tokenGetter when token passed as empty string', () => {
+    tokenGetter.and.returnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = service.decodeToken('');
+
+    expect(tokenGetter).not.toHaveBeenCalled();
+    expect(result).toBeNull();
   });
 });
 
@@ -59,6 +97,7 @@ describe('Example HttpService: with a promise based tokken getter', () => {
       ],
     });
     service = TestBed.inject(JwtHelperService);
+    tokenGetter.calls.reset();
   });
 
   it('should return null when tokenGetter returns null', async () => {
@@ -83,6 +122,42 @@ describe('Example HttpService: with a promise based tokken getter', () => {
     tokenGetter.and.resolveTo('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NjY2ODU4NjAsImV4cCI6MTY5ODIyMTg2MCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.lXrRPRZ8VNUpwBsT9fLPPO0p0BotQle4siItqg4LqLQ');
 
     await expectAsync(service.decodeToken()).toBeResolvedTo(jasmine.anything());
+  });
+
+  it('should call the tokenGetter when no token passed', async () => {
+    tokenGetter.and.resolveTo('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = await service.decodeToken();
+
+    expect(tokenGetter).toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should call the tokenGetter when undefined is passed', async () => {
+    tokenGetter.and.resolveTo('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = await service.decodeToken(undefined);
+
+    expect(tokenGetter).toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should not call the tokenGetter when token passed', async () => {
+    tokenGetter.and.resolveTo(null);
+
+    const result = await service.decodeToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    expect(tokenGetter).not.toHaveBeenCalled();
+    expect(result.name).toBe('John Doe');
+  });
+
+  it('should not call the tokenGetter when token passed as empty string', async () => {
+    tokenGetter.and.resolveTo('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+
+    const result = await service.decodeToken('');
+
+    expect(tokenGetter).not.toHaveBeenCalled();
+    expect(result).toBeNull();
   });
 });
 
