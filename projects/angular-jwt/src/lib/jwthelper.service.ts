@@ -80,20 +80,12 @@ export class JwtHelperService {
   public decodeToken<T = any>(token: string): T | null;
   public decodeToken<T = any>(token: Promise<string>): Promise<T | null>;
   public decodeToken<T = any>(): null | T | Promise<T | null>;
-  public decodeToken<T = any>(token?: string | Promise<string>): null | T | Promise<T | null> {
-    // When token is passed as an empty string, we should not involve the tokenGetter.
-    // Instead we should return null, the same way it did pre 5.1.1
-    if (token === '') {
-      return null;
+  public decodeToken<T = any>(token: string | Promise<string> = this.tokenGetter()): null | T | Promise<T | null> {
+    if (token instanceof Promise) {
+      return token.then(t => this._decodeToken(t));
     }
 
-    const _token = token || this.tokenGetter();
-
-    if (_token instanceof Promise) {
-      return _token.then(t => this._decodeToken(t));
-    }
-
-    return this._decodeToken(_token);
+    return this._decodeToken(token);
   }
 
   private _decodeToken<T = any>(token: string): null | T  {
@@ -116,26 +108,18 @@ export class JwtHelperService {
 
     return JSON.parse(decoded);
   }
+
   public getTokenExpirationDate(token: string): Date | null;
   public getTokenExpirationDate(token: Promise<string>): Promise<Date | null>;
   public getTokenExpirationDate(): null | Date | Promise<Date | null>;
   public getTokenExpirationDate(
-    token?: string | Promise<string>
+    token: string | Promise<string> = this.tokenGetter()
   ): Date | null | Promise<Date | null> {
-
-    // When token is passed as an empty string, we should not involve the tokenGetter.
-    // Instead we should return null, the same way it did pre 5.1.1
-    if (token === '') {
-      return null;
+    if (token instanceof Promise) {
+      return token.then(t => this._getTokenExpirationDate(t));
     }
 
-    const _token = token || this.tokenGetter();
-
-    if (_token instanceof Promise) {
-      return _token.then(t => this._getTokenExpirationDate(t));
-    }
-
-    return this._getTokenExpirationDate(_token);
+    return this._getTokenExpirationDate(token);
   }
 
   private _getTokenExpirationDate(token: string): Date | null {
@@ -156,25 +140,17 @@ export class JwtHelperService {
   public isTokenExpired(token: string, offsetSeconds?: number): boolean;
   public isTokenExpired(token: Promise<string>, offsetSeconds?: number): Promise<boolean>;
   public isTokenExpired(
-    token?: string | Promise<string>,
+    token: string | Promise<string> = this.tokenGetter(),
     offsetSeconds?: number
   ): boolean | Promise<boolean> {
-    // When token is passed as an empty string, we should not involve the tokenGetter.
-    // Instead we should return true, the same way it did pre 5.1.1
-    if (token === '') {
-      return true;
+    if (token instanceof Promise) {
+      return token.then(t => this._isTokenExpired(t, offsetSeconds));
     }
 
-    const _token = token || this.tokenGetter();
-
-    if (_token instanceof Promise) {
-      return _token.then(t => this._isTokenExpired(t, offsetSeconds));
-    }
-
-    return this._isTokenExpired(_token, offsetSeconds);
+    return this._isTokenExpired(token, offsetSeconds);
   }
 
-  public _isTokenExpired(
+  private _isTokenExpired(
     token: string,
     offsetSeconds?: number
   ): boolean {
