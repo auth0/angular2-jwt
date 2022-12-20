@@ -1,5 +1,11 @@
 # Change Log
 
+## [v5.1.2](https://github.com/auth0/angular2-jwt/tree/v5.1.2) (2022-12-20)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.1...v5.1.2)
+
+**Fixed**
+- Restore pre 5.1.1 behavior and fix types [\#759](https://github.com/auth0/angular2-jwt/pull/759) ([frederikprijck](https://github.com/frederikprijck))
+
 ## [v5.1.1](https://github.com/auth0/angular2-jwt/tree/v5.1.1) (2022-12-15)
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.0...v5.1.1)
 
