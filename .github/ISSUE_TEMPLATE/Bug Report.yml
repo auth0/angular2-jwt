@@ -58,3 +58,19 @@ body:
       label: angular-jwt version
     validations:
       required: true
+
+  - type: dropdown
+    id: environment-browser
+    attributes:
+      label: Which browsers have you tested in?
+      multiple: true
+      options:
+        - Chrome
+        - Edge
+        - Safari
+        - Firefox
+        - Opera
+        - IE
+        - Other
+    validations:
+      required: true
