@@ -79,6 +79,40 @@ export class AppComponent {
 }
 ```
 
+## Using with Standalone Components
+If you are using `bootstrapApplication` to bootstrap your application using a standalone component, you will need a slightly different way to integrate our SDK:
+
+```ts
+import { JwtModule } from "@auth0/angular-jwt";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+
+export function tokenGetter() {
+  return localStorage.getItem("access_token");
+}
+
+bootstrapApplication(AppComponent, {
+    providers: [
+        // ...
+        importProvidersFrom(
+            JwtModule.forRoot({
+                config: {
+                    tokenGetter: tokenGetter,
+                    allowedDomains: ["example.com"],
+                    disallowedRoutes: ["http://example.com/examplebadroute/"],
+                },
+            }),
+        ),
+        provideHttpClient(
+            withInterceptorsFromDi()
+        ),
+    ],
+});
+```
+As you can see, the differences are that:
+- The SDK's module is included trough `importProvidersFrom`.
+- In order to use the SDK's interceptor, `provideHttpClient` needs to be called with `withInterceptorsFromDi`.
+
+
 ## API reference
 Read [our API reference](https://github.com/auth0/angular2-jwt/blob/main/API.md) to get a better understanding on how to use this SDK.
 
