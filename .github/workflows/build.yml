@@ -29,6 +29,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - run: npm ci
       - run: npm run lint
       - run: npm run build
       - run: npm run test:ci

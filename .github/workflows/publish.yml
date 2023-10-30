@@ -108,7 +108,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npm run build && cp README.md ./dist/angular-jwt/
+
       - name: Publish release to NPM
-        run: npm publish --provenance --tag ${{ github.event.inputs.tag }} ${{ needs.configure.outputs.dry-run }}
+        run: npm publish ./dist/angular-jwt --provenance --tag ${{ github.event.inputs.tag }} ${{ needs.configure.outputs.dry-run }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
