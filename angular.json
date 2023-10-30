@@ -160,8 +160,9 @@
       }
     }
   },
-  "defaultProject": "angular2-jwt",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
