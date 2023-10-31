@@ -1,0 +1,117 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: The branch to release from
+        required: true
+        default: main
+      version:
+        description: The version being published. This should be a valid semver version, such as `1.0.0`.
+        required: true
+        default: ''
+        type: string
+      tag:
+        description: The tag being published. This should be latest, beta or any tag you wish to support.
+        required: true
+        default: latest
+        type: string
+      dry-run:
+        type: boolean
+        description: Perform a publishing dry run. This will not publish the release, but will validate the release and log the commands that would be run.
+        default: false
+
+permissions:
+  contents: read
+  id-token: write # For publishing to NPM with provenance. Allows developers to run `npm audit signatures` and verify release signature of SDK. @see https://github.blog/2023-04-19-introducing-npm-package-provenance/
+
+env:
+  NODE_VERSION: 18
+  NODE_ENV: development
+
+jobs:
+  configure:
+    name: Validate input parameters
+    runs-on: ubuntu-latest
+
+    outputs:
+      vtag: ${{ steps.vtag.outputs.vtag }} # The fully constructed release tag to use for publishing
+      dry-run: ${{ steps.dry-run.outputs.dry-run }} # The dry-run flag to use for publishing, if applicable
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
+
+      # Configure for dry-run, if applicable. @see https://docs.npmjs.com/cli/v9/commands/npm-publish#dry-run
+      - id: dry-run
+        if: ${{ github.event.inputs.dry-run == 'true' }}
+        name: Configure for `--dry-run`
+        run: |
+          echo "dry-run=--dry-run" >> $GITHUB_ENV
+          echo "dry-run=--dry-run" >> $GITHUB_OUTPUT
+
+      # Build the tag string from package.json version and release suffix. Produces something like `1.0.0-beta.1` for a beta, or `1.0.0` for a stable release.
+      - name: Build tag
+        id: vtag
+        run: |
+          PACKAGE_VERSION="${{ github.event.inputs.version }}"
+          echo "vtag=${PACKAGE_VERSION}" >> $GITHUB_ENV
+          echo "vtag=${PACKAGE_VERSION}" >> $GITHUB_OUTPUT
+
+      # Ensure tag does not already exist.
+      - name: Validate version
+        uses: actions/github-script@v6
+        env:
+          vtag: ${{ env.vtag }}
+        with:
+          script: |
+            const releaseMeta = github.rest.repos.listReleases.endpoint.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const releases = await github.paginate(releaseMeta);
+
+            for (const release of releases) {
+              if (release.name === process.env.vtag) {
+                throw new Error(`${process.env.vtag} already exists`);
+              }
+            }
+
+            console.log(`${process.env.vtag} does not exist. Proceeding with release.`)
+
+  publish-npm:
+    needs: configure
+
+    name: Publish to NPM
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build && cp README.md ./dist/angular-jwt/
+
+      - name: Publish release to NPM
+        run: npm publish ./dist/angular-jwt --provenance --tag ${{ github.event.inputs.tag }} ${{ needs.configure.outputs.dry-run }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
