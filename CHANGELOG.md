@@ -1,5 +1,11 @@
 # Change Log
 
+## [v5.2.0](https://github.com/auth0/angular2-jwt/tree/v5.2.0) (2023-10-31)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.2...v5.2.0)
+
+**Changed**
+- Drop support for Angular 13 and below [\#777](https://github.com/auth0/angular2-jwt/pull/777) ([frederikprijck](https://github.com/frederikprijck))
+
 ## [v5.1.2](https://github.com/auth0/angular2-jwt/tree/v5.1.2) (2022-12-20)
 [Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.1...v5.1.2)
 
