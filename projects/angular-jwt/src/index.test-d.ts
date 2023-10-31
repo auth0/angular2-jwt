@@ -1,7 +1,7 @@
 import { expectType } from 'tsd';
 import { JwtHelperService } from './index';
 
-// tslint:disable-next-line:no-empty-interface
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Token {}
 
 const service = new JwtHelperService();
