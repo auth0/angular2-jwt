@@ -4,11 +4,11 @@ import {
   Optional,
   SkipSelf,
   Provider,
-} from "@angular/core";
-import { HttpRequest, HTTP_INTERCEPTORS } from "@angular/common/http";
-import { JwtInterceptor } from "./jwt.interceptor";
-import { JWT_OPTIONS } from "./jwtoptions.token";
-import { JwtHelperService } from "./jwthelper.service";
+} from '@angular/core';
+import { HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './jwt.interceptor';
+import { JWT_OPTIONS } from './jwtoptions.token';
+import { JwtHelperService } from './jwthelper.service';
 
 export interface JwtConfig {
   tokenGetter?: (
@@ -16,11 +16,11 @@ export interface JwtConfig {
   ) => string | null | Promise<string | null>;
   headerName?: string;
   authScheme?: string | ((request?: HttpRequest<any>) => string);
-  whitelistedDomains?: Array<string | RegExp>;
-  blacklistedRoutes?: Array<string | RegExp>;
+  allowedDomains?: Array<string | RegExp>;
+  disallowedRoutes?: Array<string | RegExp>;
   throwNoTokenError?: boolean;
   skipWhenExpired?: boolean;
-};
+}
 
 export interface JwtModuleOptions {
   jwtOptionsProvider?: Provider;
@@ -32,7 +32,7 @@ export class JwtModule {
   constructor(@Optional() @SkipSelf() parentModule: JwtModule) {
     if (parentModule) {
       throw new Error(
-        "JwtModule is already loaded. It should only be imported in your application's main module."
+        `JwtModule is already loaded. It should only be imported in your application's main module.`
       );
     }
   }
