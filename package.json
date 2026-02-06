@@ -22,7 +22,6 @@
     "@angular/core": "^14.3.0",
     "@angular/platform-browser": "^14.3.0",
     "@angular/platform-browser-dynamic": "^14.3.0",
-    "core-js": "^3.2.1",
     "rxjs": "~6.5.3",
     "tslib": "^2.4.0",
     "zone.js": "~0.11.4"
@@ -54,7 +53,8 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.4.1",
     "tsd": "^0.25.0",
-    "typescript": "~4.6.4"
+    "typescript": "~4.6.4",
+    "core-js": "^3.43.0"
   },
   "np": {
     "contents": "dist/angular-jwt"
