@@ -1,6 +1,6 @@
 {
     "name": "@auth0/angular-jwt",
-    "version": "4.2.0",
+    "version": "5.2.0",
     "description": "JSON Web Token helper library for Angular",
     "private": false,
     "repository": {
@@ -20,9 +20,9 @@
     ],
     "homepage": "https://github.com/auth0/angular2-jwt",
     "peerDependencies": {
-        "@angular/common": ">=7.1.0"
+        "@angular/common": ">=14.0.0"
     },
     "dependencies": {
-        "url": "^0.11.0"
+        "tslib": "^2.0.0"
     }
 }

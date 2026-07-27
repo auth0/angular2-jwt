@@ -1,4 +1,54 @@
-# Change log
+# Change Log
+
+## [v5.2.0](https://github.com/auth0/angular2-jwt/tree/v5.2.0) (2023-10-31)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.2...v5.2.0)
+
+**Changed**
+- Drop support for Angular 13 and below [\#777](https://github.com/auth0/angular2-jwt/pull/777) ([frederikprijck](https://github.com/frederikprijck))
+
+## [v5.1.2](https://github.com/auth0/angular2-jwt/tree/v5.1.2) (2022-12-20)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.1...v5.1.2)
+
+**Fixed**
+- Restore pre 5.1.1 behavior and fix types [\#759](https://github.com/auth0/angular2-jwt/pull/759) ([frederikprijck](https://github.com/frederikprijck))
+
+## [v5.1.1](https://github.com/auth0/angular2-jwt/tree/v5.1.1) (2022-12-15)
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.1.0...v5.1.1)
+
+**Fixed**
+- Support promise based tokenGetter in JwtHelperService [\#748](https://github.com/auth0/angular2-jwt/pull/748) ([frederikprijck](https://github.com/frederikprijck))
+
+## Version [5.1.0](https://github.com/auth0/angular2-jwt/tags/v5.1.0)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.2..v5.1.0)
+
+**Changed**
+
+- Compile using Ivy partial mode [#735](https://github.com/auth0/angular2-jwt/pull/735) ([frederikprijck](https://github.com/frederikprijck))
+
+Note: This release drops support for Angular <12 as [those versions are no longer supported by Google themselves](https://angular.io/guide/releases#actively-supported-versions). [[Read more ...](https://github.com/auth0/angular2-jwt/issues/712#issuecomment-1265009015)]
+
+## Version [5.0.2](https://github.com/auth0/angular2-jwt/tags/v5.0.2)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.1..v5.0.2)
+
+- Update `decodeToken` helper type definition to accept a generic.
+
+## Version [5.0.1](https://github.com/auth0/angular2-jwt/tags/v5.0.1)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v5.0.0..v5.0.1)
+
+- Remove dependency on the window object for SSR support
+
+## Version [5.0.0](https://github.com/auth0/angular2-jwt/tags/v5.0.0)
+
+**Warning: this version has some breaking changes concerning the allowed domains and dissalowed routes!**
+
+- Replace `whitelistedDomains` to `allowedDomains` [#668](https://github.com/auth0/angular2-jwt/pull/668)
+- Replace `blacklistedRoutes` to `disallowedRoutes` [#668](https://github.com/auth0/angular2-jwt/pull/668)
+- Removed the url dependency, as this is a Node module in the CommonJS format, and the Angular 10 CLI throws warnings when using dependencies in the CommonJS format. We're using the default URL interface, https://developer.mozilla.org/en-US/docs/Web/API/URL [#666](https://github.com/auth0/angular2-jwt/pull/666)
+
+[Full Changelog](https://github.com/auth0/angular2-jwt/compare/v4.2.0..v5.0.0)
 
 ## Version [4.2.0](https://github.com/auth0/angular2-jwt/tags/v4.2.0)
 
