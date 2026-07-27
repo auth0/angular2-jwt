@@ -33,7 +33,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci --ignore-scripts
+          registry-url: 'https://registry.npmjs.org'
+      # replace-registry-host=always forces npm to resolve every tarball from the
+      # public registry above, ignoring any private-registry host that may have
+      # leaked into package-lock.json's "resolved" URLs (which would otherwise
+      # fail in public CI with E401). See npm docs: config/replace-registry-host.
+      - run: npm ci --ignore-scripts --replace-registry-host=always
       - run: npm run lint
       - run: npm run build
       - run: npm run test:ci
